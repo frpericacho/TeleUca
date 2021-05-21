@@ -1,4 +1,5 @@
 node_modules/
+apk/
 .expo/
 npm-debug.*
 *.jks
