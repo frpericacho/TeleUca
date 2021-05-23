@@ -1,16 +1,16 @@
 import Home from "../screens/Home";
-import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
 import SecondHome from "../screens/SecondHome";
+import { createDrawerNavigator } from '@react-navigation/drawer';
 
-const Stack = createStackNavigator();
+const Drawer = createDrawerNavigator();
 
 const MainStack = () => {
     return (
-      <Stack.Navigator>
-        <Stack.Screen name="Home" component={Home} />
-        <Stack.Screen name="SecondHome" component={SecondHome} />
-      </Stack.Navigator>
+      <Drawer.Navigator>
+        <Drawer.Screen name="Home" component={Home} />
+        <Drawer.Screen name="SecondHome" component={SecondHome} />
+      </Drawer.Navigator>
     );
 }
 
