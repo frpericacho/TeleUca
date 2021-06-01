@@ -15,6 +15,7 @@ export default function Login({navigation}){
           await supabase.auth.signIn({ email, password })
       if (!error && !user) Alert.alert('Check your email for the login link!')
       if (error) Alert.alert(error.message)
+      
       setLoading('')
     }
   
