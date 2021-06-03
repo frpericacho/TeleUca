@@ -4,7 +4,7 @@ import { Button, Input, Image, Icon } from "react-native-elements";
 import { supabase } from "../../lib/SupabaseSetUp"
 import React from 'react';
 
-export default function Register({navigation}) {
+export default function Register({navigation}:any) {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [loading, setLoading] = useState('')

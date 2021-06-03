@@ -11,7 +11,7 @@ type Chat = {
   avatar_url: string
 }
 
-export default function Home({navigation}) {
+export default function Home({navigation}:any) {
   const [chats, setChats] = useState<Array<Chat>>([])
   
   const fetchChat = async () => {
