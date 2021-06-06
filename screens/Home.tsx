@@ -25,22 +25,7 @@ export default function Home({navigation}:any) {
 
   return(
     <View>
-      <Button 
-        title="cerrar sesion"
-        onPress={()=>supabase.auth.signOut()}
-      />
-      <Button 
-        title="prueba"
-        onPress={()=>fetchChat()}
-      />
-      <Button 
-        title="console"
-        onPress={()=>console.log('los chats',chats)}
-      />
-      <Button 
-        title="A la segunda vista"
-        onPress={()=>navigation.navigate('SecondHome')}
-      />
+      
     </View>
   );
 };

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import Home from '../screens/Home';
 import SecondHome from '../screens/SecondHome';
@@ -10,9 +10,10 @@ const HomeStack = ({navigation}:any) => {
   return (
     <Stack.Navigator screenOptions={{headerShown: true}}>
       {/*<Stack.Screen options={{headerTitle: Header}}*/}
-      <Stack.Screen options={{ headerTitle: () => <Header navigation = {navigation}  /> }}
+      <Stack.Screen options={{ headerTitle: () => <Header navigation = {navigation} hideMenu = {false}/> }}
         name="Home" component={Home} />
-      <Stack.Screen name="SecondHome" component={SecondHome} />
+      <Stack.Screen options={{ headerTitle: () => <Header navigation = {navigation} hideMenu = {true}/> }}
+        name="SecondHome" component={SecondHome} />
     </Stack.Navigator>
   );
 }

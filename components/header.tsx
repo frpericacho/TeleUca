@@ -1,12 +1,32 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Image, Text } from "react-native-elements";
+import { Searchbar } from 'react-native-paper';
 import { View } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-const Header = ({navigation}:any) => {
+const Header = ({navigation, hideMenu}:any) => {
+  const [search, setState] = useState('')
+  const updateSearch = (search:string) => {
+    setState( search );
+    console.log('search',search)
+  };
+
+  if(hideMenu){
+    return(
+      <View style={{display:'flex', justifyContent:'space-around'}}>
+        <Searchbar
+          style={{width:'100%'}}
+          inputStyle={{width:'100%'}}
+          placeholder="Search"
+          onChangeText={updateSearch}
+          value={search}
+        />
+      </View>
+    )
+  }else{
     return (
       <View style={{ display:"flex", flexDirection:"row", justifyContent:'space-between', alignSelf:'center', width: '100%', height: '100%'}}>
-        <View style={{ height: '100%'}}>
+        <View style={{ height: '100%', display: hideMenu ? "none" : "flex"}}>
           <Icon name="menu" size={30} color="#900" onPress={()=>navigation.openDrawer()}/>
         </View> 
         <View style={{ height: '100%', width:'60%'}}>
@@ -16,10 +36,11 @@ const Header = ({navigation}:any) => {
           />
         </View>
         <View style={{ height: '100%' }}>
-          <Icon name="magnify" size={30} color="#900" onPress={()=>console.log('navigation',navigation)} />
+          <Icon name="magnify" size={30} color="#900" onPress={()=>navigation.navigate('SecondHome')} />
         </View>
       </View>
     )
+  }
 }
 
 export default Header;
