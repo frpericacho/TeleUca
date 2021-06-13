@@ -10,11 +10,11 @@ const Stack = createStackNavigator();
 const HomeStack = ({navigation}:any) => {
   return (
     <Stack.Navigator screenOptions={{headerShown: true}}>
-      <Stack.Screen options={{ headerTitle: () => <Header navigation = {navigation} hideMenu = {false}/> }}
+      <Stack.Screen options={{ headerTitle: () => <Header navigation = {navigation} hideMenu = {false} searchBar={false}/> }}
         name="Home" component={Home} />
-      <Stack.Screen options={{ headerTitle: () => <Header navigation = {navigation} hideMenu = {true}/> }}
+      <Stack.Screen options={{ headerTitle: () => <Header navigation = {navigation} hideMenu = {true} searchBar={true}/> }}
         name="SecondHome" component={SecondHome} />
-      <Stack.Screen options={{ headerTitle: () => <Header navigation = {navigation} hideMenu = {true}/> }}
+      <Stack.Screen options={{ headerTitle: () => <Header navigation = {navigation} hideMenu = {true} searchBar={false}/> }}
         name="Chat" component={Chat} />
     </Stack.Navigator>
   );
