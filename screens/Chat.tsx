@@ -1,30 +1,36 @@
-import React from 'react';
-import { Text, View } from "react-native";
-import { StyleSheet } from 'react-native';
+import React, { useCallback, useEffect, useState } from 'react';
+import { GiftedChat } from 'react-native-gifted-chat';
 
 const Chat = () => {
+
+    const [messages, setMessages] = useState<any>([]);
+
+    useEffect(() => {
+        setMessages([
+        {
+            _id: 1,
+            text: 'Hello developer',
+            createdAt: new Date(),
+            user: {
+                _id: 2,
+                name: 'React Native',
+                avatar: 'https://placeimg.com/140/140/any',
+            },
+        },])
+    }, [])
+
+    const onSend = useCallback((messages = []) => {
+        setMessages(previousMessages => GiftedChat.append(previousMessages, messages))
+    }, [])
+
     return(
-        <View style={styles.Container}>
-            <View style={styles.InputBar}>
-                <Text>Soy la barra</Text>
-            </View>
-        </View>
+        <GiftedChat
+            messages={messages}
+            onSend={messages => onSend(messages)}
+            user={{
+                _id: 1,
+            }}
+        />
     )
 }
 export default Chat;
-
-const styles = StyleSheet.create({
-    InputBar:{
-        position:'absolute',
-        width:'100%',
-        bottom:0,
-        height: 50,
-        backgroundColor:'red'
-    },
-    Container:{
-        position:'relative',
-        height:'100%',
-        width:'100%',
-        backgroundColor:'green'
-    }
-})

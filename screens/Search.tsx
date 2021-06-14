@@ -2,7 +2,7 @@ import { View } from "react-native";
 import React from 'react';
 import { Text } from "react-native-elements";
 
-export default function SecondHome() {
+export default function Search() {
   return(
       <View>
           <Text>
