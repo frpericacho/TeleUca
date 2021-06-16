@@ -5,8 +5,8 @@ import {Avatar,Title} from 'react-native-paper'
 
 const ChatItem = ({Chat, navigation}:any) => {
     return(
-        <TouchableOpacity onPress={()=>{navigation.navigate('Chat')}}>
-            <View style={{flexDirection:'row', backgroundColor: '#00bde6', height:75, alignItems:'center'}} >
+        <TouchableOpacity onPress={()=>{navigation.navigate('Chat',Chat)}}>
+            <View style={{flexDirection:'row', backgroundColor: '#00bde6', height:75, alignItems:'center', marginBottom:1}} >
                 <Avatar.Image 
                     source={{
                         uri: Chat.avatar_url

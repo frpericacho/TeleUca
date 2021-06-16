@@ -1,7 +1,7 @@
 type Chat = {
-    id: string
+    id: number
     title: string
-    user_id: number
+    user_id: string
     description: string
     avatar_url: string
 }
