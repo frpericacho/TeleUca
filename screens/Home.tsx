@@ -7,9 +7,10 @@ import { Modal, Portal, Button, Provider } from 'react-native-paper';
 import { Input } from "react-native-elements";
 import Chat from '../lib/Types/Chat'
 
+
 export default function Home({navigation}:any) {
   const [chats, setChats] = useState<Array<Chat>>([])
-
+  
   //Modal
   const [visible, setVisible] = React.useState(false);
   const showModal = () => setVisible(true);
@@ -34,6 +35,7 @@ export default function Home({navigation}:any) {
 
   useEffect(()=>{
     fetchChat();
+    retriveUser();
   },[])
   
   const fetchChat = async () => {
@@ -45,6 +47,14 @@ export default function Home({navigation}:any) {
     else setChats(chats!)
 
     console.log('chats',chats)
+  }
+
+  const retriveUser = async () => {
+    let { data: users, error } = await supabase
+      .from('users')
+      .select('*')
+      .eq('id', supabase.auth.user()?.id)
+    
   }
 
   const renderItem = ({ item }:any) => (
@@ -93,8 +103,7 @@ export default function Home({navigation}:any) {
           keyExtractor={(item) => item.id}
         />
       </View>
-      <Button style={{marginTop: 30}} onPress={showModal}>
-        Show
+      <Button icon="chat-plus" style={{marginTop: 30}} onPress={showModal}>
       </Button>
     </Provider>
   );
