@@ -1,13 +1,14 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
-import { GiftedChat, Send } from 'react-native-gifted-chat';
+import { GiftedChat, IMessage, Send } from 'react-native-gifted-chat';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { supabase } from "../lib/SupabaseSetUp";
 import Message from '../lib/Types/Message'
 
 const Chat = ({route}:any) => {
     const [messages, setMessages] = useState<Array<Message>>([]);
-    
+    const [imessages, setIMessages] = useState<Array<IMessage>>([]);
+    let MessagesGifted = []
     const fetchChat = async () => {
         const { data: messages, error } = await supabase
           .from<Message>('messages')
@@ -15,12 +16,23 @@ const Chat = ({route}:any) => {
           .order('id', { ascending: false })
         if (error) console.log('error', error)
         else setMessages(messages!)
-
-        console.log('messages',messages)
     }
 
     useEffect(() => {
-        setMessages([
+        fetchChat();
+        messages.forEach(element =>{
+            let mess: IMessage[] = [{
+                _id: element.id,
+                text: element.message,
+                createdAt: element.inserted_at,
+                user:{
+                    _id: element.user_id
+                }
+            }]
+            setIMessages(mess);
+        })
+        
+        /*setMessages([
             {
               _id: 1,
               text: 'Hello developer',
@@ -32,11 +44,24 @@ const Chat = ({route}:any) => {
                 avatar: 'https://placeimg.com/140/140/any',
               },
             },
-        ]);
+        ]);*/
     }, [])
 
-    const onSend = (newMessages = []) => {
+    const onSend = async (newMessages = []) => {
+        const{
+            text,
+            user
+        } = newMessages[0];
+
         setMessages(GiftedChat.append(messages, newMessages));
+
+        const { data, error } = await supabase
+            .from<Message>('messages')
+            .insert([
+                { message: text, user_id: route.params.user_id, media_url: 'vacio', channel_id: route.params.id},
+            ])
+
+        console.log('messages',messages)
     }
 
     const rendSend = (props:any) =>{
