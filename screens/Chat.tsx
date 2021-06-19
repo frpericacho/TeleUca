@@ -1,64 +1,53 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
-import { GiftedChat, IMessage, Send } from 'react-native-gifted-chat';
+import { GiftedChat, Send } from 'react-native-gifted-chat';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { supabase } from "../lib/SupabaseSetUp";
 import Message from '../lib/Types/Message'
+import { MyUser } from '../lib/AuthProvider';
 
 const Chat = ({route}:any) => {
     const [messages, setMessages] = useState<Array<Message>>([]);
-    const [imessages, setIMessages] = useState<Array<IMessage>>([]);
-    let MessagesGifted = []
     const fetchChat = async () => {
         const { data: messages, error } = await supabase
           .from<Message>('messages')
-          .select('*')
+          .select(`
+            *,
+            user:user_id (username)
+          `)
           .order('id', { ascending: false })
         if (error) console.log('error', error)
-        else setMessages(messages!)
+        else{
+            let mes = messages!.map(function(element){
+                return {
+                    _id: element.id,
+                    text: element.message,
+                    createdAt: element.inserted_at,
+                    image: element.media_url,
+                    user:{
+                        //el id del usuario viene undefined
+                        _id: element.user.id,
+                        name: element.user.username
+                    }
+                }
+            })
+            console.log('mes',mes)
+            setMessages(mes!)  
+        } 
     }
 
     useEffect(() => {
         fetchChat();
-        messages.forEach(element =>{
-            let mess: IMessage[] = [{
-                _id: element.id,
-                text: element.message,
-                createdAt: element.inserted_at,
-                user:{
-                    _id: element.user_id
-                }
-            }]
-            setIMessages(mess);
-        })
-        
-        /*setMessages([
-            {
-              _id: 1,
-              text: 'Hello developer',
-              createdAt: new Date(),
-              image:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT1E5SKljnQvLKVwFk1dcOTKNBVGvbyDNl_qA&usqp=CAU",
-              user: {
-                _id: 2,
-                name: 'React Native',
-                avatar: 'https://placeimg.com/140/140/any',
-              },
-            },
-        ]);*/
     }, [])
 
     const onSend = async (newMessages = []) => {
-        const{
-            text,
-            user
-        } = newMessages[0];
-
+        
         setMessages(GiftedChat.append(messages, newMessages));
 
         const { data, error } = await supabase
             .from<Message>('messages')
             .insert([
-                { message: text, user_id: route.params.user_id, media_url: 'vacio', channel_id: route.params.id},
+                { message: newMessages[0].text, user_id: route.params.user_id, channel_id: route.params.id},
             ])
 
         console.log('messages',messages)
@@ -93,7 +82,7 @@ const Chat = ({route}:any) => {
             renderLoading={rendLoading}
             renderSend={rendSend}
             user={{
-                _id: 1,
+                _id: MyUser.id,
             }}
         />
     )

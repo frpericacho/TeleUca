@@ -1,10 +1,13 @@
 import React, { createContext, useState, useEffect } from 'react';
 import { supabase } from './SupabaseSetUp';
 import { Session } from '@supabase/supabase-js';
+import User from './Types/User';
 type ContextProps = {
 	user: null | boolean;
 	session: Session | null;
 };
+
+let MyUser: User;
 
 const AuthContext = createContext<Partial<ContextProps>>({});
 
@@ -28,10 +31,26 @@ const AuthProvider = (props: Props) => {
 				setUser(session ? true : false);
 			}
 		);
+		getUser();
 		return () => {
 			authListener!.unsubscribe();
 		};
 	}, [user]);
+
+	const getUser = async () => {
+		const { data, error } = await supabase
+		.from('users')
+		.select('*')
+		.eq('id', supabase.auth.user()?.id)
+
+		MyUser = {
+			id: data[0].id,
+			username: data[0].username,
+			avatar_url: data[0].avatar_url,
+			status: data[0].status
+		}
+		console.log('MyUser',MyUser)
+	}
 
 	return (
 		<AuthContext.Provider
@@ -45,4 +64,4 @@ const AuthProvider = (props: Props) => {
 	);
 };
 
-export { AuthContext, AuthProvider };
+export { AuthContext, AuthProvider, MyUser };
