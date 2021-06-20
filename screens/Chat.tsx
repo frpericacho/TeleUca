@@ -13,8 +13,9 @@ const Chat = ({route}:any) => {
           .from<Message>('messages')
           .select(`
             *,
-            user:user_id (username)
+            user:user_id (username,avatar_url,id,status)
           `)
+          .eq('channel_id',route.params.id)
           .order('id', { ascending: false })
         if (error) console.log('error', error)
         else{
@@ -27,11 +28,11 @@ const Chat = ({route}:any) => {
                     user:{
                         //el id del usuario viene undefined
                         _id: element.user.id,
-                        name: element.user.username
+                        name: element.user.username,
                     }
                 }
             })
-            console.log('mes',mes)
+            
             setMessages(mes!)  
         } 
     }
@@ -47,10 +48,9 @@ const Chat = ({route}:any) => {
         const { data, error } = await supabase
             .from<Message>('messages')
             .insert([
-                { message: newMessages[0].text, user_id: route.params.user_id, channel_id: route.params.id},
+                { message: newMessages[0].text, user_id: MyUser.id, channel_id: route.params.id},
             ])
-
-        console.log('messages',messages)
+            if (error) console.log('error', error)
     }
 
     const rendSend = (props:any) =>{
