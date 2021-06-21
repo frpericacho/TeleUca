@@ -7,8 +7,61 @@ import Message from '../lib/Types/Message'
 import { MyUser } from '../lib/AuthProvider';
 
 const Chat = ({route}:any) => {
-    const [messages, setMessages] = useState<Array<Message>>([]);
-    const fetchChat = async () => {
+    //const [messages, setMessages] = useState<Array<Message>>([]);
+
+    let mySubscription:any = null;
+    const [messages, setMessages] = useState([]);
+    const [sliceCount, setSliceCount] = useState(10);
+    const [slicedMessages, setSlicedMessages] = useState([]);
+    const [error, setError] = useState("");
+    const [loadingInitial, setLoadingInitial] = useState(true);
+    const [newIncomingMessageTrigger, setNewIncomingMessageTrigger] = useState(
+        null
+    );
+
+    const handleNewMessage = (payload:any) => {
+        //* Sliced messages are already reversed
+        setSlicedMessages((prevSliced):any => [...prevSliced, payload.new]);
+        setMessages((prevMessages):any => [payload.new, ...prevMessages]);
+        //* needed to trigger react state because I need access to the username state
+        setNewIncomingMessageTrigger(payload.new);
+      };
+    
+      const getInitialMessages = async () => {
+        if (!messages.length) {
+          const { data, error } = await supabase
+            .from("messages")
+            .select()
+            .order("id", { ascending: false });
+          // console.log(`data`, data);
+          setLoadingInitial(false);
+          if (error) {
+            setError(error.message);
+            supabase.removeSubscription(mySubscription);
+            mySubscription = null;
+            return;
+          }
+          setSlicedMessages(data.slice(0, sliceCount).reverse());
+          setMessages(data);
+        }
+      };
+    
+      const getMessagesAndSubscribe = async () => {
+        setError("");
+        if (!mySubscription) {
+          getInitialMessages();
+          mySubscription = supabase
+            .from("messages")
+            .on("*", (payload) => {
+              handleNewMessage(payload);
+            })
+            .subscribe();
+        }
+      };
+
+//  Sin uso de RealTime
+/* 
+    const fetchMessages = async () => {
         const { data: messages, error } = await supabase
           .from<Message>('messages')
           .select(`
@@ -26,7 +79,6 @@ const Chat = ({route}:any) => {
                     createdAt: element.inserted_at,
                     image: element.media_url,
                     user:{
-                        //el id del usuario viene undefined
                         _id: element.user.id,
                         name: element.user.username,
                     }
@@ -36,9 +88,10 @@ const Chat = ({route}:any) => {
             setMessages(mes!)  
         } 
     }
-
+*/
     useEffect(() => {
-        fetchChat();
+        //fetchMessages();
+        getMessagesAndSubscribe();
     }, [])
 
     const onSend = async (newMessages = []) => {
