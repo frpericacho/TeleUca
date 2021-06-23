@@ -49,7 +49,6 @@ const AuthProvider = (props: Props) => {
 			avatar_url: data[0].avatar_url,
 			status: data[0].status
 		}
-		console.log('MyUser',MyUser)
 	}
 
 	return (

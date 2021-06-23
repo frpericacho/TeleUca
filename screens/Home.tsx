@@ -7,8 +7,8 @@ import { Modal, Portal, Button, Provider } from 'react-native-paper';
 import { Input } from "react-native-elements";
 import Chat from '../lib/Types/Chat'
 
-
 export default function Home({navigation}:any) {
+
   const [chats, setChats] = useState<Array<Chat>>([])
   
   //Modal
@@ -33,7 +33,7 @@ export default function Home({navigation}:any) {
     <ChatItem navigation={navigation} Chat={item} />
   );
 
-  useEffect(()=>{
+  useEffect(() =>{ 
     fetchChat();
     retriveUser();
   },[])
@@ -45,8 +45,6 @@ export default function Home({navigation}:any) {
       .order('id', { ascending: false })
     if (error) console.log('error', error)
     else setChats(chats!)
-
-    console.log('chats',chats)
   }
 
   const retriveUser = async () => {
@@ -54,7 +52,6 @@ export default function Home({navigation}:any) {
       .from('users')
       .select('*')
       .eq('id', supabase.auth.user()?.id)
-    
   }
 
   const renderItem = ({ item }:any) => (

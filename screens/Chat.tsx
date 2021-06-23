@@ -7,60 +7,9 @@ import Message from '../lib/Types/Message'
 import { MyUser } from '../lib/AuthProvider';
 
 const Chat = ({route}:any) => {
-    //const [messages, setMessages] = useState<Array<Message>>([]);
-
     let mySubscription:any = null;
-    const [messages, setMessages] = useState([]);
-    const [sliceCount, setSliceCount] = useState(10);
-    const [slicedMessages, setSlicedMessages] = useState([]);
-    const [error, setError] = useState("");
-    const [loadingInitial, setLoadingInitial] = useState(true);
-    const [newIncomingMessageTrigger, setNewIncomingMessageTrigger] = useState(
-        null
-    );
+    const [messagesOR, setMessages] = useState([]);
 
-    const handleNewMessage = (payload:any) => {
-        //* Sliced messages are already reversed
-        setSlicedMessages((prevSliced):any => [...prevSliced, payload.new]);
-        setMessages((prevMessages):any => [payload.new, ...prevMessages]);
-        //* needed to trigger react state because I need access to the username state
-        setNewIncomingMessageTrigger(payload.new);
-      };
-    
-      const getInitialMessages = async () => {
-        if (!messages.length) {
-          const { data, error } = await supabase
-            .from("messages")
-            .select()
-            .order("id", { ascending: false });
-          // console.log(`data`, data);
-          setLoadingInitial(false);
-          if (error) {
-            setError(error.message);
-            supabase.removeSubscription(mySubscription);
-            mySubscription = null;
-            return;
-          }
-          setSlicedMessages(data.slice(0, sliceCount).reverse());
-          setMessages(data);
-        }
-      };
-    
-      const getMessagesAndSubscribe = async () => {
-        setError("");
-        if (!mySubscription) {
-          getInitialMessages();
-          mySubscription = supabase
-            .from("messages")
-            .on("*", (payload) => {
-              handleNewMessage(payload);
-            })
-            .subscribe();
-        }
-      };
-
-//  Sin uso de RealTime
-/* 
     const fetchMessages = async () => {
         const { data: messages, error } = await supabase
           .from<Message>('messages')
@@ -84,26 +33,50 @@ const Chat = ({route}:any) => {
                     }
                 }
             })
-            
-            setMessages(mes!)  
+            setMessages(mes!)
+            fetchData()
         } 
     }
-*/
+
+    async function fetchData(){
+        let mySubscription = supabase
+            .from("messages")
+            .on("INSERT", async (payload) => {
+                let { data, error } = await supabase
+                .from('users')
+                .select('*')
+                .eq('id', payload.new.user_id)
+                if(!error){
+                    let mes = [{
+                        _id: payload.new.id,
+                        text: payload.new.message,
+                        createdAt: payload.new.inserted_at,
+                        image: payload.new.media_url,
+                        user:{
+                            _id: data[0].id,
+                            name: data[0].username,
+                        }
+                    }]
+                    setMessages(GiftedChat.append(messagesOR, mes))
+                    console.log('messagesOR fetchData',messagesOR);
+                }
+            })
+            .subscribe();
+    }
+
     useEffect(() => {
-        //fetchMessages();
-        getMessagesAndSubscribe();
+        fetchMessages();
     }, [])
 
     const onSend = async (newMessages = []) => {
-        
-        setMessages(GiftedChat.append(messages, newMessages));
-
+        setMessages(GiftedChat.append(messagesOR, newMessages));
         const { data, error } = await supabase
-            .from<Message>('messages')
-            .insert([
-                { message: newMessages[0].text, user_id: MyUser.id, channel_id: route.params.id},
-            ])
-            if (error) console.log('error', error)
+        .from<Message>('messages')
+        .insert([
+            { message: newMessages[0].text, user_id: MyUser.id, channel_id: route.params.id},
+        ])
+        if (error) console.log('error', error)
+        console.log('messagesOR onSend',messagesOR);
     }
 
     const rendSend = (props:any) =>{
@@ -126,7 +99,7 @@ const Chat = ({route}:any) => {
 
     return(
         <GiftedChat
-            messages={messages}
+            messages={messagesOR}
             onSend={messages => onSend(messages)}
             alwaysShowSend
             showAvatarForEveryMessage
