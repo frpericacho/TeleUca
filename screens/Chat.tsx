@@ -8,7 +8,8 @@ import { MyUser } from '../lib/AuthProvider';
 
 const Chat = ({route}:any) => {
     let mySubscription:any = null;
-    const [messagesOR, setMessages] = useState([]);
+    const [Messages, setMessages] = useState([]);
+    const [NewMessages, setNewMessages] = useState([]);
 
     const fetchMessages = async () => {
         const { data: messages, error } = await supabase
@@ -57,8 +58,8 @@ const Chat = ({route}:any) => {
                             name: data[0].username,
                         }
                     }]
-                    setMessages(GiftedChat.append(messagesOR, mes))
-                    console.log('messagesOR fetchData',messagesOR);
+                    if(MyUser.id != payload.new.user_id)
+                        setMessages(prevMessages => GiftedChat.append(prevMessages, mes))
                 }
             })
             .subscribe();
@@ -69,14 +70,13 @@ const Chat = ({route}:any) => {
     }, [])
 
     const onSend = async (newMessages = []) => {
-        setMessages(GiftedChat.append(messagesOR, newMessages));
+        setMessages(GiftedChat.append(Messages, newMessages));
         const { data, error } = await supabase
         .from<Message>('messages')
         .insert([
             { message: newMessages[0].text, user_id: MyUser.id, channel_id: route.params.id},
         ])
         if (error) console.log('error', error)
-        console.log('messagesOR onSend',messagesOR);
     }
 
     const rendSend = (props:any) =>{
@@ -99,7 +99,7 @@ const Chat = ({route}:any) => {
 
     return(
         <GiftedChat
-            messages={messagesOR}
+            messages={Messages}
             onSend={messages => onSend(messages)}
             alwaysShowSend
             showAvatarForEveryMessage
