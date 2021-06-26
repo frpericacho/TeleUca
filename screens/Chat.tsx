@@ -5,10 +5,12 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { supabase } from "../lib/SupabaseSetUp";
 import Message from '../lib/Types/Message'
 import { MyUser } from '../lib/AuthProvider';
+import * as ImagePicker from 'expo-image-picker';
 
 const Chat = ({route}:any) => {
     let mySubscription:any = null;
     const [Messages, setMessages] = useState([]);
+    const [image, setImage] = useState(null);
 
     const fetchMessages = async () => {
         const { data: messages, error } = await supabase
@@ -96,14 +98,29 @@ const Chat = ({route}:any) => {
         );
     }
 
+    const pickImage = async () => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+          mediaTypes: ImagePicker.MediaTypeOptions.All,
+          allowsEditing: true,
+          aspect: [4, 3],
+          quality: 1,
+        });
+    
+        console.log(result);
+    
+        if (!result.cancelled) {
+          setImage(result.uri);
+        }
+    };
+
     const renderActions = (props: Readonly<ActionsProps>) => {
         return (
             <Actions
                 {...props}
+                options={{pickImage}}
                 icon={()=>(
                     <Icon name="attachment" size={25} color='#6646ee' />
                 )}
-                onSend={args => console.log(args)}
             />
         )
     }

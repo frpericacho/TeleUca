@@ -1,4 +1,4 @@
-import { Text, View, FlatList, StyleSheet } from "react-native";
+import { Text, View, FlatList, StyleSheet, Platform } from "react-native";
 import React, { useState } from 'react';
 import { supabase } from "../lib/SupabaseSetUp"
 import ChatItem from '../components/chatItem';
@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import { Modal, Portal, Button, Provider } from 'react-native-paper';
 import { Input } from "react-native-elements";
 import Chat from '../lib/Types/Chat'
+import * as ImagePicker from 'expo-image-picker';
 
 export default function Home({navigation}:any) {
 
@@ -36,6 +37,14 @@ export default function Home({navigation}:any) {
   useEffect(() =>{ 
     fetchChat();
     retriveUser();
+    (async () => {
+      if (Platform.OS !== 'web') {
+        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (status !== 'granted') {
+          alert('Sorry, we need camera roll permissions to make this work!');
+        }
+      }
+    })();
   },[])
   
   const fetchChat = async () => {
