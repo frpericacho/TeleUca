@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
-import { GiftedChat, Send } from 'react-native-gifted-chat';
+import { ActionsProps, Actions, GiftedChat, Send } from 'react-native-gifted-chat';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { supabase } from "../lib/SupabaseSetUp";
 import Message from '../lib/Types/Message'
@@ -9,7 +9,6 @@ import { MyUser } from '../lib/AuthProvider';
 const Chat = ({route}:any) => {
     let mySubscription:any = null;
     const [Messages, setMessages] = useState([]);
-    const [NewMessages, setNewMessages] = useState([]);
 
     const fetchMessages = async () => {
         const { data: messages, error } = await supabase
@@ -89,12 +88,24 @@ const Chat = ({route}:any) => {
         )
     }
 
-    const rendLoading = () =>{
+    const rendLoading = () => {
         return (
             <View style={styles.loadingContainer}>
               <Icon name="loading" size={35} color='#6646ee' />
             </View>
         );
+    }
+
+    const renderActions = (props: Readonly<ActionsProps>) => {
+        return (
+            <Actions
+                {...props}
+                icon={()=>(
+                    <Icon name="attachment" size={25} color='#6646ee' />
+                )}
+                onSend={args => console.log(args)}
+            />
+        )
     }
 
     return(
@@ -105,6 +116,7 @@ const Chat = ({route}:any) => {
             showAvatarForEveryMessage
             scrollToBottom
             isTyping
+            renderActions={renderActions}
             renderLoading={rendLoading}
             renderSend={rendSend}
             user={{
