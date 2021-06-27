@@ -6,11 +6,12 @@ import { supabase } from "../lib/SupabaseSetUp";
 import Message from '../lib/Types/Message'
 import { MyUser } from '../lib/AuthProvider';
 import * as ImagePicker from 'expo-image-picker';
+import * as FileSystem from 'expo-file-system';
 
 const Chat = ({route}:any) => {
     let mySubscription:any = null;
     const [Messages, setMessages] = useState([]);
-    const [image, setImage] = useState(null);
+    const [image, setImage] = useState('');
 
     const fetchMessages = async () => {
         const { data: messages, error } = await supabase
@@ -109,7 +110,13 @@ const Chat = ({route}:any) => {
         console.log(result);
     
         if (!result.cancelled) {
-          setImage(result.uri);
+            setImage(result.uri);
+            let info = await FileSystem.getInfoAsync(result.uri || "");
+            console.log('info',info.uri)
+            const { data, error } = await supabase
+            .storage
+            .from('avatars')
+            .upload(info.uri)
         }
     };
 
@@ -117,7 +124,7 @@ const Chat = ({route}:any) => {
         return (
             <Actions
                 {...props}
-                options={{pickImage}}
+                options={{['Enviar imagen']:pickImage}}
                 icon={()=>(
                     <Icon name="attachment" size={25} color='#6646ee' />
                 )}
