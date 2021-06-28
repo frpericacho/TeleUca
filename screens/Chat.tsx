@@ -107,16 +107,20 @@ const Chat = ({route}:any) => {
           quality: 1,
         });
     
-        console.log(result);
+        //console.log('result',result);
     
         if (!result.cancelled) {
             setImage(result.uri);
-            let info = await FileSystem.getInfoAsync(result.uri || "");
-            console.log('info',info.uri)
-            const { data, error } = await supabase
+            /*const { data, error } = await supabase
             .storage
-            .from('avatars')
-            .upload(info.uri)
+            .from('media')
+            .upload('imagen/', result.uri)
+            if (error) console.log('error', error)*/
+            let info = await FileSystem.getInfoAsync(result.uri).then(data=>{
+                console.log('data',data)
+            })
+            //const file = new Blob([result.uri],{type: 'image/jpeg'})
+            //console.log('file',file)
         }
     };
 
