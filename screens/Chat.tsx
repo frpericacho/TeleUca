@@ -7,6 +7,7 @@ import Message from '../lib/Types/Message'
 import { MyUser } from '../lib/AuthProvider';
 import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from 'expo-file-system';
+import { ImageInfo } from 'expo-image-picker/build/ImagePicker.types';
 
 const Chat = ({route}:any) => {
     let mySubscription:any = null;
@@ -105,20 +106,27 @@ const Chat = ({route}:any) => {
           allowsEditing: true,
           aspect: [4, 3],
           quality: 1,
+          base64: true
         });
-    
-        //console.log('result',result);
-    
+        
         if (!result.cancelled) {
             setImage(result.uri);
-            /*const { data, error } = await supabase
+            const file = await dataUrlToFile(result);
+            console.log('file',file)
+            const { data, error } = await supabase
             .storage
             .from('media')
-            .upload('imagen/', result.uri)
-            if (error) console.log('error', error)*/
+            .upload('images/filename.jpeg', file)
+            if (error) console.log('error', error)
+
+
+            /*const { data, error } = await supabase
+            .storage
+            .from('avatars')
+            .download('space-cat.png')
             let info = await FileSystem.getInfoAsync(result.uri).then(data=>{
                 console.log('data',data)
-            })
+            })*/
             //const file = new Blob([result.uri],{type: 'image/jpeg'})
             //console.log('file',file)
         }
@@ -154,6 +162,25 @@ const Chat = ({route}:any) => {
     )
 }
 export default Chat;
+
+async function dataUrlToFile(image: ImageInfo): Promise<File> {
+    const imgExt = image.uri.split('.').pop();
+    let type = 'image/png';
+    if (imgExt!.toLowerCase() !== 'png') {
+        type = 'image/jpg';
+    }
+    
+    try {
+        const res = await fetch(image.uri)
+        console.log('res')
+        const blob: Blob = await res.blob();
+        console.log('blob')
+        return new File([blob], 'fileName.'+imgExt, { type });
+    } catch (error) {
+        console.log(error)
+        return new File([],'sdfsd.txt')
+    }
+}
 
 const styles = StyleSheet.create({
     // rest remains same
