@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Alert, StyleSheet, View } from "react-native";
 import { Button, Input, Image } from "react-native-elements";
-import { supabase } from "../../lib/SupabaseSetUp"
 import React from 'react';
+import firebase from "firebase";
 
 export default function Login({navigation}:any){
     const [email, setEmail] = useState('')
@@ -11,11 +11,22 @@ export default function Login({navigation}:any){
 
     const handleLogin = async (email: string, password: string) => {
       setLoading('Entrando')
+      //  Supabase
+      /*
       const { error, user } =
           await supabase.auth.signIn({ email, password })
       if (!error && !user) Alert.alert('Check your email for the login link!')
       if (error) Alert.alert(error.message)
+      */
+
+      //  Firebase
       
+      await firebase.auth().signInWithEmailAndPassword(email,password).then((res)=>{
+        console.log(res)
+      }).catch((error)=>{
+        console.log(error)
+      })
+
       setLoading('')
     }
   

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Alert, StyleSheet, View } from "react-native";
 import { Button, Input, Image, Icon } from "react-native-elements";
-import { supabase } from "../../lib/SupabaseSetUp"
+import firebase from "firebase";
 import React from 'react';
 
 export default function Register({navigation}:any) {
@@ -11,10 +11,20 @@ export default function Register({navigation}:any) {
 
     const handleRegister = async (email: string, password: string) => {
       setLoading('Registrando')
+      //  Supabase
+      /*
       const { error, user } =
           await supabase.auth.signUp({ email, password })
       if (!error && !user) Alert.alert('Check your email for the login link!')
       if (error) Alert.alert(error.message)
+      */
+
+      //  Firebase
+      await firebase.auth().createUserWithEmailAndPassword(email,password).then((res)=>{
+        console.log(res)
+      }).catch((error)=>{
+        console.log(error)
+      })
       setLoading('')
     }
   

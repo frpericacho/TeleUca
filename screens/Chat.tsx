@@ -2,19 +2,21 @@ import React, { useEffect, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { ActionsProps, Actions, GiftedChat, Send } from 'react-native-gifted-chat';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { supabase } from "../lib/SupabaseSetUp";
 import Message from '../lib/Types/Message'
-import { MyUser } from '../lib/AuthProvider';
 import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from 'expo-file-system';
 import { ImageInfo } from 'expo-image-picker/build/ImagePicker.types';
+import { Text } from 'react-native-paper';
 
 const Chat = ({route}:any) => {
+/*
     let mySubscription:any = null;
     const [Messages, setMessages] = useState([]);
     const [image, setImage] = useState('');
 
+
     const fetchMessages = async () => {
+        
         const { data: messages, error } = await supabase
           .from<Message>('messages')
           .select(`
@@ -98,9 +100,9 @@ const Chat = ({route}:any) => {
               <Icon name="loading" size={35} color='#6646ee' />
             </View>
         );
-    }
+    }*/
 
-    const pickImage = async () => {
+    /*const pickImage = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
           mediaTypes: ImagePicker.MediaTypeOptions.All,
           allowsEditing: true,
@@ -118,17 +120,6 @@ const Chat = ({route}:any) => {
             .from('media')
             .upload('images/filename.jpeg', file)
             if (error) console.log('error', error)
-
-
-            /*const { data, error } = await supabase
-            .storage
-            .from('avatars')
-            .download('space-cat.png')
-            let info = await FileSystem.getInfoAsync(result.uri).then(data=>{
-                console.log('data',data)
-            })*/
-            //const file = new Blob([result.uri],{type: 'image/jpeg'})
-            //console.log('file',file)
         }
     };
 
@@ -143,7 +134,7 @@ const Chat = ({route}:any) => {
             />
         )
     }
-
+    
     return(
         <GiftedChat
             messages={Messages}
@@ -155,11 +146,16 @@ const Chat = ({route}:any) => {
             renderActions={renderActions}
             renderLoading={rendLoading}
             renderSend={rendSend}
-            user={{
-                _id: MyUser.id,
-            }}
         />
     )
+    */
+   return (
+       <View>
+           <Text>
+                Hola
+           </Text>
+       </View>
+   )
 }
 export default Chat;
 

@@ -2,9 +2,9 @@ import * as React from 'react';
 import { Button, Input, Image } from "react-native-elements";
 import {DrawerContentScrollView, DrawerItem} from '@react-navigation/drawer';
 import { View, StyleSheet } from 'react-native';
-import { supabase } from "../lib/SupabaseSetUp"
 import {Avatar,Title,Text,Caption,Paragraph,Drawer,TouchableRipple,Switch} from 'react-native-paper'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
+import firebase from 'firebase';
 
 export function DrawerContent(props: any){
     return(
@@ -33,7 +33,7 @@ export function DrawerContent(props: any){
                             size={size}
                         />
                     )}
-                    onPress={()=>supabase.auth.signOut()}
+                    onPress={()=> firebase.auth().signOut()}
                 />
             </Drawer.Section>
         </View>

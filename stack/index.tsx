@@ -1,16 +1,16 @@
 import { NavigationContainer } from '@react-navigation/native';
 import React,{ useContext, useEffect } from 'react';
-import { AuthContext } from '../lib/AuthProvider';
+import { useAuthState } from 'react-firebase-hooks/auth';
 import AuthStack from './AuthStack';
 import MainStack from './MainStack';
+import firebase from 'firebase';
 
 export default () => {
-	const auth = useContext(AuthContext);
-	const user = auth.user;
+	const [user] = useAuthState(firebase.auth())
+
 	return (
 		<NavigationContainer>
-			{user == false && <AuthStack />}
-			{user == true &&  <MainStack/>}
+			{user ? <MainStack/> : <AuthStack />}
 		</NavigationContainer>
 	);
 };
