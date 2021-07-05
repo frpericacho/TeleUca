@@ -48,11 +48,19 @@ export default function Home({navigation}:any) {
   },[])
   
   const fetchChat = async () => {
-    console.log('hola')
     let docs:any = [];
     firebase.firestore().collection('chats').get().then((snapshot)=>{
       snapshot.docs.forEach(doc => {
-        docs.push(doc.data())
+        let object:{
+          id: string,
+          avatar_url: string,
+          description: string,
+          title: string,
+          user_id: string
+        }
+        object=doc.data();
+        object.id=doc.id;
+        docs.push(object)
       })
       console.log('docs',docs)
       setChats(docs)
@@ -84,7 +92,6 @@ export default function Home({navigation}:any) {
       console.log(err);
     })
   }
-  
 
   return(
     <Provider>

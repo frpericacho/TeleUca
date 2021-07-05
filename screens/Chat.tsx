@@ -6,15 +6,15 @@ import Message from '../lib/Types/Message'
 import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from 'expo-file-system';
 import { ImageInfo } from 'expo-image-picker/build/ImagePicker.types';
-import { Text } from 'react-native-paper';
+import firebase from 'firebase';
 
 const Chat = ({route}:any) => {
-/*
+
     let mySubscription:any = null;
     const [Messages, setMessages] = useState([]);
     const [image, setImage] = useState('');
 
-
+/*
     const fetchMessages = async () => {
         
         const { data: messages, error } = await supabase
@@ -69,19 +69,34 @@ const Chat = ({route}:any) => {
             })
             .subscribe();
     }
-
+*/
     useEffect(() => {
-        fetchMessages();
+        //fetchMessages();
+        console.log('route',route)
     }, [])
 
     const onSend = async (newMessages = []) => {
         setMessages(GiftedChat.append(Messages, newMessages));
+
+        //  Supabase
+        /*
         const { data, error } = await supabase
         .from<Message>('messages')
         .insert([
             { message: newMessages[0].text, user_id: MyUser.id, channel_id: route.params.id},
         ])
         if (error) console.log('error', error)
+        */
+
+        //  Firebase
+        firebase.firestore().collection('messages').add({
+            chat: route.params.id,
+            text: newMessages[0].text
+        }).then(()=>{
+
+        }).catch((err)=>{
+            console.log(err)
+        })
     }
 
     const rendSend = (props:any) =>{
@@ -100,9 +115,9 @@ const Chat = ({route}:any) => {
               <Icon name="loading" size={35} color='#6646ee' />
             </View>
         );
-    }*/
+    }
 
-    /*const pickImage = async () => {
+    const pickImage = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
           mediaTypes: ImagePicker.MediaTypeOptions.All,
           allowsEditing: true,
@@ -112,14 +127,7 @@ const Chat = ({route}:any) => {
         });
         
         if (!result.cancelled) {
-            setImage(result.uri);
-            const file = await dataUrlToFile(result);
-            console.log('file',file)
-            const { data, error } = await supabase
-            .storage
-            .from('media')
-            .upload('images/filename.jpeg', file)
-            if (error) console.log('error', error)
+            //Subir a bucket
         }
     };
 
@@ -148,14 +156,7 @@ const Chat = ({route}:any) => {
             renderSend={rendSend}
         />
     )
-    */
-   return (
-       <View>
-           <Text>
-                Hola
-           </Text>
-       </View>
-   )
+    
 }
 export default Chat;
 
