@@ -50,17 +50,8 @@ export default function Home({navigation}:any) {
   const fetchChat = async () => {
     let docs:any = [];
     firebase.firestore().collection('chats').get().then((snapshot)=>{
-      snapshot.docs.forEach(doc => {
-        let object:{
-          id: string,
-          avatar_url: string,
-          description: string,
-          title: string,
-          user_id: string
-        }
-        object=doc.data();
-        object.id=doc.id;
-        docs.push(object)
+      docs = snapshot.docs.map((doc) => {
+        return { id: doc.id, ...doc.data() }
       })
       console.log('docs',docs)
       setChats(docs)

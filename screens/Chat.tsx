@@ -14,36 +14,21 @@ const Chat = ({route}:any) => {
     const [Messages, setMessages] = useState([]);
     const [image, setImage] = useState('');
 
-/*
     const fetchMessages = async () => {
-        
-        const { data: messages, error } = await supabase
-          .from<Message>('messages')
-          .select(`
-            *,
-            user:user_id (username,avatar_url,id,status)
-          `)
-          .eq('channel_id',route.params.id)
-          .order('id', { ascending: false })
-        if (error) console.log('error', error)
-        else{
-            let mes = messages!.map(function(element){
-                return {
-                    _id: element.id,
-                    text: element.message,
-                    createdAt: element.inserted_at,
-                    image: element.media_url,
-                    user:{
-                        _id: element.user.id,
-                        name: element.user.username,
-                    }
-                }
+        /*firebase.firestore().collection('messages').get().then((snapshot)=>{
+            snapshot.docs.forEach(doc => {
+              let object:{
+                id: string,
+                avatar_url: string,
+                description: string,
+                title: string,
+                user_id: string
+              }
             })
-            setMessages(mes!)
-            fetchData()
-        } 
+            
+        })*/
     }
-
+/*
     async function fetchData(){
         let mySubscription = supabase
             .from("messages")
@@ -71,8 +56,12 @@ const Chat = ({route}:any) => {
     }
 */
     useEffect(() => {
-        //fetchMessages();
-        console.log('route',route)
+        let docs:any = [];
+        firebase.firestore().collection('messages').get().then((snapshot)=>{
+            snapshot.docs.forEach(doc =>{
+                console.log('messages',doc.data())
+            })
+        })
     }, [])
 
     const onSend = async (newMessages = []) => {

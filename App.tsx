@@ -7,12 +7,13 @@ import 'react-native-url-polyfill/auto';
 import * as firebase from 'firebase'
 
 const firebaseConfig = {
-  apiKey: "AIzaSyB-aGJKOYjI-_Px4IzpWyxsLSuJ7qtRwqw",
-  authDomain: "ucachat-fbf3c.firebaseapp.com",
-  projectId: "ucachat-fbf3c",
-  storageBucket: "ucachat-fbf3c.appspot.com",
-  messagingSenderId: "629136872020",
-  appId: "1:629136872020:web:d233ee4baece243bfc53c1"
+  apiKey: "AIzaSyBe5z0ysKIyS9m6_FdGOwq67sNUgJsfnKY",
+  authDomain: "ucachat-f2d20.firebaseapp.com",
+  projectId: "ucachat-f2d20",
+  storageBucket: "ucachat-f2d20.appspot.com",
+  messagingSenderId: "167756626914",
+  appId: "1:167756626914:web:f423ea91c85a3be12c57bb"
+
 };
 
 if(firebase.default.apps.length == 0){
