@@ -57,10 +57,13 @@ const Chat = ({route}:any) => {
 */
     useEffect(() => {
         let docs:any = [];
-        firebase.firestore().collection('messages').get().then((snapshot)=>{
-            snapshot.docs.forEach(doc =>{
-                console.log('messages',doc.data())
-            })
+        firebase.firestore().collection('messages').onSnapshot((snapshot)=>{
+            setMessages(
+                snapshot.docs.map(doc=>({
+                    id: doc.id,
+                    data: doc.data()
+                }))
+            )
         })
     }, [])
 
@@ -81,6 +84,7 @@ const Chat = ({route}:any) => {
         firebase.firestore().collection('messages').add({
             chat: route.params.id,
             text: newMessages[0].text
+            user: firebase.auth().currentUser?.email
         }).then(()=>{
 
         }).catch((err)=>{
@@ -134,7 +138,14 @@ const Chat = ({route}:any) => {
     
     return(
         <GiftedChat
-            messages={Messages}
+            messages={Messages.map(({id,data})=>{
+                data.user={
+                    _id:data.user,
+                    name: firebase.auth().currentUser?.email
+                }
+                console.log('Messages',data)
+                return data;
+            })}
             onSend={messages => onSend(messages)}
             alwaysShowSend
             showAvatarForEveryMessage
@@ -143,6 +154,10 @@ const Chat = ({route}:any) => {
             renderActions={renderActions}
             renderLoading={rendLoading}
             renderSend={rendSend}
+            user={{
+                _id: firebase.auth().currentUser?.email,
+                name: firebase.auth().currentUser?.email
+            }}
         />
     )
     
