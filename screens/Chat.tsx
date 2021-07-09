@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { ActionsProps, Actions, GiftedChat, Send } from 'react-native-gifted-chat';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -14,54 +14,15 @@ const Chat = ({route}:any) => {
     const [Messages, setMessages] = useState([]);
     const [image, setImage] = useState('');
 
-    const fetchMessages = async () => {
-        /*firebase.firestore().collection('messages').get().then((snapshot)=>{
-            snapshot.docs.forEach(doc => {
-              let object:{
-                id: string,
-                avatar_url: string,
-                description: string,
-                title: string,
-                user_id: string
-              }
-            })
-            
-        })*/
-    }
-/*
-    async function fetchData(){
-        let mySubscription = supabase
-            .from("messages")
-            .on("INSERT", async (payload) => {
-                let { data, error } = await supabase
-                .from('users')
-                .select('*')
-                .eq('id', payload.new.user_id)
-                if(!error){
-                    let mes = [{
-                        _id: payload.new.id,
-                        text: payload.new.message,
-                        createdAt: payload.new.inserted_at,
-                        image: payload.new.media_url,
-                        user:{
-                            _id: data[0].id,
-                            name: data[0].username,
-                        }
-                    }]
-                    if(MyUser.id != payload.new.user_id)
-                        setMessages(prevMessages => GiftedChat.append(prevMessages, mes))
-                }
-            })
-            .subscribe();
-    }
-*/
-    useEffect(() => {
+    useLayoutEffect(() => {
         let docs:any = [];
-        firebase.firestore().collection('messages').onSnapshot((snapshot)=>{
-            setMessages(
+        firebase.firestore().collection('messages').where('chat_id','==',route.params.id).orderBy('createdAt','desc').onSnapshot((snapshot)=>{
+           setMessages(
                 snapshot.docs.map(doc=>({
-                    id: doc.id,
-                    data: doc.data()
+                    _id: doc.data()._id,
+                    createdAt: doc.data().createdAt,
+                    text: doc.data().text,
+                    user: doc.data().user,
                 }))
             )
         })
@@ -69,24 +30,18 @@ const Chat = ({route}:any) => {
 
     const onSend = async (newMessages = []) => {
         setMessages(GiftedChat.append(Messages, newMessages));
-
-        //  Supabase
-        /*
-        const { data, error } = await supabase
-        .from<Message>('messages')
-        .insert([
-            { message: newMessages[0].text, user_id: MyUser.id, channel_id: route.params.id},
-        ])
-        if (error) console.log('error', error)
-        */
-
-        //  Firebase
+        const {
+            _id,
+            createdAt,
+            text,
+            user
+        }=newMessages[0]
         firebase.firestore().collection('messages').add({
-            chat: route.params.id,
-            text: newMessages[0].text
-            user: firebase.auth().currentUser?.email
-        }).then(()=>{
-
+            _id: _id,
+            chat_id: route.params.id,
+            text: text,
+            createdAt: new Date().toString(),
+            user: user
         }).catch((err)=>{
             console.log(err)
         })
@@ -138,14 +93,10 @@ const Chat = ({route}:any) => {
     
     return(
         <GiftedChat
-            messages={Messages.map(({id,data})=>{
-                data.user={
-                    _id:data.user,
-                    name: firebase.auth().currentUser?.email
-                }
-                console.log('Messages',data)
+            /*messages={Messages.map(({id,data})=>{
                 return data;
-            })}
+            })}*/
+            messages={Messages}
             onSend={messages => onSend(messages)}
             alwaysShowSend
             showAvatarForEveryMessage
