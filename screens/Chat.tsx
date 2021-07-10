@@ -12,7 +12,7 @@ const Chat = ({route}:any) => {
 
     let mySubscription:any = null;
     const [Messages, setMessages] = useState([]);
-    const [image, setImage] = useState('');
+    const [Image, setImage] = useState('');
 
     useLayoutEffect(() => {
         let docs:any = [];
@@ -32,7 +32,6 @@ const Chat = ({route}:any) => {
         setMessages(GiftedChat.append(Messages, newMessages));
         const {
             _id,
-            createdAt,
             text,
             user
         }=newMessages[0]
@@ -41,7 +40,8 @@ const Chat = ({route}:any) => {
             chat_id: route.params.id,
             text: text,
             createdAt: new Date().toString(),
-            user: user
+            user: user,
+            image: Image
         }).catch((err)=>{
             console.log(err)
         })
@@ -70,14 +70,34 @@ const Chat = ({route}:any) => {
           mediaTypes: ImagePicker.MediaTypeOptions.All,
           allowsEditing: true,
           aspect: [4, 3],
-          quality: 1,
-          base64: true
+          quality: 1
         });
         
         if (!result.cancelled) {
-            //Subir a bucket
+            setImage(result.uri)
         }
+        
     };
+
+    const uploadImage = async () =>{
+        const blob = await new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            xhr.onload = function() {
+              resolve(xhr.response);
+            };
+            xhr.onerror = function() {
+              reject(new TypeError('Network request failed'));
+            };
+            xhr.responseType = 'blob';
+            xhr.open('GET', Image, true);
+            xhr.send(null);
+        });
+
+        const ref = firebase.storage().ref().child(new Date().toISOString())
+        const snapshot = ref.put(blob)
+
+        snapshot.on(firebase.storage.TaskEvent.STATE_CHANGED,()=>{})
+    }
 
     const renderActions = (props: Readonly<ActionsProps>) => {
         return (
@@ -93,9 +113,6 @@ const Chat = ({route}:any) => {
     
     return(
         <GiftedChat
-            /*messages={Messages.map(({id,data})=>{
-                return data;
-            })}*/
             messages={Messages}
             onSend={messages => onSend(messages)}
             alwaysShowSend
