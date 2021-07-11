@@ -2,15 +2,13 @@ import React, { useEffect, useLayoutEffect, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { ActionsProps, Actions, GiftedChat, Send } from 'react-native-gifted-chat';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import Message from '../lib/Types/Message'
 import * as ImagePicker from 'expo-image-picker';
-import * as FileSystem from 'expo-file-system';
 import { ImageInfo } from 'expo-image-picker/build/ImagePicker.types';
+import { Audio, Video } from 'expo-av';
 import firebase from 'firebase';
 
 const Chat = ({route}:any) => {
 
-    let mySubscription:any = null;
     const [Messages, setMessages] = useState([]);
     const [Image, setImage] = useState('');
 
@@ -23,6 +21,8 @@ const Chat = ({route}:any) => {
                     createdAt: doc.data().createdAt,
                     text: doc.data().text,
                     user: doc.data().user,
+                    image: doc.data().image,
+                    video: doc.data().video
                 }))
             )
         })
@@ -41,7 +41,6 @@ const Chat = ({route}:any) => {
             text: text,
             createdAt: new Date().toString(),
             user: user,
-            image: Image
         }).catch((err)=>{
             console.log(err)
         })
@@ -74,30 +73,64 @@ const Chat = ({route}:any) => {
         });
         
         if (!result.cancelled) {
-            setImage(result.uri)
+            let nombre = new Date().toString()
+            if(result.type=="image"){
+                uploadImage(result.uri).then((resolve)=>{
+                    let ref = firebase
+                    .storage()
+                    .ref()
+                    .child(`media/${nombre}`);
+                    
+                    ref.put(resolve).then(resolve =>{
+                        resolve.ref.getDownloadURL().then(url=>{
+                            firebase.firestore().collection('messages').add({
+                                _id: new Date().toString(),
+                                chat_id: route.params.id,
+                                createdAt: new Date().toString(),
+                                user: {
+                                    _id: firebase.auth().currentUser?.email,
+                                    name: firebase.auth().currentUser?.email
+                                },
+                                image: url,
+                            }).catch((err)=>{
+                                console.log(err)
+                            })
+                        })
+                    })
+    
+                }).catch(error=>{
+                    console.log(error);
+                })
+            }else{
+                uploadImage(result.uri).then((resolve)=>{
+                    let ref = firebase
+                    .storage()
+                    .ref()
+                    .child(`media/${nombre}`);
+                    
+                    ref.put(resolve).then(resolve =>{
+                        resolve.ref.getDownloadURL().then(url=>{
+                            firebase.firestore().collection('messages').add({
+                                _id: new Date().toString(),
+                                chat_id: route.params.id,
+                                createdAt: new Date().toString(),
+                                user: {
+                                    _id: firebase.auth().currentUser?.email,
+                                    name: firebase.auth().currentUser?.email
+                                },
+                                video: url,
+                            }).catch((err)=>{
+                                console.log(err)
+                            })
+                        })
+                    })
+    
+                }).catch(error=>{
+                    console.log(error);
+                })
+            }
         }
-        
     };
-
-    const uploadImage = async () =>{
-        const blob = await new Promise((resolve, reject) => {
-            const xhr = new XMLHttpRequest();
-            xhr.onload = function() {
-              resolve(xhr.response);
-            };
-            xhr.onerror = function() {
-              reject(new TypeError('Network request failed'));
-            };
-            xhr.responseType = 'blob';
-            xhr.open('GET', Image, true);
-            xhr.send(null);
-        });
-
-        const ref = firebase.storage().ref().child(new Date().toISOString())
-        const snapshot = ref.put(blob)
-
-        snapshot.on(firebase.storage.TaskEvent.STATE_CHANGED,()=>{})
-    }
 
     const renderActions = (props: Readonly<ActionsProps>) => {
         return (
@@ -111,6 +144,38 @@ const Chat = ({route}:any) => {
         )
     }
     
+    const uploadImage = (uri:string) => {
+        return new Promise((resolve, reject) => {
+          let xhr = new XMLHttpRequest();
+          xhr.onerror = reject;
+          xhr.onreadystatechange = () => {
+            if (xhr.readyState === 4) {
+              resolve(xhr.response);
+            }
+          };
+    
+          xhr.open("GET", uri);
+          xhr.responseType = "blob";
+          xhr.send();
+        });
+    };
+
+    const renderMessageVideo = (props: any) => {
+        const { currentMessage } = props;
+        console.log('currentMessage',currentMessage)
+        return (
+          <View style={{height:250, width:250}}>
+             <Video
+              resizeMode="stretch"
+              useNativeControls
+              shouldPlay={false}
+              source={{ uri: currentMessage.video }}
+              style={{height:250, width:250}}
+            />
+          </View>
+        );
+      };
+
     return(
         <GiftedChat
             messages={Messages}
@@ -119,6 +184,7 @@ const Chat = ({route}:any) => {
             showAvatarForEveryMessage
             scrollToBottom
             isTyping
+            renderMessageVideo={renderMessageVideo}
             renderActions={renderActions}
             renderLoading={rendLoading}
             renderSend={rendSend}
