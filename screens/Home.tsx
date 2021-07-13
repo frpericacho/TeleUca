@@ -58,14 +58,6 @@ export default function Home({navigation}:any) {
     })
   }
 
-  /*
-  const retriveUser = async () => {
-    let { data: users, error } = await supabase
-      .from('users')
-      .select('*')
-      .eq('id', supabase.auth.user()?.id)
-  }
-*/
   const renderItem = ({ item }:any) => (
     <Item item={item}/>
   );

@@ -1,16 +1,21 @@
-import React, { useEffect, useLayoutEffect, useState } from 'react';
-import { View, StyleSheet } from 'react-native';
-import { ActionsProps, Actions, GiftedChat, Send } from 'react-native-gifted-chat';
+import React, { useLayoutEffect, useState } from 'react';
+import { View, StyleSheet, Text } from 'react-native';
+import { ActionsProps, Actions, GiftedChat, Send, Bubble } from 'react-native-gifted-chat';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import * as ImagePicker from 'expo-image-picker';
-import { ImageInfo } from 'expo-image-picker/build/ImagePicker.types';
 import { Audio, Video } from 'expo-av';
 import firebase from 'firebase';
+import { Button } from 'react-native-elements/dist/buttons/Button';
+import * as FileSystem from 'expo-file-system'
 
 const Chat = ({route}:any) => {
 
     const [Messages, setMessages] = useState([]);
-    const [Image, setImage] = useState('');
+    const [recording, setRecording] = React.useState();
+    const [playing, setPlaying] = React.useState(false);
+    const [Sound, setSound] = React.useState();
+    const sound = new Audio.Sound();
+    let info;
 
     useLayoutEffect(() => {
         let docs:any = [];
@@ -22,7 +27,8 @@ const Chat = ({route}:any) => {
                     text: doc.data().text,
                     user: doc.data().user,
                     image: doc.data().image,
-                    video: doc.data().video
+                    video: doc.data().video,
+                    audio: doc.data().audio
                 }))
             )
         })
@@ -47,13 +53,21 @@ const Chat = ({route}:any) => {
     }
 
     const rendSend = (props:any) =>{
-        return (
-            <Send {...props}>
-                <View>
-                    <Icon name="send-circle" size={35} color="#00bde6" style={{marginBottom:5, marginRight:5}}/>
+        if(!props.text.trim()){
+            return (
+                <View >
+                    <Icon onPress={startRecording} name="microphone" size={35} color="#00bde6" style={{marginBottom:5, marginRight:5}}/>
                 </View>
-            </Send>
-        )
+            )
+        }else{
+            return (
+                <Send {...props}>
+                    <View>
+                        <Icon name="send-circle" size={35} color="#00bde6" style={{marginBottom:5, marginRight:5}}/>
+                    </View>
+                </Send>
+            )
+        }
     }
 
     const rendLoading = () => {
@@ -75,7 +89,7 @@ const Chat = ({route}:any) => {
         if (!result.cancelled) {
             let nombre = new Date().toString()
             if(result.type=="image"){
-                uploadImage(result.uri).then((resolve)=>{
+                uploadImage(result.uri).then((resolve:any)=>{
                     let ref = firebase
                     .storage()
                     .ref()
@@ -102,7 +116,7 @@ const Chat = ({route}:any) => {
                     console.log(error);
                 })
             }else{
-                uploadImage(result.uri).then((resolve)=>{
+                uploadImage(result.uri).then((resolve:any)=>{
                     let ref = firebase
                     .storage()
                     .ref()
@@ -136,7 +150,7 @@ const Chat = ({route}:any) => {
         return (
             <Actions
                 {...props}
-                options={{['Enviar imagen']:pickImage}}
+                options={{['Enviar imagen/video']:pickImage,['Enviar Audio']:startRecording}}
                 icon={()=>(
                     <Icon name="attachment" size={25} color='#6646ee' />
                 )}
@@ -161,20 +175,83 @@ const Chat = ({route}:any) => {
     };
 
     const renderMessageVideo = (props: any) => {
-        const { currentMessage } = props;
-        console.log('currentMessage',currentMessage)
         return (
           <View style={{height:250, width:250}}>
              <Video
               resizeMode="stretch"
               useNativeControls
               shouldPlay={false}
-              source={{ uri: currentMessage.video }}
+              source={{ uri: props.currentMessage.video }}
               style={{height:250, width:250}}
             />
           </View>
         );
-      };
+    };
+
+    const renderMessageAudio = (props: any) => {
+        return (
+          <View style={{height:50, width:250}}>
+              <Button icon={playing ?
+                <Icon name="pause" size={25} color='#6646ee' onPress={()=>{stopSound(props.currentMessage)}}/>
+                :
+                <Icon name="play" size={25} color='#6646ee' onPress={()=>{playSound(props.currentMessage)}}/>
+              } title="" />
+          </View>
+        );
+    };
+
+    async function startRecording() {
+        try {
+          console.log('Requesting permissions..'); 
+          await Audio.requestPermissionsAsync();
+          await Audio.setAudioModeAsync({
+            allowsRecordingIOS: true,
+            playsInSilentModeIOS: true, 
+          }); 
+          console.log('Starting recording..');
+          const recording = new Audio.Recording();
+          await recording.prepareToRecordAsync(Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY);
+          await recording.startAsync(); 
+          setRecording(recording);
+          console.log('Recording started');
+        } catch (err) {
+          console.error('Failed to start recording', err);
+        }
+    }
+    
+    async function stopRecording() {
+        console.log('Stopping recording..');
+        setRecording(undefined);
+        await recording.stopAndUnloadAsync();
+        const uri = recording.getURI(); 
+        //globalURI = uri;
+        //console.log('Recording stopped and stored at', globalURI);
+        info = await FileSystem.getInfoAsync(uri || "");
+        console.log(`FILE INFO: ${JSON.stringify(info)}`);
+    }
+    
+    async function playSound(props:any) {
+        try {
+            const obj={
+                uri:props.audio
+            };
+            await sound.loadAsync(obj)
+            setSound(props.audio);
+            setPlaying(true)
+            await sound.playAsync();
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    async function stopSound(props:any) {
+        try {
+            await sound.pauseAsync()
+            setPlaying(false)
+        } catch (error) {
+            console.log(error)
+        }
+    }
 
     return(
         <GiftedChat
@@ -188,6 +265,7 @@ const Chat = ({route}:any) => {
             renderActions={renderActions}
             renderLoading={rendLoading}
             renderSend={rendSend}
+            renderMessageAudio={renderMessageAudio}
             user={{
                 _id: firebase.auth().currentUser?.email,
                 name: firebase.auth().currentUser?.email
@@ -198,30 +276,10 @@ const Chat = ({route}:any) => {
 }
 export default Chat;
 
-async function dataUrlToFile(image: ImageInfo): Promise<File> {
-    const imgExt = image.uri.split('.').pop();
-    let type = 'image/png';
-    if (imgExt!.toLowerCase() !== 'png') {
-        type = 'image/jpg';
-    }
-    
-    try {
-        const res = await fetch(image.uri)
-        console.log('res')
-        const blob: Blob = await res.blob();
-        console.log('blob')
-        return new File([blob], 'fileName.'+imgExt, { type });
-    } catch (error) {
-        console.log(error)
-        return new File([],'sdfsd.txt')
-    }
-}
-
 const styles = StyleSheet.create({
-    // rest remains same
     loadingContainer: {
       flex: 1,
       alignItems: 'center',
       justifyContent: 'center'
     }
-  });
+});
