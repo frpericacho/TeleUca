@@ -7,14 +7,13 @@ import { Audio, Video } from 'expo-av';
 import firebase from 'firebase';
 import { Button } from 'react-native-elements/dist/buttons/Button';
 import * as FileSystem from 'expo-file-system'
+const soundObject = new Audio.Sound();
 
 const Chat = ({route}:any) => {
 
     const [Messages, setMessages] = useState([]);
     const [recording, setRecording] = React.useState();
     const [playing, setPlaying] = React.useState(false);
-    const [Sound, setSound] = React.useState();
-    const sound = new Audio.Sound();
     let info;
 
     useLayoutEffect(() => {
@@ -189,6 +188,9 @@ const Chat = ({route}:any) => {
     };
 
     const renderMessageAudio = (props: any) => {
+        soundObject.getStatusAsync().then((res)=>{
+            console.log(res)
+        })
         return (
           <View style={{height:50, width:250}}>
               <Button icon={playing ?
@@ -229,16 +231,17 @@ const Chat = ({route}:any) => {
         info = await FileSystem.getInfoAsync(uri || "");
         console.log(`FILE INFO: ${JSON.stringify(info)}`);
     }
-    
+
     async function playSound(props:any) {
         try {
-            const obj={
-                uri:props.audio
-            };
-            await sound.loadAsync(obj)
-            setSound(props.audio);
-            setPlaying(true)
-            await sound.playAsync();
+            if(soundObject._loaded){ 
+                await soundObject.playAsync()
+                setPlaying(true)
+            }else{
+                await soundObject.loadAsync({uri:props.audio},{shouldPlay:true})
+                await soundObject.playAsync()
+                setPlaying(true)
+            }
         } catch (error) {
             console.log(error)
         }
@@ -246,7 +249,7 @@ const Chat = ({route}:any) => {
 
     async function stopSound(props:any) {
         try {
-            await sound.pauseAsync()
+            await soundObject.pauseAsync()
             setPlaying(false)
         } catch (error) {
             console.log(error)
