@@ -181,6 +181,7 @@ const Chat = ({route}:any) => {
     };
 
     const renderMessageVideo = (props: any) => {
+        
         return (
           <View style={{height:250, width:250}}>
              <Video
@@ -254,7 +255,7 @@ const Chat = ({route}:any) => {
         info = await FileSystem.getInfoAsync(uri || "");
         console.log(`FILE INFO: ${JSON.stringify(info)}`);
     }
-    
+
     return(
         <GiftedChat
             messages={Messages}
