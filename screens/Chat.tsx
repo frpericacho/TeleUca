@@ -14,6 +14,12 @@ const Chat = ({route}:any) => {
     const [Messages, setMessages] = useState([]);
     const [recording, setRecording] = React.useState();
     const [playing, setPlaying] = React.useState(false);
+    const [state, setState] = React.useState({
+        playbackObj: null,
+        soundObjt: null,
+        currentAudio: {}
+    })
+
     let info;
 
     useLayoutEffect(() => {
@@ -188,19 +194,35 @@ const Chat = ({route}:any) => {
     };
 
     const renderMessageAudio = (props: any) => {
-        soundObject.getStatusAsync().then((res)=>{
-            console.log(res)
-        })
         return (
           <View style={{height:50, width:250}}>
-              <Button icon={playing ?
-                <Icon name="pause" size={25} color='#6646ee' onPress={()=>{stopSound(props.currentMessage)}}/>
+            <Button icon={playing ?
+                <Icon name="pause" size={25} color='#6646ee' onPress={()=>{handleAudio(props.currentMessage)}}/>
                 :
-                <Icon name="play" size={25} color='#6646ee' onPress={()=>{playSound(props.currentMessage)}}/>
-              } title="" />
+                <Icon name="play" size={25} color='#6646ee' onPress={()=>{handleAudio(props.currentMessage)}}/>
+            } title="" />
           </View>
         );
     };
+
+    async function handleAudio (props:any) {
+        if(state.soundObjt === null){
+            const playbackObj = new Audio.Sound()
+            const status = await playbackObj.loadAsync({uri:props.audio},{shouldPlay:true})
+            setPlaying(true)
+            return setState({...state, playbackObj:playbackObj, soundObjt: status, currentAudio: props.audio})
+        }
+        if(state.soundObjt?.isLoaded && state.soundObjt?.isPlaying){
+            const status = await state.playbackObj?.setStatusAsync({shouldPlay:false})
+            setPlaying(false)
+            return setState({...state, soundObjt: status})
+        }
+        if(state.soundObjt?.isLoaded && !state.soundObjt?.isPlaying && state.currentAudio.id === props.audio.id){
+            const status = await state.playbackObj?.playAsync({shouldPlay:true})
+            setPlaying(true)
+            return setState({...state, soundObjt: status})
+        }
+    }
 
     async function startRecording() {
         try {
@@ -230,30 +252,6 @@ const Chat = ({route}:any) => {
         //console.log('Recording stopped and stored at', globalURI);
         info = await FileSystem.getInfoAsync(uri || "");
         console.log(`FILE INFO: ${JSON.stringify(info)}`);
-    }
-
-    async function playSound(props:any) {
-        try {
-            if(soundObject._loaded){ 
-                await soundObject.playAsync()
-                setPlaying(true)
-            }else{
-                await soundObject.loadAsync({uri:props.audio},{shouldPlay:true})
-                await soundObject.playAsync()
-                setPlaying(true)
-            }
-        } catch (error) {
-            console.log(error)
-        }
-    }
-
-    async function stopSound(props:any) {
-        try {
-            await soundObject.pauseAsync()
-            setPlaying(false)
-        } catch (error) {
-            console.log(error)
-        }
     }
 
     return(
