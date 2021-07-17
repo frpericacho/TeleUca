@@ -1,6 +1,6 @@
 import React, { useLayoutEffect, useState } from 'react';
 import { View, StyleSheet, Text } from 'react-native';
-import { ActionsProps, Actions, GiftedChat, Send, Bubble } from 'react-native-gifted-chat';
+import { ActionsProps, Actions, GiftedChat, Send, Time } from 'react-native-gifted-chat';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import * as ImagePicker from 'expo-image-picker';
 import { Audio, Video } from 'expo-av';
@@ -23,12 +23,11 @@ const Chat = ({route}:any) => {
     let info;
 
     useLayoutEffect(() => {
-        let docs:any = [];
         firebase.firestore().collection('messages').where('chat_id','==',route.params.id).orderBy('createdAt','desc').onSnapshot((snapshot)=>{
            setMessages(
                 snapshot.docs.map(doc=>({
                     _id: doc.data()._id,
-                    createdAt: doc.data().createdAt,
+                    createdAt: doc.data().createdAt.toDate(),
                     text: doc.data().text,
                     user: doc.data().user,
                     image: doc.data().image,
@@ -44,13 +43,14 @@ const Chat = ({route}:any) => {
         const {
             _id,
             text,
-            user
+            user,
+            createdAt
         }=newMessages[0]
         firebase.firestore().collection('messages').add({
             _id: _id,
             chat_id: route.params.id,
             text: text,
-            createdAt: new Date().toString(),
+            createdAt: createdAt,
             user: user,
         }).catch((err)=>{
             console.log(err)
@@ -65,6 +65,7 @@ const Chat = ({route}:any) => {
                 </View>
             )
         }else{
+            
             return (
                 <Send {...props}>
                     <View>
@@ -105,7 +106,7 @@ const Chat = ({route}:any) => {
                             firebase.firestore().collection('messages').add({
                                 _id: new Date().toString(),
                                 chat_id: route.params.id,
-                                createdAt: new Date().toString(),
+                                createdAt: new Date(),
                                 user: {
                                     _id: firebase.auth().currentUser?.email,
                                     name: firebase.auth().currentUser?.email
@@ -132,7 +133,7 @@ const Chat = ({route}:any) => {
                             firebase.firestore().collection('messages').add({
                                 _id: new Date().toString(),
                                 chat_id: route.params.id,
-                                createdAt: new Date().toString(),
+                                createdAt: new Date(),
                                 user: {
                                     _id: firebase.auth().currentUser?.email,
                                     name: firebase.auth().currentUser?.email
@@ -253,13 +254,14 @@ const Chat = ({route}:any) => {
         info = await FileSystem.getInfoAsync(uri || "");
         console.log(`FILE INFO: ${JSON.stringify(info)}`);
     }
-
+    
     return(
         <GiftedChat
             messages={Messages}
             onSend={messages => onSend(messages)}
             alwaysShowSend
             showAvatarForEveryMessage
+            messageIdGenerator={()=>Date().toString()}
             scrollToBottom
             isTyping
             renderMessageVideo={renderMessageVideo}
