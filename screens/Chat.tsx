@@ -3,21 +3,22 @@ import { View, StyleSheet, Text } from 'react-native';
 import { ActionsProps, Actions, GiftedChat, Send, Time } from 'react-native-gifted-chat';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import * as ImagePicker from 'expo-image-picker';
-import { Audio, Video } from 'expo-av';
+import { Audio, Video, AVPlaybackStatus } from 'expo-av';
 import firebase from 'firebase';
 import { Button } from 'react-native-elements/dist/buttons/Button';
 import * as FileSystem from 'expo-file-system'
-const soundObject = new Audio.Sound();
+import AudioType from '../lib/Types/Audio';
 
 const Chat = ({route}:any) => {
-
     const [Messages, setMessages] = useState([]);
+    
+    //Audio
     const [recording, setRecording] = React.useState();
-    const [playing, setPlaying] = React.useState(false);
-    const [state, setState] = React.useState({
-        playbackObj: null,
+    const [state, setState] = React.useState<AudioType>({
         soundObjt: null,
-        currentAudio: {}
+        playbackObj: null,
+        currentAudio: '',
+        isPlaying: false,
     })
 
     let info;
@@ -65,7 +66,6 @@ const Chat = ({route}:any) => {
                 </View>
             )
         }else{
-            
             return (
                 <Send {...props}>
                     <View>
@@ -181,7 +181,6 @@ const Chat = ({route}:any) => {
     };
 
     const renderMessageVideo = (props: any) => {
-        
         return (
           <View style={{height:250, width:250}}>
              <Video
@@ -198,31 +197,46 @@ const Chat = ({route}:any) => {
     const renderMessageAudio = (props: any) => {
         return (
           <View style={{height:50, width:250}}>
-            <Button icon={playing ?
-                <Icon name="pause" size={25} color='#6646ee' onPress={()=>{handleAudio(props.currentMessage)}}/>
-                :
-                <Icon name="play" size={25} color='#6646ee' onPress={()=>{handleAudio(props.currentMessage)}}/>
-            } title="" />
+            <Icon name="play" size={25} color='#6646ee' onPress={()=>{handleAudio(props.currentMessage.audio)}}/>
           </View>
         );
     };
 
-    async function handleAudio (props:any) {
-        if(state.soundObjt === null){
+    const handleAudio = async (audio:any) => {
+
+        //PROBAR A INSERTAR EXPO-AUDIO-PLAYER-EXAMPLE
+
+        //nuevo
+        if(state.soundObjt == null){
+            console.log('nuevo')
+            console.log('state',state)
             const playbackObj = new Audio.Sound()
-            const status = await playbackObj.loadAsync({uri:props.audio},{shouldPlay:true})
-            setPlaying(true)
-            return setState({...state, playbackObj:playbackObj, soundObjt: status, currentAudio: props.audio})
+            const status = await playbackObj.loadAsync({uri:audio},{shouldPlay:true})
+            return setState({playbackObj:playbackObj, soundObjt: status, currentAudio: audio, isPlaying: true})
         }
-        if(state.soundObjt?.isLoaded && state.soundObjt?.isPlaying){
+        //pausa
+        if(state.soundObjt?.isLoaded && state.soundObjt?.isPlaying && state.currentAudio == audio){
+            console.log('pausa')
+            console.log('soundObjt',state.soundObjt)
             const status = await state.playbackObj?.setStatusAsync({shouldPlay:false})
-            setPlaying(false)
-            return setState({...state, soundObjt: status})
+            return setState({playbackObj:state.playbackObj, currentAudio:state.currentAudio, soundObjt: status, isPlaying: false})
         }
-        if(state.soundObjt?.isLoaded && !state.soundObjt?.isPlaying && state.currentAudio.id === props.audio.id){
-            const status = await state.playbackObj?.playAsync({shouldPlay:true})
-            setPlaying(true)
-            return setState({...state, soundObjt: status})
+        //reanudar
+        if(state.soundObjt?.isLoaded && !state.soundObjt?.isPlaying && state.currentAudio == audio){
+            console.log('reanuda')
+            console.log('soundObjt',state.soundObjt)
+            const status = await state.playbackObj?.setStatusAsync({shouldPlay:true})
+            return setState({playbackObj:state.playbackObj, currentAudio:state.currentAudio, soundObjt: status, isPlaying: true})
+        }
+        //seleccionar otro archivo
+        if(state.soundObjt?.isLoaded && state.currentAudio != audio){
+            console.log('otro')
+            console.log('soundObjt',state.soundObjt)
+            await state.playbackObj?.stopAsync()
+            await state.playbackObj?.unloadAsync()
+            const playbackObj = new Audio.Sound()
+            const status = await playbackObj.loadAsync({uri:audio},{shouldPlay:true})
+            return setState({playbackObj:playbackObj, soundObjt: status, currentAudio: audio, isPlaying: true})
         }
     }
 
