@@ -107,6 +107,7 @@ export default function Home({navigation}:any) {
           keyExtractor={(item) => item.title}
         />
       </View>
+
       <Button icon="chat-plus" style={{marginTop: 30}} onPress={showModal}>
       </Button>
     </Provider>

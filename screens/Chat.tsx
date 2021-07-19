@@ -8,6 +8,7 @@ import firebase from 'firebase';
 import { Button } from 'react-native-elements/dist/buttons/Button';
 import * as FileSystem from 'expo-file-system'
 import AudioType from '../lib/Types/Audio';
+import AudioSlider from '../components/AudioPlayer/AudioSlider';
 
 const Chat = ({route}:any) => {
     const [Messages, setMessages] = useState([]);
@@ -195,10 +196,13 @@ const Chat = ({route}:any) => {
     };
 
     const renderMessageAudio = (props: any) => {
-        return (
+        /*return (
           <View style={{height:50, width:250}}>
             <Icon name="play" size={25} color='#6646ee' onPress={()=>{handleAudio(props.currentMessage.audio)}}/>
           </View>
+        );*/
+        return (
+            <AudioSlider audio={props.currentMessage.audio}/>
         );
     };
 
