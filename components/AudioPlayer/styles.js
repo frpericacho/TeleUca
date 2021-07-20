@@ -3,10 +3,10 @@ import {StyleSheet} from 'react-native';
 export const standardsStylesObject = {
     backgroundColor: "white",
     borderColor: "grey",
-    color: "black",
+    color: "white",
     borderRadius: 5,
     borderWidth: 0.5,
-    fontSizeNormal: 17,
+    fontSizeNormal: 14,
 };
 
 const styles = StyleSheet.create({

@@ -49,7 +49,8 @@ export default class AudioSlider extends PureComponent {
                 Animated.event([
                     null, 
                     { dx: this.state.dotOffset.x, dy: this.state.dotOffset.y }
-                ])(e, gestureState)
+                ]
+                )(e, gestureState)
             },
             onPanResponderTerminationRequest: () => false,
             onPanResponderTerminate: async (evt, gestureState) => {
@@ -105,6 +106,7 @@ export default class AudioSlider extends PureComponent {
         Animated.timing(this.state.dotOffset, {
             toValue: {x: this.state.trackLayout.width, y: 0},
             duration: durationLeft,
+            useNativeDriver:true,
             easing: Easing.linear
         }).start(() => this.animationPausedOrStopped());
     }
@@ -160,7 +162,6 @@ export default class AudioSlider extends PureComponent {
                     paddingRight: 8,
                 }}
             >
-
                 <View
                     style={{
                         flex: 0,
@@ -172,7 +173,6 @@ export default class AudioSlider extends PureComponent {
                         height: 35
                     }}
                 >
-
                     <TouchableOpacity
                         style={{
                             flex: 1,
@@ -187,12 +187,11 @@ export default class AudioSlider extends PureComponent {
                         {
                             this.state.playing
                                 ?
-                                <MaterialIcons name="pause" size={30} color="black" />
+                                <MaterialIcons name="pause" size={25} color="black" />
                                 :
-                                <Entypo name="controller-play" size={30} color="black" />
+                                <Entypo name="controller-play" size={25} color="black" />
                         }
                     </TouchableOpacity>
-
                     <Animated.View
                         onLayout={this.measureTrack}
                         style={{
@@ -236,9 +235,7 @@ export default class AudioSlider extends PureComponent {
                             </View>
                         </Animated.View>
                     </Animated.View>
-
                 </View>
-
                 <View style={{
                         flex: 0,
                         flexDirection: "row",

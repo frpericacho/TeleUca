@@ -26,7 +26,7 @@ export default class DigitalTimeString extends React.Component {
         let minutes = Math.floor(seconds_left / 60);
         let seconds = seconds_left - minutes * 60;
 
-        let finalTime = this.str_pad_left(hours, '0', 2) + ':' + this.str_pad_left(minutes, '0', 2) + ':' + this.str_pad_left(seconds, '0', 2);
+        let finalTime = this.str_pad_left(minutes, '0', 2) + ':' + this.str_pad_left(seconds, '0', 2);
         return finalTime
     }
 

@@ -1,5 +1,5 @@
 import React, { useLayoutEffect, useState } from 'react';
-import { View, StyleSheet, Text } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { ActionsProps, Actions, GiftedChat, Send, Time } from 'react-native-gifted-chat';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import * as ImagePicker from 'expo-image-picker';
@@ -202,14 +202,13 @@ const Chat = ({route}:any) => {
           </View>
         );*/
         return (
-            <AudioSlider audio={props.currentMessage.audio}/>
+            <View style={{width:240}}>
+                <AudioSlider audio={props.currentMessage.audio}/>
+            </View>
         );
     };
 
     const handleAudio = async (audio:any) => {
-
-        //PROBAR A INSERTAR EXPO-AUDIO-PLAYER-EXAMPLE
-
         //nuevo
         if(state.soundObjt == null){
             console.log('nuevo')
