@@ -5,7 +5,6 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import * as ImagePicker from 'expo-image-picker';
 import { Audio, Video, AVPlaybackStatus } from 'expo-av';
 import firebase from 'firebase';
-import { Button } from 'react-native-elements/dist/buttons/Button';
 import * as FileSystem from 'expo-file-system'
 import AudioType from '../lib/Types/Audio';
 import AudioSlider from '../components/AudioPlayer/AudioSlider';
@@ -14,7 +13,7 @@ const Chat = ({route}:any) => {
     const [Messages, setMessages] = useState([]);
     
     //Audio
-    const [recording, setRecording] = React.useState();
+    const [recording, setRecording] = React.useState<Audio.Recording>();
     const [state, setState] = React.useState<AudioType>({
         soundObjt: null,
         playbackObj: null,
@@ -62,7 +61,7 @@ const Chat = ({route}:any) => {
     const rendSend = (props:any) =>{
         if(!props.text.trim()){
             return (
-                <View >
+                <View>
                     <Icon onPress={startRecording} name="microphone" size={35} color="#00bde6" style={{marginBottom:5, marginRight:5}}/>
                 </View>
             )
@@ -157,7 +156,7 @@ const Chat = ({route}:any) => {
         return (
             <Actions
                 {...props}
-                options={{['Enviar imagen/video']:pickImage,['Enviar Audio']:startRecording}}
+                options={{['Enviar imagen/video']:pickImage,['Guardar Audio']:saveAudio,['empezar Audio']:startRecording,['Detener Audio']:stopRecording}}
                 icon={()=>(
                     <Icon name="attachment" size={25} color='#6646ee' />
                 )}
@@ -196,52 +195,12 @@ const Chat = ({route}:any) => {
     };
 
     const renderMessageAudio = (props: any) => {
-        /*return (
-          <View style={{height:50, width:250}}>
-            <Icon name="play" size={25} color='#6646ee' onPress={()=>{handleAudio(props.currentMessage.audio)}}/>
-          </View>
-        );*/
         return (
             <View style={{width:240}}>
                 <AudioSlider audio={props.currentMessage.audio}/>
             </View>
         );
     };
-
-    const handleAudio = async (audio:any) => {
-        //nuevo
-        if(state.soundObjt == null){
-            console.log('nuevo')
-            console.log('state',state)
-            const playbackObj = new Audio.Sound()
-            const status = await playbackObj.loadAsync({uri:audio},{shouldPlay:true})
-            return setState({playbackObj:playbackObj, soundObjt: status, currentAudio: audio, isPlaying: true})
-        }
-        //pausa
-        if(state.soundObjt?.isLoaded && state.soundObjt?.isPlaying && state.currentAudio == audio){
-            console.log('pausa')
-            console.log('soundObjt',state.soundObjt)
-            const status = await state.playbackObj?.setStatusAsync({shouldPlay:false})
-            return setState({playbackObj:state.playbackObj, currentAudio:state.currentAudio, soundObjt: status, isPlaying: false})
-        }
-        //reanudar
-        if(state.soundObjt?.isLoaded && !state.soundObjt?.isPlaying && state.currentAudio == audio){
-            console.log('reanuda')
-            console.log('soundObjt',state.soundObjt)
-            const status = await state.playbackObj?.setStatusAsync({shouldPlay:true})
-            return setState({playbackObj:state.playbackObj, currentAudio:state.currentAudio, soundObjt: status, isPlaying: true})
-        }
-        //seleccionar otro archivo
-        if(state.soundObjt?.isLoaded && state.currentAudio != audio){
-            console.log('otro')
-            console.log('soundObjt',state.soundObjt)
-            await state.playbackObj?.stopAsync()
-            await state.playbackObj?.unloadAsync()
-            const playbackObj = new Audio.Sound()
-            const status = await playbackObj.loadAsync({uri:audio},{shouldPlay:true})
-            return setState({playbackObj:playbackObj, soundObjt: status, currentAudio: audio, isPlaying: true})
-        }
-    }
 
     async function startRecording() {
         try {
@@ -271,6 +230,14 @@ const Chat = ({route}:any) => {
         //console.log('Recording stopped and stored at', globalURI);
         info = await FileSystem.getInfoAsync(uri || "");
         console.log(`FILE INFO: ${JSON.stringify(info)}`);
+        
+    }
+
+    async function saveAudio(){
+        let audio = info;
+        let nombre = new Date().toString()
+
+        //implementar con uploadImage
     }
 
     return(
