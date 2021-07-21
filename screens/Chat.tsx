@@ -21,7 +21,7 @@ const Chat = ({route}:any) => {
         isPlaying: false,
     })
 
-    let info;
+    let info:FileSystem.FileInfo;
 
     useLayoutEffect(() => {
         firebase.firestore().collection('messages').where('chat_id','==',route.params.id).orderBy('createdAt','desc').onSnapshot((snapshot)=>{
@@ -228,16 +228,66 @@ const Chat = ({route}:any) => {
         const uri = recording.getURI(); 
         //globalURI = uri;
         //console.log('Recording stopped and stored at', globalURI);
-        info = await FileSystem.getInfoAsync(uri || "");
-        console.log(`FILE INFO: ${JSON.stringify(info)}`);
-        
+        await FileSystem.getInfoAsync(uri || "").then((file)=>{
+            let nombre = new Date().toString()
+            console.log('file.uri',file.uri)
+            uploadImage(file.uri).then((resolve:any)=>{
+                let ref = firebase
+                .storage()
+                .ref()
+                .child(`media/${nombre}`);
+                
+                ref.put(resolve).then(resolve =>{
+                    resolve.ref.getDownloadURL().then(url=>{
+                        firebase.firestore().collection('messages').add({
+                            _id: new Date().toString(),
+                            chat_id: route.params.id,
+                            createdAt: new Date(),
+                            user: {
+                                _id: firebase.auth().currentUser?.email,
+                                name: firebase.auth().currentUser?.email
+                            },
+                            audio: url,
+                        }).catch((err)=>{
+                            console.log(err)
+                        })
+                    })
+                })
+            }).catch(error=>{
+                console.log(error);
+            })
+        }).catch(error=>{
+            console.log(error);
+        })
     }
 
     async function saveAudio(){
-        let audio = info;
         let nombre = new Date().toString()
-
-        //implementar con uploadImage
+        uploadImage(info.uri).then((resolve:any)=>{
+            let ref = firebase
+            .storage()
+            .ref()
+            .child(`media/${nombre}`);
+            
+            ref.put(resolve).then(resolve =>{
+                resolve.ref.getDownloadURL().then(url=>{
+                    firebase.firestore().collection('messages').add({
+                        _id: new Date().toString(),
+                        chat_id: route.params.id,
+                        createdAt: new Date(),
+                        user: {
+                            _id: firebase.auth().currentUser?.email,
+                            name: firebase.auth().currentUser?.email
+                        },
+                        audio: url,
+                    }).catch((err)=>{
+                        console.log(err)
+                    })
+                })
+            })
+        }).catch(error=>{
+            console.log(error);
+        })
     }
 
     return(
