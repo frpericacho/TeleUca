@@ -1,5 +1,5 @@
 import React, { useLayoutEffect, useState } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { ActionsProps, Actions, GiftedChat, Send, Time } from 'react-native-gifted-chat';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import * as ImagePicker from 'expo-image-picker';
@@ -14,6 +14,7 @@ const Chat = ({route}:any) => {
     
     //Audio
     const [recording, setRecording] = React.useState<Audio.Recording>();
+    const [IsRecording,setIsRecording] = React.useState(false);
     const [state, setState] = React.useState<AudioType>({
         soundObjt: null,
         playbackObj: null,
@@ -62,7 +63,9 @@ const Chat = ({route}:any) => {
         if(!props.text.trim()){
             return (
                 <View>
-                    <Icon onPress={startRecording} name="microphone" size={35} color="#00bde6" style={{marginBottom:5, marginRight:5}}/>
+                    <TouchableOpacity onPressIn={startRecording} onPressOut={stopRecording}>
+                        <Icon name={IsRecording ? "microphone" : "microphone-outline"} size={35} color="#00bde6" style={{marginBottom:5, marginRight:5}}/>
+                    </TouchableOpacity>
                 </View>
             )
         }else{
@@ -156,7 +159,7 @@ const Chat = ({route}:any) => {
         return (
             <Actions
                 {...props}
-                options={{['Enviar imagen/video']:pickImage,['Guardar Audio']:saveAudio,['empezar Audio']:startRecording,['Detener Audio']:stopRecording}}
+                options={{['Enviar imagen/video']:pickImage,['empezar Audio']:startRecording,['Detener Audio']:stopRecording}}
                 icon={()=>(
                     <Icon name="attachment" size={25} color='#6646ee' />
                 )}
@@ -215,6 +218,7 @@ const Chat = ({route}:any) => {
           await recording.prepareToRecordAsync(Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY);
           await recording.startAsync(); 
           setRecording(recording);
+          setIsRecording(true);
           console.log('Recording started');
         } catch (err) {
           console.error('Failed to start recording', err);
@@ -224,10 +228,9 @@ const Chat = ({route}:any) => {
     async function stopRecording() {
         console.log('Stopping recording..');
         setRecording(undefined);
+        setIsRecording(false)
         await recording.stopAndUnloadAsync();
         const uri = recording.getURI(); 
-        //globalURI = uri;
-        //console.log('Recording stopped and stored at', globalURI);
         await FileSystem.getInfoAsync(uri || "").then((file)=>{
             let nombre = new Date().toString()
             console.log('file.uri',file.uri)
@@ -255,35 +258,6 @@ const Chat = ({route}:any) => {
                 })
             }).catch(error=>{
                 console.log(error);
-            })
-        }).catch(error=>{
-            console.log(error);
-        })
-    }
-
-    async function saveAudio(){
-        let nombre = new Date().toString()
-        uploadImage(info.uri).then((resolve:any)=>{
-            let ref = firebase
-            .storage()
-            .ref()
-            .child(`media/${nombre}`);
-            
-            ref.put(resolve).then(resolve =>{
-                resolve.ref.getDownloadURL().then(url=>{
-                    firebase.firestore().collection('messages').add({
-                        _id: new Date().toString(),
-                        chat_id: route.params.id,
-                        createdAt: new Date(),
-                        user: {
-                            _id: firebase.auth().currentUser?.email,
-                            name: firebase.auth().currentUser?.email
-                        },
-                        audio: url,
-                    }).catch((err)=>{
-                        console.log(err)
-                    })
-                })
             })
         }).catch(error=>{
             console.log(error);
