@@ -8,9 +8,7 @@ const ChatItem = ({Chat, navigation}:any) => {
         <TouchableOpacity onPress={()=>{navigation.navigate('Chat',Chat)}}>
             <View style={{flexDirection:'row', backgroundColor: '#00bde6', height:75, alignItems:'center', marginBottom:1}} >
                 <Avatar.Image 
-                    source={{
-                        uri: Chat.avatar_url
-                    }}
+                    source={Chat.avatar_url ? {uri:Chat.avatar_url} : {uri:'../assets/icon.png'}}
                     size={50}
                     style={{marginLeft:20}}
                 />

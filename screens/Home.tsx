@@ -1,4 +1,4 @@
-import { Text, View, FlatList, StyleSheet, Platform } from "react-native";
+import { Text, View, FlatList, StyleSheet, Platform, TouchableOpacity } from "react-native";
 import React, { useState } from 'react';
 import ChatItem from '../components/chatItem';
 import { useEffect } from "react";
@@ -7,11 +7,19 @@ import { Input } from "react-native-elements";
 import Chat from '../lib/Types/Chat'
 import * as ImagePicker from 'expo-image-picker';
 import firebase from "firebase";
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 export default function Home({navigation}:any) {
 
+  //MyUser
+  const [MyUser,setMyUser] = useState('');
+
+  //Chat
   const [chats, setChats] = useState<Array<Chat>>([])
-  
+  const [user, setUser] = useState('')
+  const [UserList,setUserList] = useState([]);
+  let textInput:any
+
   //Modal
   const [visible, setVisible] = React.useState(false);
   const showModal = () => setVisible(true);
@@ -36,7 +44,7 @@ export default function Home({navigation}:any) {
 
   useEffect(() =>{ 
     fetchChat();
-    //retriveUser();
+    retrieveUser();
     (async () => {
       if (Platform.OS !== 'web') {
         const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -46,7 +54,11 @@ export default function Home({navigation}:any) {
       }
     })();
   },[])
-  
+
+  const retrieveUser = async () => {
+    UserList.push(firebase.auth().currentUser?.email)
+  }
+
   const fetchChat = async () => {
     let docs:any = [];
     firebase.firestore().collection('chats').get().then((snapshot)=>{
@@ -58,17 +70,40 @@ export default function Home({navigation}:any) {
     })
   }
 
-  const renderItem = ({ item }:any) => (
+  const renderChatItem = ({ item }:any) => (
     <Item item={item}/>
   );
+
+  const deleteItem = async (item:any) => {
+    let arr = UserList.filter(function(it) {
+      return it !== item
+    })
+    setUserList(arr);
+  }
+
+  const renderUserItem = ({item}:any) => {
+    return (
+      <View style={{display:'flex', flexDirection:"row", justifyContent:"space-between"}}>
+        <Text>
+          {item}
+        </Text>
+        <TouchableOpacity onPress={() => deleteItem(item)}>
+            <Icon name="delete" style={{paddingLeft: 10,paddingRight:10}} size={20} color="red" />
+        </TouchableOpacity>
+      </View>
+    );
+  }
 
   const submit = async (title:string, description:string) =>{
     firebase.firestore().collection('chats').add({
       avatar_url: '',
       description: DescriptionChat,
       title: titleChat,
-      user_id: ''
+      users:{
+        UserList
+      }
     }).then(()=>{
+      setUserList([firebase.auth().currentUser?.email]);
       hideModal();
       fetchChat();
     }).catch((err)=>{
@@ -76,9 +111,13 @@ export default function Home({navigation}:any) {
     })
   }
 
+  const addUserChat = async () =>{
+    UserList.push(user)
+    textInput.clear()
+  }
+
   return(
     <Provider>
-      
       <Portal>
         <Modal visible={visible} onDismiss={hideModal} contentContainerStyle={containerStyle}>
           <Text>Añadir Chat</Text>
@@ -92,18 +131,35 @@ export default function Home({navigation}:any) {
             onChangeText={value => setDescriptionChat(value)}
             placeholder='Descripcion'
           />
+          <Input
+            label="Añadir usuario:"
+            ref={input => { textInput = input }} 
+            onChangeText={value => setUser(value)}
+            placeholder='email usuario'
+            clearTextOnFocus
+            rightIcon={
+              <TouchableOpacity onPress={addUserChat}>
+                <Icon name="account-plus" size={20} color="#00bde6"/>
+              </TouchableOpacity>
+            }
+          />
+          <FlatList 
+            style={{marginBottom:3}}
+            data={UserList}
+            renderItem={renderUserItem}
+            keyExtractor={(item) => item}          
+          />
           <Button onPress={()=>submit(titleChat,DescriptionChat)}>
             Enviar
           </Button>
         </Modal>
       </Portal>
-      
       <View>
         <ChatItem navigation={navigation} Chat={Saved} />
         <FlatList
           style={{marginBottom:1}}
           data={chats}
-          renderItem={renderItem}
+          renderItem={renderChatItem}
           keyExtractor={(item) => item.title}
         />
       </View>

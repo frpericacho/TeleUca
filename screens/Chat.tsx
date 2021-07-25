@@ -6,7 +6,6 @@ import * as ImagePicker from 'expo-image-picker';
 import { Audio, Video, AVPlaybackStatus } from 'expo-av';
 import firebase from 'firebase';
 import * as FileSystem from 'expo-file-system'
-import AudioType from '../lib/Types/Audio';
 import AudioSlider from '../components/AudioPlayer/AudioSlider';
 
 const Chat = ({route}:any) => {
@@ -15,12 +14,6 @@ const Chat = ({route}:any) => {
     //Audio
     const [recording, setRecording] = React.useState<Audio.Recording>();
     const [IsRecording,setIsRecording] = React.useState(false);
-    const [state, setState] = React.useState<AudioType>({
-        soundObjt: null,
-        playbackObj: null,
-        currentAudio: '',
-        isPlaying: false,
-    })
 
     let info:FileSystem.FileInfo;
 
