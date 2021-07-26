@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Alert, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { Button, Input, Image } from "react-native-elements";
 import React from 'react';
 import firebase from "firebase";
