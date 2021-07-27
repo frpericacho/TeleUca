@@ -12,7 +12,7 @@ const HomeStack = ({navigation}:any) => {
     <Stack.Navigator screenOptions={{headerShown: true}}>
       <Stack.Screen options={{ headerTitle: () => <Header navigation = {navigation} Page={'Home'}/> }}
         name="Home" component={Home} />
-      <Stack.Screen options={{ headerTitle: () => <Header navigation = {navigation} Page={'Search'}/> }}
+      <Stack.Screen options={{header: () => null}}
         name="Search" component={Search} />
       <Stack.Screen options={{ headerTitle: () => <Header navigation = {navigation} Page={'Chat'}/> }}
         name="Chat" component={Chat} />

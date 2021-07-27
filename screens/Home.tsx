@@ -9,8 +9,10 @@ import * as ImagePicker from 'expo-image-picker';
 import firebase from "firebase";
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-export default function Home({navigation}:any) {  
-  const MyUserAuth = firebase.auth();
+export default function Home({navigation}:any) {
+  //MyUser
+  const MyUserAuth = firebase.auth().currentUser;
+  
   //Chat
   const [chats, setChats] = useState<Array<Chat>>([])
   const [user, setUser] = useState('')
@@ -53,12 +55,12 @@ export default function Home({navigation}:any) {
   },[])
 
   const retrieveUser = async () => {
-    UserList.push(MyUserAuth.currentUser?.email)
+    UserList.push(MyUserAuth?.email)
   }
 
   const fetchChat = async () => {
     let docs:any = [];
-    firebase.firestore().collection('chats').where('users.UserList','array-contains',MyUserAuth.currentUser?.email).get().then((snapshot)=>{
+    firebase.firestore().collection('chats').where('users.UserList','array-contains',MyUserAuth?.email).get().then((snapshot)=>{
       docs = snapshot.docs.map((doc) => {
         return { id: doc.id, ...doc.data() }
       })

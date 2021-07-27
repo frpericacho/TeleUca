@@ -9,7 +9,7 @@ import * as FileSystem from 'expo-file-system'
 import AudioSlider from '../components/AudioPlayer/AudioSlider';
 
 const Chat = ({route}:any) => {
-    const [Messages, setMessages] = useState([]);
+    const [Messages, setMessages] = useState<any>([]);
     
     //Audio
     const [recording, setRecording] = React.useState<Audio.Recording>();
