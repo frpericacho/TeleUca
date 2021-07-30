@@ -64,7 +64,6 @@ export default function Home({navigation}:any) {
       docs = snapshot.docs.map((doc) => {
         return { id: doc.id, ...doc.data() }
       })
-      console.log('docs',docs)
       setChats(docs)
     })
   }

@@ -3,24 +3,23 @@ import { TouchableOpacity } from 'react-native';
 import { View, StyleSheet } from 'react-native';
 import {Avatar,Title} from 'react-native-paper'
 
-const ChatItem = ({Chat, navigation}:any) => {
+const UserItem = ({User, navigation}:any) => {
     return(
-        <TouchableOpacity onPress={()=>{navigation.navigate('Chat',Chat)}}>
+        <TouchableOpacity onPress={()=>{navigation.navigate('Chat',User)}}>
             <View style={{flexDirection:'row', backgroundColor: '#00bde6', height:75, alignItems:'center', marginBottom:1}}>
                 <Avatar.Image
-                    source={Chat.avatar_url ? {uri:Chat.avatar_url} : {uri:'../assets/icon.png'}}
+                    source={User.avatar_url ? {uri:User.avatar_url} : {uri:'../assets/icon.png'}}
                     size={50}
                     style={{marginLeft:20}}
                 />
                 <View style={{marginLeft:15, flexDirection:'column'}}>
-                    <Title style={styles.title}>{Chat.title}</Title>
-                    <Title style={styles.subTitle}>{Chat.description}</Title>
+                    <Title style={styles.title}>{User.email}</Title>
                 </View>
             </View>
         </TouchableOpacity>
     )
 }
-export default ChatItem;
+export default UserItem;
 
 const styles = StyleSheet.create({
     title: {

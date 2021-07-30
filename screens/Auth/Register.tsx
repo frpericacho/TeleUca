@@ -11,17 +11,15 @@ export default function Register({navigation}:any) {
 
     const handleRegister = async (email: string, password: string) => {
       setLoading('Registrando')
-      //  Supabase
-      /*
-      const { error, user } =
-          await supabase.auth.signUp({ email, password })
-      if (!error && !user) Alert.alert('Check your email for the login link!')
-      if (error) Alert.alert(error.message)
-      */
-
-      //  Firebase
       await firebase.auth().createUserWithEmailAndPassword(email,password).then((res)=>{
         console.log(res)
+        firebase.firestore().collection('users').add({
+          email: email,
+        }).then(()=>{
+          console.log('Usuario guardado correctamente')
+        }).catch((error)=>{
+          console.log(error)
+        })
       }).catch((error)=>{
         console.log(error)
       })
