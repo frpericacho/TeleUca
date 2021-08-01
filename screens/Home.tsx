@@ -29,11 +29,13 @@ export default function Home({navigation}:any) {
   const [titleChat, setTitleChat] = React.useState('');
   const [DescriptionChat, setDescriptionChat] = React.useState('');
 
-  const Saved:Chat ={
-    id: 0,
-    title: 'string',
-    user_id: '2f4e944a-5cf1-49af-bc90-1fb5ff34dec0',
-    description: 'string',
+  const Saved ={
+    id: MyUserAuth?.email,
+    title: 'Saved',
+    users:{
+      UserList: MyUserAuth?.email
+    },
+    description: 'Saved Messages',
     avatar_url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT1E5SKljnQvLKVwFk1dcOTKNBVGvbyDNl_qA&usqp=CAU',
   }
   
