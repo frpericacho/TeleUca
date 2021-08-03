@@ -29,7 +29,9 @@ export default function Search({navigation}:any) {
             let userDocs:any = [];
             firebase.firestore().collection('chats').orderBy('title').startAt(search).endAt(search+'\uf8ff').onSnapshot((snapshot)=>{
                 //Añadir .filter para filtrar solo aquellos chats en los que aparezca el user en userList del chat
-                docs = snapshot.docs.map((doc) => {
+                docs = snapshot.docs.filter((doc)=>{
+                    return doc.data().users.UserList.includes(MyUserAuth.email)
+                }).map((doc) => {
                     return { id: doc.id, ...doc.data() }
                 })
                 setChats(docs)
