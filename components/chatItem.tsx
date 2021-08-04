@@ -13,6 +13,7 @@ const ChatItem = ({Chat, navigation}:any) => {
                     style={{marginLeft:20}}
                 />
                 <View style={{marginLeft:15, flexDirection:'column'}}>
+                    {/* PONER COMO TITULO EL EMAIL CONTRARIO DEL MYUSER SI NO ES GRUPO */}
                     <Title style={styles.title}>{Chat.title}</Title>
                     <Title style={styles.subTitle}>{Chat.description}</Title>
                 </View>

@@ -28,14 +28,12 @@ export default function Search({navigation}:any) {
             let docs:any = [];
             let userDocs:any = [];
             firebase.firestore().collection('chats').orderBy('title').startAt(search).endAt(search+'\uf8ff').onSnapshot((snapshot)=>{
-                //Añadir .filter para filtrar solo aquellos chats en los que aparezca el user en userList del chat
                 docs = snapshot.docs.filter((doc)=>{
                     return doc.data().users.UserList.includes(MyUserAuth.email)
                 }).map((doc) => {
                     return { id: doc.id, ...doc.data() }
                 })
                 setChats(docs)
-                //console.log('docs',docs)
             })
             firebase.firestore().collection('users').orderBy('email').startAt(search).endAt(search+'\uf8ff').onSnapshot((snapshot)=>{
                 userDocs = snapshot.docs.filter((doc)=>{
@@ -44,9 +42,7 @@ export default function Search({navigation}:any) {
                     return { id: doc.id, ...doc.data() }
                 })
                 setUsers(userDocs)
-                //console.log('docs',userDocs)
             })
-            //console.log('search',search)
         }
     };
 
