@@ -12,38 +12,45 @@ const UserItem = ({User, navigation}:any) => {
         //https://www.youtube.com/watch?v=svlEVg0To_c
         //1:30:00
 
-    const submit = async () => {
+    const createChatOneToOne = async () => {
         firebase.firestore().collection('chats').add({
             avatar_url: '',
-            description: "chat individual",
-            title: "titleChat",
+            description: "",
+            title: "",
+            group: false,
             users:{
                 UserList:[
                     MyUserAuth?.email,
                     User.email
                 ]
             }
-        }).catch((err)=>{
+        }).then((chat)=>{
+            console.log('puede que sea chat',chat)
+            //navigation.navigate('Chat',)
+        })
+        .catch((err)=>{
             console.log(err);
         })
     }
 
-    const createChatOneToOne = async () => {
+    const HandleChatOneToOne = async () => {
         let docs:any = [];
-        firebase.firestore().collection('chats').where('users.UserList','==',[User.email,MyUserAuth?.email]&&[MyUserAuth?.email,User.email]).get().then((snapshot)=>{
+        firebase.firestore().collection('chats').where('users.UserList','==',[User.email,MyUserAuth?.email]&&[MyUserAuth?.email,User.email])
+        .where('group',"==",false).get().then((snapshot)=>{
             docs = snapshot.docs.map((doc) => {
                 return { id: doc.id, ...doc.data() }
             })
             if(docs.length!=0){
+                console.log('el Chat',docs[0])
                 navigation.navigate('Chat',docs[0])
             }else{
-                
+                createChatOneToOne()
             }
         })
     }
 
     return(
-        <TouchableOpacity /*onPress={()=>{navigation.navigate('Chat',User)}}*/ onPress={createChatOneToOne} >
+        <TouchableOpacity /*onPress={()=>{navigation.navigate('Chat',User)}}*/ onPress={HandleChatOneToOne} >
             <View style={{flexDirection:'row', backgroundColor: '#00bde6', height:75, alignItems:'center', marginBottom:1}}>
                 <Avatar.Image
                     source={User.avatar_url ? {uri:User.avatar_url} : {uri:'../assets/icon.png'}}

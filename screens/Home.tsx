@@ -32,6 +32,7 @@ export default function Home({navigation}:any) {
   const Saved ={
     id: MyUserAuth?.email,
     title: 'Saved',
+    group: true,
     users:{
       UserList: MyUserAuth?.email
     },
@@ -99,6 +100,7 @@ export default function Home({navigation}:any) {
       avatar_url: '',
       description: DescriptionChat,
       title: titleChat,
+      group: true,
       users:{
         UserList
       }
