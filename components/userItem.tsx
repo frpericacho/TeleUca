@@ -25,7 +25,6 @@ const UserItem = ({User, navigation}:any) => {
                 ]
             }
         }).then((chat)=>{
-            console.log('puede que sea chat',chat)
             //navigation.navigate('Chat',)
         })
         .catch((err)=>{
@@ -34,23 +33,39 @@ const UserItem = ({User, navigation}:any) => {
     }
 
     const HandleChatOneToOne = async () => {
-        let docs:any = [];
-        firebase.firestore().collection('chats').where('users.UserList','==',[User.email,MyUserAuth?.email]&&[MyUserAuth?.email,User.email])
-        .where('group',"==",false).get().then((snapshot)=>{
-            docs = snapshot.docs.map((doc) => {
-                return { id: doc.id, ...doc.data() }
+        let docsOther:any = [];
+        let docsMe:any = [];
+        firebase.firestore().collection('chats')
+        .where('group',"==",false)
+        .where('users.UserList', '==', [User.email, MyUserAuth?.email])
+        .get().then((snapshotOther)=>{
+
+            firebase.firestore().collection('chats')
+            .where('group',"==",false)
+            .where('users.UserList', '==', [MyUserAuth?.email, User.email])
+            .get().then((snapshotMe)=>{
+                docsOther = snapshotOther.docs.map((doc) => {
+                    return { id: doc.id, ...doc.data() }
+                })
+                docsMe = snapshotMe.docs.map((doc) => {
+                    return { id: doc.id, ...doc.data() }
+                })
+
+                console.log('docsOther',docsOther)
+                console.log('docsMe',docsMe)
+                /*if(docs.length!=0){
+                    console.log("lleno",docs)
+                    navigation.navigate('Chat',docs[0])
+                }else{
+                    console.log("vacio",docs)
+                    createChatOneToOne()
+                }*/
             })
-            if(docs.length!=0){
-                console.log('el Chat',docs[0])
-                navigation.navigate('Chat',docs[0])
-            }else{
-                createChatOneToOne()
-            }
         })
     }
 
     return(
-        <TouchableOpacity /*onPress={()=>{navigation.navigate('Chat',User)}}*/ onPress={HandleChatOneToOne} >
+        <TouchableOpacity onPress={HandleChatOneToOne} >
             <View style={{flexDirection:'row', backgroundColor: '#00bde6', height:75, alignItems:'center', marginBottom:1}}>
                 <Avatar.Image
                     source={User.avatar_url ? {uri:User.avatar_url} : {uri:'../assets/icon.png'}}

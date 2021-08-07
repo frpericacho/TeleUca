@@ -63,7 +63,7 @@ export default function Home({navigation}:any) {
 
   const fetchChat = async () => {
     let docs:any = [];
-    firebase.firestore().collection('chats').where('users.UserList','array-contains',MyUserAuth?.email).get().then((snapshot)=>{
+    firebase.firestore().collection('chats').where('users.UserList','array-contains',MyUserAuth?.email).onSnapshot((snapshot)=>{
       docs = snapshot.docs.map((doc) => {
         return { id: doc.id, ...doc.data() }
       })
