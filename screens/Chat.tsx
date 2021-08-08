@@ -18,7 +18,6 @@ const Chat = ({route}:any) => {
     let info:FileSystem.FileInfo;
 
     useLayoutEffect(() => {
-        //console.log('route',route.params)
         firebase.firestore().collection('messages').where('chat_id','==',route.params.id).orderBy('createdAt','desc').onSnapshot((snapshot)=>{
            setMessages(
                 snapshot.docs.map(doc=>({

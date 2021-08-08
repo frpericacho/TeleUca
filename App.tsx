@@ -5,6 +5,20 @@ import Navigation from './stack';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import 'react-native-url-polyfill/auto';
 import * as firebase from 'firebase'
+import * as Notifications from 'expo-notifications';
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: false,
+    shouldSetBadge: false,
+  }),
+});
+
+const setUpNotifications = async () =>{
+  let token = (await Notifications.getExpoPushTokenAsync()).data;
+  console.log('token',token)
+}
 
 const firebaseConfig = {
   apiKey: "AIzaSyBe5z0ysKIyS9m6_FdGOwq67sNUgJsfnKY",
@@ -21,7 +35,7 @@ if(firebase.default.apps.length == 0){
 }
 
 export default function App() {
-
+  setUpNotifications()
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <Navigation />
