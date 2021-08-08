@@ -25,7 +25,9 @@ const UserItem = ({User, navigation}:any) => {
                 ]
             }
         }).then((chat)=>{
-            //navigation.navigate('Chat',)
+            chat.get().then((docs)=>{
+                navigation.navigate('Chat',{ id: docs.id, ...docs.data() })
+            })
         })
         .catch((err)=>{
             console.log(err);
@@ -35,6 +37,8 @@ const UserItem = ({User, navigation}:any) => {
     const HandleChatOneToOne = async () => {
         let docsOther:any = [];
         let docsMe:any = [];
+        let docs:any = []
+
         firebase.firestore().collection('chats')
         .where('group',"==",false)
         .where('users.UserList', '==', [User.email, MyUserAuth?.email])
@@ -51,15 +55,14 @@ const UserItem = ({User, navigation}:any) => {
                     return { id: doc.id, ...doc.data() }
                 })
 
-                console.log('docsOther',docsOther)
-                console.log('docsMe',docsMe)
-                /*if(docs.length!=0){
-                    console.log("lleno",docs)
+                
+                docs=[...docsOther,...docsMe]
+
+                if(docs.length!=0){
                     navigation.navigate('Chat',docs[0])
                 }else{
-                    console.log("vacio",docs)
                     createChatOneToOne()
-                }*/
+                }
             })
         })
     }

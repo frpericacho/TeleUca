@@ -8,6 +8,8 @@ const ChatItem = ({Chat, navigation}:any) => {
     //MyUser
     const MyUserAuth = firebase.auth().currentUser;
 
+    console.log(Chat)
+
     if(Chat.group){
         return(
             <TouchableOpacity onPress={()=>{navigation.navigate('Chat',Chat)}}>
