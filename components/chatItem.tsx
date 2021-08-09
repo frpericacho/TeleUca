@@ -29,7 +29,7 @@ const ChatItem = ({Chat, navigation}:any) => {
         let titleDisplay = Chat.users.UserList.filter((email:string)=>{
             return email != MyUserAuth?.email
         })
-
+        
         return(
             <TouchableOpacity onPress={()=>{navigation.navigate('Chat',Chat)}}>
                 <View style={{flexDirection:'row', backgroundColor: '#00bde6', height:75, alignItems:'center', marginBottom:1}}>
@@ -57,4 +57,4 @@ const styles = StyleSheet.create({
     subTitle: {
         fontSize: 12,
     }
-  });
+});

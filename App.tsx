@@ -1,11 +1,13 @@
 import React from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet } from 'react-native';
+import { Platform, StyleSheet } from 'react-native';
 import Navigation from './stack';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import 'react-native-url-polyfill/auto';
 import * as firebase from 'firebase'
 import * as Notifications from 'expo-notifications';
+import * as Permissions from 'expo-permissions';
+import Constants from 'expo-constants';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -15,9 +17,41 @@ Notifications.setNotificationHandler({
   }),
 });
 
-const setUpNotifications = async () =>{
-  let token = (await Notifications.getExpoPushTokenAsync()).data;
-  console.log('token',token)
+const registerForPushNotificationsAsync = async () => {
+  let token:any;
+  if (Constants.isDevice) {
+    const { status: existingStatus } = await Notifications.getPermissionsAsync();
+    let finalStatus = existingStatus;
+    if (existingStatus !== 'granted') {
+      const { status } = await Notifications.requestPermissionsAsync();
+      finalStatus = status;
+    }
+    if (finalStatus !== 'granted') {
+      alert('Failed to get push token for push notification!');
+      return;
+    }
+    token = (await Notifications.getExpoPushTokenAsync()).data;
+    console.log(token);
+  } else {
+    alert('Must use physical device for Push Notifications');
+  }
+
+  if(token){
+    firebase.default.firestore().collection('users').where('email','==',firebase.default.auth().currentUser?.email).get().then((doc)=>{
+      firebase.default.firestore().collection('users').doc(doc.docs[0].id).update({token: token})
+    })
+  }
+
+  if (Platform.OS === 'android') {
+    Notifications.setNotificationChannelAsync('default', {
+      name: 'default',
+      importance: Notifications.AndroidImportance.MAX,
+      vibrationPattern: [0, 250, 250, 250],
+      lightColor: '#FF231F7C',
+    });
+  }
+
+  return token;
 }
 
 const firebaseConfig = {
@@ -35,7 +69,7 @@ if(firebase.default.apps.length == 0){
 }
 
 export default function App() {
-  setUpNotifications()
+  registerForPushNotificationsAsync()
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <Navigation />
