@@ -33,32 +33,39 @@ const Chat = ({route}:any) => {
         })
     }, [])
 
-    const sendPushNotification = async (expoPushToken:any) => {
-        const message = {
-          to: expoPushToken,
-          sound: 'default',
-          title: 'Original Title',
-          body: 'And here is the body!',
-          data: { someData: 'goes here' },
-        };
-      
-        await fetch('https://exp.host/--/api/v2/push/send', {
-          method: 'POST',
-          headers: {
-            Accept: 'application/json',
-            'Accept-encoding': 'gzip, deflate',
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(message),
-        });
+    const sendPushNotification = async (email:string,text:string) => {
+        firebase.firestore().collection('users').where('email','==',email).get().then((snapshot)=>{
+            snapshot.docs.filter((user)=>{
+                return user.data().email != firebase.auth().currentUser?.email
+            }).forEach(async(user)=>{
+                const message = {
+                  to: user.data().token,
+                  sound: 'default',
+                  title: 'Mensaje Nuevo',
+                  body: text,
+                  data: { someData: 'goes here' },
+                };
+              
+                await fetch('https://exp.host/--/api/v2/push/send', {
+                  method: 'POST',
+                  headers: {
+                    Accept: 'application/json',
+                    'Accept-encoding': 'gzip, deflate',
+                    'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify(message),
+                });
+            })
+        })
+
     }
 
-    const sendNotificationToGroupUsers = async () => {
-        // Ejemplo:
-        // https://www.youtube.com/watch?v=ACLzAL2JDxk
-        // get() todos los usuarios del chat y hacer un forEach donde para cada uno llamamos a sendPushNotification
-        // pasandole su token para enviar la push notification
-    }
+    const sendNotificationToGroupUsers = async (text:string) => {
+        let usersChat = (await firebase.firestore().collection('chats').doc(route.params.id).get()).data()?.users.UserList
+        usersChat.forEach((user:string) => {
+            sendPushNotification(user,text)
+        });
+    }  
 
     const onSend = async (newMessages = []) => {
         setMessages(GiftedChat.append(Messages, newMessages));
@@ -77,7 +84,7 @@ const Chat = ({route}:any) => {
         }).catch((err)=>{
             console.log(err)
         })
-
+        sendNotificationToGroupUsers(text)
     }
 
     const rendSend = (props:any) =>{
