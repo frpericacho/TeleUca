@@ -160,9 +160,8 @@ export default function Home({navigation}:any) {
         <ChatItem navigation={navigation} Chat={Saved} />
         <FlatList
           style={{marginBottom:1}}
-          data={chats}
+          data={chats.sort((a,b)=> sortChat(a,b))}
           renderItem={renderChatItem}
-          keyExtractor={(item) => item.title}
         />
       </View>
 
@@ -171,6 +170,10 @@ export default function Home({navigation}:any) {
     </Provider>
   );
 };
+
+function sortChat(a:Chat, b:Chat) {
+  return a.LastMessage.createdAt < b.LastMessage.createdAt
+}
 
 const styles = StyleSheet.create({
   fab: {

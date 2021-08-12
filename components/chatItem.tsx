@@ -4,7 +4,9 @@ import { View, StyleSheet } from 'react-native';
 import {Avatar,Title} from 'react-native-paper'
 import {Badge, withBadge} from 'react-native-elements'
 import firebase from "firebase";
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+
+// POSIBLE FORMA DE MARCAR MENSAJES NO LEIDOS
+// https://www.youtube.com/watch?v=k_szzEIYA80
 
 const ChatItem = ({Chat, navigation}:any) => {
     //MyUser

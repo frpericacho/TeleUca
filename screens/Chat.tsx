@@ -81,7 +81,45 @@ const Chat = ({route}:any) => {
             text: text,
             createdAt: createdAt,
             user: user,
-        }).catch((err)=>{
+        }).then(()=>{
+            /*
+            .update(
+                {
+                    LastMessage: {
+                        _id, 
+                        text,
+                        user,
+                        createdAt
+                    }
+                }
+            )
+            */
+            firebase.firestore().collection('chats').doc(route.params.id).get().then((chat)=>{
+                let ChatAux = chat.data();
+
+                ChatAux?.LastMessage = {
+                    _id, 
+                    text,
+                    user,
+                    createdAt
+                }
+
+                console.log(ChatAux)
+
+                /*chat.ref.update({
+                    LastMessage: {
+                        _id, 
+                        text,
+                        user,
+                        createdAt
+                    }
+                })
+                chat.data()?.users.UserList.filter((users:string)=>{
+                    return users != firebase.auth().currentUser?.email
+                })*/
+            })
+        })
+        .catch((err)=>{
             console.log(err)
         })
         sendNotificationToGroupUsers(text)
