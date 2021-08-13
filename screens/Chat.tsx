@@ -92,32 +92,28 @@ const Chat = ({route}:any) => {
                         createdAt
                     }
                 }
-            )
-            */
+            )*/
+            
             firebase.firestore().collection('chats').doc(route.params.id).get().then((chat)=>{
-                let ChatAux = chat.data();
+                let NewMessagesAux=chat.data()?.NewMessages;
 
-                ChatAux?.LastMessage = {
-                    _id, 
-                    text,
-                    user,
-                    createdAt
-                }
-
-                console.log(ChatAux)
-
-                /*chat.ref.update({
+                NewMessagesAux.filter((users:any)=>{
+                    return users.email != firebase.auth().currentUser?.email
+                }).map((users:any)=>{
+                    users.NewMessage=true
+                })
+                console.log('NewMessagesAux',NewMessagesAux)
+                chat.ref.update({
                     LastMessage: {
                         _id, 
                         text,
                         user,
                         createdAt
-                    }
+                    },
+                    NewMessages: NewMessagesAux
                 })
-                chat.data()?.users.UserList.filter((users:string)=>{
-                    return users != firebase.auth().currentUser?.email
-                })*/
             })
+            
         })
         .catch((err)=>{
             console.log(err)

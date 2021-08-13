@@ -12,6 +12,11 @@ const ChatItem = ({Chat, navigation}:any) => {
     //MyUser
     const MyUserAuth = firebase.auth().currentUser;
 
+    if(checkNewMessages(Chat, MyUserAuth)){
+        //console.log('tengo un nuevo mensaje en el chat:', Chat.title)
+    }else{
+        //console.log('pues no: ', Chat.title)
+    }
     if(Chat.group){
         return(
             <TouchableOpacity onPress={()=>{navigation.navigate('Chat',Chat)}}>
@@ -65,6 +70,15 @@ const ChatItem = ({Chat, navigation}:any) => {
     }
 }
 export default ChatItem;
+
+function checkNewMessages(Chat: any, MyUserAuth: firebase.User|null){
+    console.log('el chat',Chat)
+    console.log('el user',MyUserAuth?.email)
+
+    // HACER EL CHECK DE SI EL QUE VE EL CHATITEM TIENE NEWMESSAGES A TRUE
+
+    return false
+}
 
 const styles = StyleSheet.create({
     title: {
