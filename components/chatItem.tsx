@@ -13,71 +13,121 @@ const ChatItem = ({Chat, navigation}:any) => {
     const MyUserAuth = firebase.auth().currentUser;
 
     if(checkNewMessages(Chat, MyUserAuth)){
-        //console.log('tengo un nuevo mensaje en el chat:', Chat.title)
+        if(Chat.group){
+            return(
+                <TouchableOpacity onPress={()=>{navigation.navigate('Chat',Chat)}}>
+                    <View style={{flexDirection:'row', backgroundColor: '#00bde6', height:75, width:'100%', alignItems:'center', marginBottom:1}}>
+                        <View style={{flexDirection:'column'}}>
+                            <Avatar.Image
+                                source={Chat.avatar_url ? {uri:Chat.avatar_url} : {uri:'../assets/icon.png'}}
+                                size={50}
+                                style={{marginLeft:20}}
+                            />
+                            <Badge
+                                status="success"
+                                containerStyle={{ position: 'absolute', top: -4, right: -4 }}
+                                value="!"
+                            />
+                        </View>
+                        <View style={{marginLeft:15, flexDirection:'column', width:'60%'}}>
+                            <Title adjustsFontSizeToFit style={styles.title}>{Chat.title}</Title>
+                            <Title adjustsFontSizeToFit style={styles.subTitle}>{Chat.description}</Title>
+                        </View>
+                    </View>
+                </TouchableOpacity>
+            )
+        }else{
+            let titleDisplay = Chat.users.UserList.filter((email:string)=>{
+                return email != MyUserAuth?.email
+            })
+            return(
+                <TouchableOpacity onPress={()=>{navigation.navigate('Chat',Chat)}}>
+                    <View style={{flexDirection:'row', backgroundColor: '#00bde6', height:75, width:'100%', alignItems:'center', marginBottom:1}}>
+                        <View style={{flexDirection:'column'}}>
+                            <Avatar.Image
+                                source={Chat.avatar_url ? {uri:Chat.avatar_url} : {uri:'../assets/icon.png'}}
+                                size={50}
+                                style={{marginLeft:20}}
+                            />
+                            <Badge
+                                status="success"
+                                containerStyle={{ position: 'absolute', top: -4, right: -4 }}
+                                value="!"
+                            />
+                        </View>
+                        <View style={{marginLeft:15, flexDirection:'column', width:'60%'}}>
+                            <Title adjustsFontSizeToFit style={styles.title}>{titleDisplay[0].split('@')[0]}</Title>
+                        </View>
+                    </View>
+                </TouchableOpacity>
+            )
+        }
     }else{
-        //console.log('pues no: ', Chat.title)
+        if(Chat.group){
+            return(
+                <TouchableOpacity onPress={()=>{navigation.navigate('Chat',Chat)}}>
+                    <View style={{flexDirection:'row', backgroundColor: '#00bde6', height:75, width:'100%', alignItems:'center', marginBottom:1}}>
+                        <View style={{flexDirection:'column'}}>
+                            <Avatar.Image
+                                source={Chat.avatar_url ? {uri:Chat.avatar_url} : {uri:'../assets/icon.png'}}
+                                size={50}
+                                style={{marginLeft:20}}
+                            />
+                        </View>
+                        <View style={{marginLeft:15, flexDirection:'column', width:'60%'}}>
+                            <Title adjustsFontSizeToFit style={styles.title}>{Chat.title}</Title>
+                            <Title adjustsFontSizeToFit style={styles.subTitle}>{Chat.description}</Title>
+                        </View>
+                    </View>
+                </TouchableOpacity>
+            )
+        }else{
+            let titleDisplay = Chat.users.UserList.filter((email:string)=>{
+                return email != MyUserAuth?.email
+            })
+            return(
+                <TouchableOpacity onPress={()=>{navigation.navigate('Chat',Chat)}}>
+                    <View style={{flexDirection:'row', backgroundColor: '#00bde6', height:75, width:'100%', alignItems:'center', marginBottom:1}}>
+                        <View style={{flexDirection:'column'}}>
+                            <Avatar.Image
+                                source={Chat.avatar_url ? {uri:Chat.avatar_url} : {uri:'../assets/icon.png'}}
+                                size={50}
+                                style={{marginLeft:20}}
+                            />
+                        </View>
+                        <View style={{marginLeft:15, flexDirection:'column', width:'60%'}}>
+                            <Title adjustsFontSizeToFit style={styles.title}>{titleDisplay[0].split('@')[0]}</Title>
+                        </View>
+                    </View>
+                </TouchableOpacity>
+            )
+        }
     }
-    if(Chat.group){
-        return(
-            <TouchableOpacity onPress={()=>{navigation.navigate('Chat',Chat)}}>
-                <View style={{flexDirection:'row', backgroundColor: '#00bde6', height:75, width:'100%', alignItems:'center', marginBottom:1}}>
-                    <View style={{flexDirection:'column'}}>
-                        <Avatar.Image
-                            source={Chat.avatar_url ? {uri:Chat.avatar_url} : {uri:'../assets/icon.png'}}
-                            size={50}
-                            style={{marginLeft:20}}
-                        />
-                        <Badge
-                            status="success"
-                            containerStyle={{ position: 'absolute', top: -4, right: -4 }}
-                            value="!"
-                        />
-                    </View>
-                    <View style={{marginLeft:15, flexDirection:'column', width:'60%'}}>
-                        <Title adjustsFontSizeToFit style={styles.title}>{Chat.title}</Title>
-                        <Title adjustsFontSizeToFit style={styles.subTitle}>{Chat.description}</Title>
-                    </View>
-                </View>
-            </TouchableOpacity>
-        )
-    }else{
-
-        let titleDisplay = Chat.users.UserList.filter((email:string)=>{
-            return email != MyUserAuth?.email
-        })
-        
-        return(
-            <TouchableOpacity onPress={()=>{navigation.navigate('Chat',Chat)}}>
-                <View style={{flexDirection:'row', backgroundColor: '#00bde6', height:75, width:'100%', alignItems:'center', marginBottom:1}}>
-                    <View style={{flexDirection:'column'}}>
-                        <Avatar.Image
-                            source={Chat.avatar_url ? {uri:Chat.avatar_url} : {uri:'../assets/icon.png'}}
-                            size={50}
-                            style={{marginLeft:20}}
-                        />
-                        <Badge
-                            status="success"
-                            containerStyle={{ position: 'absolute', top: -4, right: -4 }}
-                            value="!"
-                        />
-                    </View>
-                    <View style={{marginLeft:15, flexDirection:'column', width:'60%'}}>
-                        <Title adjustsFontSizeToFit style={styles.title}>{titleDisplay[0].split('@')[0]}</Title>
-                    </View>
-                </View>
-            </TouchableOpacity>
-        )
-    }
+    
 }
 export default ChatItem;
 
+function search(MyEmail:string|null|undefined, myArray:Array<any>){
+    for (var i=0; i < myArray.length; i++) {
+        if (myArray[i].email === MyEmail) {
+            return myArray[i];
+        }
+    }
+}
+
 function checkNewMessages(Chat: any, MyUserAuth: firebase.User|null){
-    console.log('el chat',Chat)
-    console.log('el user',MyUserAuth?.email)
+    let check:boolean = false
 
-    // HACER EL CHECK DE SI EL QUE VE EL CHATITEM TIENE NEWMESSAGES A TRUE
+    if(Chat?.NewMessages){
+        let user = search(MyUserAuth?.email,Chat.NewMessages)
+        if(user.NewMessage){
+            check = true
+        }else{
+            check = false
+        }
+    }
 
-    return false
+    return check
 }
 
 const styles = StyleSheet.create({
