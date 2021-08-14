@@ -17,7 +17,8 @@ const Chat = ({route}:any) => {
 
     let info:FileSystem.FileInfo;
 
-    useLayoutEffect(() => {
+    useLayoutEffect( () => {
+        readNewMessages()
         firebase.firestore().collection('messages').where('chat_id','==',route.params.id).orderBy('createdAt','desc').onSnapshot((snapshot)=>{
            setMessages(
                 snapshot.docs.map(doc=>({
@@ -32,6 +33,21 @@ const Chat = ({route}:any) => {
             )
         })
     }, [])
+
+    const readNewMessages = async () => {
+        firebase.firestore().collection('chats').doc(route.params.id).get().then((chat)=>{
+            let NewMessagesAux=chat.data()?.NewMessages;
+
+            NewMessagesAux.filter((users:any)=>{
+                return users.email == firebase.auth().currentUser?.email
+            }).map((users:any)=>{
+                users.NewMessage=false
+            })
+            chat.ref.update({
+                NewMessages: NewMessagesAux
+            })
+        })
+    }
 
     const sendPushNotification = async (email:string,text:string) => {
         firebase.firestore().collection('users').where('email','==',email).get().then((snapshot)=>{
@@ -82,18 +98,6 @@ const Chat = ({route}:any) => {
             createdAt: createdAt,
             user: user,
         }).then(()=>{
-            /*
-            .update(
-                {
-                    LastMessage: {
-                        _id, 
-                        text,
-                        user,
-                        createdAt
-                    }
-                }
-            )*/
-            
             firebase.firestore().collection('chats').doc(route.params.id).get().then((chat)=>{
                 let NewMessagesAux=chat.data()?.NewMessages;
 
