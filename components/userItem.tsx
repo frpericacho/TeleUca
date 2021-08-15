@@ -23,7 +23,16 @@ const UserItem = ({User, navigation}:any) => {
                     MyUserAuth?.email,
                     User.email
                 ]
-            }
+            },
+            LastMessage: {},
+            NewMessages: [{
+                email: MyUserAuth?.email,
+                NewMessage: false
+            },{
+                email: User.email,
+                NewMessage: false
+            }],
+            Admin: ""
         }).then((chat)=>{
             chat.get().then((docs)=>{
                 navigation.navigate('Chat',{ id: docs.id, ...docs.data() })

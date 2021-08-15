@@ -15,7 +15,7 @@ const ChatItem = ({Chat, navigation}:any) => {
     if(checkNewMessages(Chat, MyUserAuth)){
         if(Chat.group){
             return(
-                <TouchableOpacity onPress={()=>{navigation.navigate('Chat',Chat)}}>
+                <TouchableOpacity onPress={()=>{navigation.navigate('Chat',{Chat,navigation})}}>
                     <View style={{flexDirection:'row', backgroundColor: '#00bde6', height:75, width:'100%', alignItems:'center', marginBottom:1}}>
                         <View style={{flexDirection:'column'}}>
                             <Avatar.Image
@@ -120,7 +120,7 @@ function checkNewMessages(Chat: any, MyUserAuth: firebase.User|null){
 
     if(Chat?.NewMessages){
         let user = search(MyUserAuth?.email,Chat.NewMessages)
-        if(user.NewMessage){
+        if(user?.NewMessage){
             check = true
         }else{
             check = false

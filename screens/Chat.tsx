@@ -1,22 +1,22 @@
 import React, { useLayoutEffect, useState } from 'react';
-import { View, StyleSheet, TouchableOpacity } from 'react-native';
-import { ActionsProps, Actions, GiftedChat, Send, Time } from 'react-native-gifted-chat';
+import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
+import { ActionsProps, Actions, GiftedChat, Send } from 'react-native-gifted-chat';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import * as ImagePicker from 'expo-image-picker';
-import { Audio, Video, AVPlaybackStatus } from 'expo-av';
+import { Audio, Video } from 'expo-av';
 import firebase from 'firebase';
 import * as FileSystem from 'expo-file-system'
 import AudioSlider from '../components/AudioPlayer/AudioSlider';
 
-const Chat = ({route}:any) => {
+const Chat = ({route,navigation}:any) => {
     const [Messages, setMessages] = useState<any>([]);
     
     //Audio
     const [recording, setRecording] = React.useState<Audio.Recording>();
     const [IsRecording,setIsRecording] = React.useState(false);
-
+    
     let info:FileSystem.FileInfo;
-
+    
     useLayoutEffect( () => {
         readNewMessages()
         firebase.firestore().collection('messages').where('chat_id','==',route.params.id).orderBy('createdAt','desc').onSnapshot((snapshot)=>{
@@ -106,7 +106,6 @@ const Chat = ({route}:any) => {
                 }).map((users:any)=>{
                     users.NewMessage=true
                 })
-                console.log('NewMessagesAux',NewMessagesAux)
                 chat.ref.update({
                     LastMessage: {
                         _id, 
@@ -331,24 +330,41 @@ const Chat = ({route}:any) => {
     }
 
     return(
-        <GiftedChat
-            messages={Messages}
-            onSend={messages => onSend(messages)}
-            alwaysShowSend
-            showAvatarForEveryMessage
-            messageIdGenerator={()=>Date().toString()}
-            scrollToBottom
-            isTyping
-            renderMessageVideo={renderMessageVideo}
-            renderActions={renderActions}
-            renderLoading={rendLoading}
-            renderSend={rendSend}
-            renderMessageAudio={renderMessageAudio}
-            user={{
-                _id: firebase.auth().currentUser?.email,
-                name: firebase.auth().currentUser?.email
-            }}
-        />
+        <View style={{display:'flex', height:'100%'}}>
+            <View style={{backgroundColor:'white', height:'7%', flexDirection:'row', justifyContent: 'space-between', alignItems: 'center'}}>
+                <View style={{ marginLeft:15}}>
+                    <TouchableOpacity>
+                        <Icon name="arrow-left" size={30} color="#900" onPress={()=>navigation.goBack()}/>
+                    </TouchableOpacity>
+                </View>
+                <View>
+                    <Text>
+                        {route.params.title}
+                    </Text>
+                </View>
+                <View style={{marginRight:15}}>
+                    <Icon name="dots-vertical" size={30} color="#900" onPress={()=>navigation.openDrawer()}/>
+                </View> 
+            </View>
+            <GiftedChat
+                messages={Messages}
+                onSend={messages => onSend(messages)}
+                alwaysShowSend
+                showAvatarForEveryMessage
+                messageIdGenerator={()=>Date().toString()}
+                scrollToBottom
+                isTyping
+                renderMessageVideo={renderMessageVideo}
+                renderActions={renderActions}
+                renderLoading={rendLoading}
+                renderSend={rendSend}
+                renderMessageAudio={renderMessageAudio}
+                user={{
+                    _id: firebase.auth().currentUser?.email,
+                    name: firebase.auth().currentUser?.email
+                }}
+            />
+        </View>
     )
     
 }

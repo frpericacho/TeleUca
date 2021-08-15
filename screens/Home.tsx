@@ -38,6 +38,11 @@ export default function Home({navigation}:any) {
     },
     description: 'Saved Messages',
     avatar_url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT1E5SKljnQvLKVwFk1dcOTKNBVGvbyDNl_qA&usqp=CAU',
+    LastMessage: {},
+    NewMessages: [{
+      email: MyUserAuth?.email,
+      NewMessage: false
+    }]
   }
   
   const Item = ({ item }:any) => (
@@ -103,11 +108,23 @@ export default function Home({navigation}:any) {
       group: true,
       users:{
         UserList
-      }
-    }).then(()=>{
+      },
+      LastMessage: {},
+      NewMessages: [],
+      Admin: MyUserAuth?.email
+    }).then((chat)=>{
+      let NewMessages:any=[]
+      UserList.forEach((user:string)=>{
+        NewMessages.push({
+          email: user,
+          NewMessage: false
+        })
+      })
+      chat.update({
+        NewMessages: NewMessages
+      })
       setUserList([firebase.auth().currentUser?.email]);
       hideModal();
-      fetchChat();
     }).catch((err)=>{
       console.log(err);
     })

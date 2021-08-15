@@ -14,7 +14,7 @@ const HomeStack = ({navigation}:any) => {
         name="Home" component={Home} />
       <Stack.Screen options={{header: () => null}}
         name="Search" component={Search} />
-      <Stack.Screen options={{ headerTitle: () => <Header navigation = {navigation} Page={'Chat'}/> }}
+      <Stack.Screen options={{header: () => null}}
         name="Chat" component={Chat} />
     </Stack.Navigator>
   );

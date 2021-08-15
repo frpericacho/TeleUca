@@ -56,7 +56,7 @@ export default function Search({navigation}:any) {
 
     return(
         <View>
-            <View style={{flexDirection:'row', display:'flex', width: '100%', marginTop:5}}>
+            <View style={{backgroundColor:'white', flexDirection:'row', display:'flex', width: '100%', marginTop:5}}>
                 <View style={{display:'flex', justifyContent:'center', alignContent:'center'}}>
                     <Button onPress={()=>navigation.goBack()}>
                         <Icon name="arrow-left" style={{width:'100%', height:'100%'}} size={20} color="#00bde6"/>

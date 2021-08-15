@@ -6,7 +6,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import 'react-native-url-polyfill/auto';
 import * as firebase from 'firebase'
 import * as Notifications from 'expo-notifications';
-import * as Permissions from 'expo-permissions';
 import Constants from 'expo-constants';
 
 Notifications.setNotificationHandler({
@@ -31,7 +30,6 @@ const registerForPushNotificationsAsync = async () => {
       return;
     }
     token = (await Notifications.getExpoPushTokenAsync()).data;
-    console.log(token);
   } else {
     alert('Must use physical device for Push Notifications');
   }
