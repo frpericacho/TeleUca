@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { TouchableOpacity } from 'react-native';
 import { View, StyleSheet } from 'react-native';
 import {Avatar,Title} from 'react-native-paper'
@@ -9,13 +9,13 @@ import firebase from "firebase";
 // https://www.youtube.com/watch?v=k_szzEIYA80
 
 const ChatItem = ({Chat, navigation}:any) => {
-    //MyUser
-    const MyUserAuth = firebase.auth().currentUser;
+        //MyUser
+        const MyUserAuth = firebase.auth().currentUser;
 
     if(checkNewMessages(Chat, MyUserAuth)){
         if(Chat.group){
             return(
-                <TouchableOpacity onPress={()=>{navigation.navigate('Chat',{Chat,navigation})}}>
+                <TouchableOpacity onPress={()=>{navigation.navigate('Chat',Chat)}}>
                     <View style={{flexDirection:'row', backgroundColor: '#00bde6', height:75, width:'100%', alignItems:'center', marginBottom:1}}>
                         <View style={{flexDirection:'column'}}>
                             <Avatar.Image

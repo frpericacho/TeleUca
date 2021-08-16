@@ -9,15 +9,25 @@ import * as FileSystem from 'expo-file-system'
 import AudioSlider from '../components/AudioPlayer/AudioSlider';
 
 const Chat = ({route,navigation}:any) => {
+    //MyUser
+    const MyUserAuth = firebase.auth().currentUser;
+
+    //Messages
     const [Messages, setMessages] = useState<any>([]);
-    
+
+    //TitleChat
+    const [Title, setTitle] = useState('');
+
+    //Admin
+    const [Admin, setAdmin] = useState(false);
+
     //Audio
     const [recording, setRecording] = React.useState<Audio.Recording>();
     const [IsRecording,setIsRecording] = React.useState(false);
     
-    let info:FileSystem.FileInfo;
-    
     useLayoutEffect( () => {
+        getTitleChat()
+        checkAdmin()
         readNewMessages()
         firebase.firestore().collection('messages').where('chat_id','==',route.params.id).orderBy('createdAt','desc').onSnapshot((snapshot)=>{
            setMessages(
@@ -33,6 +43,25 @@ const Chat = ({route,navigation}:any) => {
             )
         })
     }, [])
+
+    const checkAdmin = async () => {
+        if(route.params.Admin == MyUserAuth?.email){
+            setAdmin(true)
+        }else{
+            setAdmin(false)
+        }
+    }
+
+    const getTitleChat = async () => {
+        if(route.params.group){
+            setTitle(route.params.title)
+        }else{
+            let titleDisplay = route.params.users.UserList.filter((email:string)=>{
+                return email != MyUserAuth?.email
+            })
+            setTitle(titleDisplay[0].split('@')[0])
+        }
+    }
 
     const readNewMessages = async () => {
         firebase.firestore().collection('chats').doc(route.params.id).get().then((chat)=>{
@@ -339,11 +368,11 @@ const Chat = ({route,navigation}:any) => {
                 </View>
                 <View>
                     <Text>
-                        {route.params.title}
+                        {Title}
                     </Text>
                 </View>
                 <View style={{marginRight:15}}>
-                    <Icon name="dots-vertical" size={30} color="#900" onPress={()=>navigation.openDrawer()}/>
+                    <Icon name="dots-vertical" size={30} color="#900" onPress={()=>Admin ? navigation.navigate('ChatOptions',{chat:route.params, Admin: true}) : navigation.navigate('ChatOptions',{chat:route.params, Admin: false})}/>
                 </View> 
             </View>
             <GiftedChat
