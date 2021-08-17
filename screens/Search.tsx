@@ -29,7 +29,7 @@ export default function Search({navigation}:any) {
             let userDocs:any = [];
             firebase.firestore().collection('chats').orderBy('title').startAt(search).endAt(search+'\uf8ff').onSnapshot((snapshot)=>{
                 docs = snapshot.docs.filter((doc)=>{
-                    return doc.data().users.UserList.includes(MyUserAuth.email)
+                    return doc.data().users.UserList.includes(MyUserAuth?.email)
                 }).map((doc) => {
                     return { id: doc.id, ...doc.data() }
                 })
@@ -37,7 +37,7 @@ export default function Search({navigation}:any) {
             })
             firebase.firestore().collection('users').orderBy('email').startAt(search).endAt(search+'\uf8ff').onSnapshot((snapshot)=>{
                 userDocs = snapshot.docs.filter((doc)=>{
-                    return doc.data().email != MyUserAuth.email
+                    return doc.data().email != MyUserAuth?.email
                 }).map((doc) => {
                     return { id: doc.id, ...doc.data() }
                 })

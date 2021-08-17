@@ -9,8 +9,8 @@ import firebase from "firebase";
 // https://www.youtube.com/watch?v=k_szzEIYA80
 
 const ChatItem = ({Chat, navigation}:any) => {
-        //MyUser
-        const MyUserAuth = firebase.auth().currentUser;
+    //MyUser
+    const MyUserAuth = firebase.auth().currentUser;
 
     if(checkNewMessages(Chat, MyUserAuth)){
         if(Chat.group){

@@ -372,7 +372,7 @@ const Chat = ({route,navigation}:any) => {
                     </Text>
                 </View>
                 <View style={{marginRight:15}}>
-                    <Icon name="dots-vertical" size={30} color="#900" onPress={()=>Admin ? navigation.navigate('ChatOptions',{chat:route.params, Admin: true}) : navigation.navigate('ChatOptions',{chat:route.params, Admin: false})}/>
+                    <Icon name="dots-vertical" size={30} color="#900" onPress={()=>Admin ? navigation.navigate('ChatOptions',{title: Title, chat:route.params, Admin: true}) : navigation.navigate('ChatOptions',{title: Title, chat:route.params, Admin: false})}/>
                 </View> 
             </View>
             <GiftedChat
