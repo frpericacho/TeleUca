@@ -47,7 +47,7 @@ export default function Search({navigation}:any) {
     };
 
     const renderUserItem = ({ item }:any) => (
-        <UserItem navigation={navigation} User={item}/>
+        <UserItem navigation={navigation} User={item} Search={true}/>
     );
 
     const renderChatItem = ({ item }:any) => (

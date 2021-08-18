@@ -13,26 +13,19 @@ const ChatOptions = ({route,navigation}:any) => {
     const [users, setUsers] = useState<Array<any>>([])
 
     const renderUserItem = ({ item }:any) => (
-        <UserItem navigation={navigation} User={item}/>
+        <UserItem navigation={navigation} User={item} Search={false}/>
     );
 
-    const fetchUser = async (email:string) => {
-        let user:any
-        await firebase.firestore().collection('users').where('email','==',email).get().then((snapshot)=>{
-            if(snapshot.docs[0].data().email != MyUserAuth?.email){
-                user = snapshot.docs[0].data()
-            }
-        })
-        return user
-    }
-
     const fetchUsers = async () => {
-        let usersChat:Array<any> = []
-        usersChat = await route.params.chat.users.UserList.map(async(email:string)=>{
-            return await fetchUser(email) 
+        let userDocs:any = [];
+        firebase.firestore().collection('users').where('email','in',route.params.chat.users.UserList).get().then((snapshot)=>{
+            userDocs = snapshot.docs.filter((user)=>{
+                return user.data().email != MyUserAuth?.email
+            }).map((user)=>{
+                return user.data()
+            })
+            setUsers(userDocs)
         })
-        console.log('usersChat',usersChat)
-        setUsers(usersChat)
     }
 
     useLayoutEffect(() => { 

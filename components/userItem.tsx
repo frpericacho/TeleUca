@@ -1,16 +1,18 @@
 import React from 'react';
-import { TouchableOpacity } from 'react-native';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import {Avatar,Title} from 'react-native-paper'
+import { ListItem } from 'react-native-elements'
 import firebase from "firebase";
 
-const UserItem = ({User, navigation}:any) => {
+const UserItem = ({User, navigation, Search}:any) => {
     //MyUser
     const MyUserAuth = firebase.auth().currentUser;
 
         //Para ver como poder hacer chat 1-1
         //https://www.youtube.com/watch?v=svlEVg0To_c
         //1:30:00
+
+    console.log('Search',Search)
 
     const createChatOneToOne = async () => {
         firebase.firestore().collection('chats').add({
@@ -63,12 +65,11 @@ const UserItem = ({User, navigation}:any) => {
                 docsMe = snapshotMe.docs.map((doc) => {
                     return { id: doc.id, ...doc.data() }
                 })
-
                 
                 docs=[...docsOther,...docsMe]
 
                 if(docs.length!=0){
-                    navigation.navigate('Chat',docs[0])
+                    navigation.push('Chat',docs[0])
                 }else{
                     createChatOneToOne()
                 }
@@ -76,20 +77,37 @@ const UserItem = ({User, navigation}:any) => {
         })
     }
 
-    return(
-        <TouchableOpacity onPress={HandleChatOneToOne} >
-            <View style={{flexDirection:'row', backgroundColor: '#00bde6', height:75, alignItems:'center', marginBottom:1}}>
-                <Avatar.Image
-                    source={User.avatar_url ? {uri:User.avatar_url} : {uri:'../assets/icon.png'}}
-                    size={50}
-                    style={{marginLeft:20}}
-                />
-                <View style={{marginLeft:15, flexDirection:'column'}}>
-                    <Title style={styles.title}>{User.email}</Title>
+    if(Search){
+        return(
+            <TouchableOpacity onPress={HandleChatOneToOne} >
+                <View style={{flexDirection:'row', backgroundColor: '#00bde6', height:75, alignItems:'center', marginBottom:1}}>
+                    <Avatar.Image
+                        source={User.avatar_url ? {uri:User.avatar_url} : {uri:'../assets/icon.png'}}
+                        size={50}
+                        style={{marginLeft:20}}
+                    />
+                    <View style={{marginLeft:15, flexDirection:'column'}}>
+                        <Title style={styles.title}>{User.email.split('@')[0]}</Title>
+                    </View>
                 </View>
-            </View>
-        </TouchableOpacity>
-    )
+            </TouchableOpacity>
+        )
+    }else{
+        return(
+            <TouchableOpacity onPress={HandleChatOneToOne} >
+                <View style={{flexDirection:'row', backgroundColor: '#00bde6', height:75, alignItems:'center', marginBottom:1}}>
+                    <Avatar.Image
+                        source={User.avatar_url ? {uri:User.avatar_url} : {uri:'../assets/icon.png'}}
+                        size={50}
+                        style={{marginLeft:20}}
+                    />
+                    <View style={{marginLeft:15, flexDirection:'column'}}>
+                        <Title style={styles.title}>{User.email.split('@')[0]}</Title>
+                    </View>
+                </View>
+            </TouchableOpacity>
+        )
+    }
 }
 export default UserItem;
 
