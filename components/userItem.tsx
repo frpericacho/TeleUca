@@ -12,8 +12,6 @@ const UserItem = ({User, navigation, Search}:any) => {
         //https://www.youtube.com/watch?v=svlEVg0To_c
         //1:30:00
 
-    console.log('Search',Search)
-
     const createChatOneToOne = async () => {
         firebase.firestore().collection('chats').add({
             avatar_url: '',

@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
 import { ActionsProps, Actions, GiftedChat, Send } from 'react-native-gifted-chat';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -24,8 +24,22 @@ const Chat = ({route,navigation}:any) => {
     //Audio
     const [recording, setRecording] = React.useState<Audio.Recording>();
     const [IsRecording,setIsRecording] = React.useState(false);
-    
-    useLayoutEffect( () => {
+
+    //Chat
+    const [Chat, setChat] = useState<any>()
+
+    //Cada vez que se entra en la vista
+    useEffect(() => {
+        //Se ejecuta lo que hay en el listener
+        const willFocusSubscription = navigation.addListener('focus', async () => {
+            setChat(
+                {
+                    id: firebase.firestore().collection('chats').doc(route.params.id).id,
+                    ...(await firebase.firestore().collection('chats').doc(route.params.id).get()).data()
+                }
+            )
+            console.log('chaty',(await firebase.firestore().collection('chats').doc(route.params.id).get()).data())
+        })
         getTitleChat()
         checkAdmin()
         readNewMessages()
@@ -42,7 +56,8 @@ const Chat = ({route,navigation}:any) => {
                 }))
             )
         })
-    }, [])
+        return willFocusSubscription;
+    }, []);
 
     const checkAdmin = async () => {
         if(route.params.Admin == MyUserAuth?.email){
@@ -363,7 +378,7 @@ const Chat = ({route,navigation}:any) => {
             <View style={{backgroundColor:'white', height:'7%', flexDirection:'row', justifyContent: 'space-between', alignItems: 'center'}}>
                 <View style={{ marginLeft:15}}>
                     <TouchableOpacity>
-                        <Icon name="arrow-left" size={30} color="#900" onPress={()=>navigation.goBack()}/>
+                        <Icon name="arrow-left" size={30} color="#900" onPress={()=>navigation.navigate('Home')}/>
                     </TouchableOpacity>
                 </View>
                 <View>
@@ -372,7 +387,9 @@ const Chat = ({route,navigation}:any) => {
                     </Text>
                 </View>
                 <View style={{marginRight:15}}>
-                    <Icon name="dots-vertical" size={30} color="#900" onPress={()=>Admin ? navigation.navigate('ChatOptions',{title: Title, chat:route.params, Admin: true}) : navigation.navigate('ChatOptions',{title: Title, chat:route.params, Admin: false})}/>
+                    <Icon name="dots-vertical" size={30} color="#900" onPress={async () => await Admin ? 
+                        navigation.navigate('ChatOptions',{title: Title, chat: Chat, Admin: true}) : 
+                        navigation.navigate('ChatOptions',{title: Title, chat: Chat, Admin: false})}/>
                 </View> 
             </View>
             <GiftedChat
