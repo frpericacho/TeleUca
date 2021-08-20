@@ -23,12 +23,12 @@ const ChatOptions = ({route,navigation}:any) => {
     let textInput:any
 
     useLayoutEffect(() => {
-        fetchUsers()
+        fetchUsers(route.params.chat.users.UserList)
     },[])
 
-    const fetchUsers = async () => {
+    const fetchUsers = async (UserList:any) => {
         let userDocs:any = [];
-        firebase.firestore().collection('users').where('email','in',route.params.chat.users.UserList).get().then((snapshot)=>{
+        firebase.firestore().collection('users').where('email','in',UserList).get().then((snapshot)=>{
             userDocs = snapshot.docs.filter((user)=>{
                 return user.data().email != MyUserAuth?.email
             }).map((user)=>{
@@ -123,7 +123,7 @@ const ChatOptions = ({route,navigation}:any) => {
                 NewMessagesAux = NewMessagesAux.concat(NewMessage)
             })
 
-            //Hacer una funcion que recoja a todos los usurios de UserListAux y ponerlos en setUsers
+            fetchUsers(UserListAux)
 
             chat.ref.update({
                 NewMessages: NewMessagesAux,
