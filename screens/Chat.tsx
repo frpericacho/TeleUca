@@ -38,7 +38,6 @@ const Chat = ({route,navigation}:any) => {
                     ...(await firebase.firestore().collection('chats').doc(route.params.id).get()).data()
                 }
             )
-            console.log('chaty',(await firebase.firestore().collection('chats').doc(route.params.id).get()).data())
         })
         getTitleChat()
         checkAdmin()

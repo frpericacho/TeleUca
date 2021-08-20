@@ -16,7 +16,7 @@ export default function Home({navigation}:any) {
   //Chat
   const [chats, setChats] = useState<Array<Chat>>([])
   const [user, setUser] = useState('')
-  const [UserList,setUserList] = useState([]);
+  const [UserList,setUserList] = useState<Array<any>>([]);
   let textInput:any
 
   //Modal
@@ -131,7 +131,7 @@ export default function Home({navigation}:any) {
   }
 
   const addUserChat = async () =>{
-    UserList.push(user)
+    setUserList([...UserList,user])
     textInput.clear()
   }
 
@@ -191,11 +191,3 @@ export default function Home({navigation}:any) {
 function sortChat(a:Chat, b:Chat) {
   return a.LastMessage.createdAt < b.LastMessage.createdAt
 }
-
-const styles = StyleSheet.create({
-  fab: {
-    position: 'absolute',
-    right: 0,
-    bottom: 0,
-  },
-})
