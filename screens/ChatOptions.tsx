@@ -1,11 +1,11 @@
 import React, { useLayoutEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { Image, FAB, Input } from "react-native-elements";
+import { Image, Input } from "react-native-elements";
 import UserItem from '../components/userItem';
 import { SwipeListView } from 'react-native-swipe-list-view';
 import firebase from "firebase";
-import { Button, Provider, Portal, Modal } from 'react-native-paper';
+import { Button, Provider, Portal, Modal, FAB } from 'react-native-paper';
 
 const ChatOptions = ({route,navigation}:any) => {
     //MyUser
@@ -21,6 +21,14 @@ const ChatOptions = ({route,navigation}:any) => {
     const [UserList, setUserList] = useState<Array<any>>([]);
     const [user, setUser] = useState('')
     let textInput:any
+
+    //ModalTitle
+    const [visibleTitle, setVisibleTitle] = React.useState(false);
+    const showModalTitle = () => setVisibleTitle(true);
+    const hideModalTitle = () => setVisibleTitle(false);
+    const [Title, setTitle] = useState(route.params.chat.title)
+    const [TitleChat, setTitleChat] = useState(route.params.chat.title)
+    let textInputTitle:any
 
     useLayoutEffect(() => {
         fetchUsers(route.params.chat.users.UserList)
@@ -139,11 +147,20 @@ const ChatOptions = ({route,navigation}:any) => {
         setUserList([...UserList,user])
         textInput.clear()
     }
+
+    const ChangeTitleChat = async () => {
+        firebase.firestore().collection('chats').doc(route.params.chat.id).update({
+            title: Title
+        }).then((chat)=>{
+            setTitleChat(Title)
+            hideModalTitle()
+        })
+    }
     
     if(route.params.Admin){
         return(
-            <View style={{flexDirection:'column', height:'100%', justifyContent:'flex-start'}}>
-                <Provider>
+            <Provider>
+               <View style={{flexDirection:'column', height:'100%', justifyContent:'flex-start'}}>
                     <Portal>
                         <Modal visible={visible} onDismiss={hideModal} contentContainerStyle={styles.containerStyle}>
                             <Input
@@ -168,6 +185,19 @@ const ChatOptions = ({route,navigation}:any) => {
                                 Enviar
                             </Button>
                         </Modal>
+                        <Modal visible={visibleTitle} onDismiss={hideModalTitle} contentContainerStyle={styles.containerStyle}>
+                            <Input
+                                value={Title}
+                                label="Nuevo nombre de chat:"
+                                ref={input => { textInputTitle = input }} 
+                                onChangeText={value => setTitle(value)}
+                                placeholder='Título chat'
+                                clearTextOnFocus
+                            />  
+                            <Button onPress={()=>ChangeTitleChat()}>
+                                Enviar
+                            </Button>
+                        </Modal>
                     </Portal>
                     <View style={{backgroundColor:'white', height:'7%', flexDirection:'row', justifyContent: 'space-between', alignItems: 'center'}}>
                         <View style={{ marginLeft:15}}>
@@ -177,11 +207,11 @@ const ChatOptions = ({route,navigation}:any) => {
                         </View>
                         <View>
                             <Text>
-                                {route.params.title}
+                                {TitleChat}
                             </Text>
                         </View>
                         <View style={{marginRight:15}}>
-                            <Icon name="dots-vertical" size={30} color="white"/>
+                            <Icon name="circle-edit-outline" size={30} color="#900" onPress={showModalTitle}/>
                         </View> 
                     </View>
                     <View style={{height:'93%', flex:1, flexDirection: "column"}}>
@@ -203,13 +233,16 @@ const ChatOptions = ({route,navigation}:any) => {
                                 )}
                                 rightOpenValue={-75}
                             />
-                            <FAB title={<Icon name="account-plus" size={30} color="white"/>} 
-                            visible={route.params.chat.group ? true : false} size="large" placement="right" 
-                            onPress={showModal} />
+                            <FAB
+                                style={{ position: 'absolute', margin: 16, padding: 5, right: 0, bottom: 0,}}
+                                small
+                                icon="account-plus" 
+                                onPress={showModal}
+                            />
                         </View>
                     </View>
-                </Provider>
-            </View>
+                </View>
+            </Provider>
         )
     }else{
         return(
@@ -222,7 +255,7 @@ const ChatOptions = ({route,navigation}:any) => {
                     </View>
                     <View>
                         <Text>
-                            {route.params.title}
+                            {TitleChat}
                         </Text>
                     </View>
                     <View style={{marginRight:15}}>
@@ -271,6 +304,13 @@ const styles = StyleSheet.create({
     },
     containerStyle: {
         backgroundColor: 'white',
+        padding: 20
+    },
+    containerStyleOpt: {
+        backgroundColor: 'white',
+        position: 'absolute',
+        top: 0,
+        right: 20,
         padding: 20
     }
 });

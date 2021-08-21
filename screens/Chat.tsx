@@ -16,7 +16,7 @@ const Chat = ({route,navigation}:any) => {
     const [Messages, setMessages] = useState<any>([]);
 
     //TitleChat
-    const [Title, setTitle] = useState('');
+    const [Title, setTitle] = useState(route.params.title);
 
     //Admin
     const [Admin, setAdmin] = useState(false);
@@ -38,8 +38,8 @@ const Chat = ({route,navigation}:any) => {
                     ...(await firebase.firestore().collection('chats').doc(route.params.id).get()).data()
                 }
             )
+            getTitleChat()
         })
-        getTitleChat()
         checkAdmin()
         readNewMessages()
         firebase.firestore().collection('messages').where('chat_id','==',route.params.id).orderBy('createdAt','desc').onSnapshot((snapshot)=>{
@@ -68,7 +68,9 @@ const Chat = ({route,navigation}:any) => {
 
     const getTitleChat = async () => {
         if(route.params.group){
-            setTitle(route.params.title)
+            setTitle(
+                (await firebase.firestore().collection('chats').doc(route.params.id).get()).data()?.title
+            )
         }else{
             let titleDisplay = route.params.users.UserList.filter((email:string)=>{
                 return email != MyUserAuth?.email
