@@ -6,6 +6,7 @@ import UserItem from '../components/userItem';
 import { SwipeListView } from 'react-native-swipe-list-view';
 import firebase from "firebase";
 import { Button, Provider, Portal, Modal, FAB } from 'react-native-paper';
+import * as ImagePicker from 'expo-image-picker';
 
 const ChatOptions = ({route,navigation}:any) => {
     //MyUser
@@ -29,6 +30,9 @@ const ChatOptions = ({route,navigation}:any) => {
     const [Title, setTitle] = useState(route.params.chat.title)
     const [TitleChat, setTitleChat] = useState(route.params.chat.title)
     let textInputTitle:any
+
+    //ChatImage
+    const [ImageChat, setImageChat] = useState(route.params.chat.avatar_url)
 
     useLayoutEffect(() => {
         fetchUsers(route.params.chat.users.UserList)
@@ -57,6 +61,58 @@ const ChatOptions = ({route,navigation}:any) => {
             </TouchableOpacity>
         </View>
     )
+
+    const uploadImage = (uri:string) => {
+        return new Promise((resolve, reject) => {
+          let xhr = new XMLHttpRequest();
+          xhr.onerror = reject;
+          xhr.onreadystatechange = () => {
+            if (xhr.readyState === 4) {
+              resolve(xhr.response);
+            }
+          };
+    
+          xhr.open("GET", uri);
+          xhr.responseType = "blob";
+          xhr.send();
+        });
+    };
+
+    const pickImage = async () => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+          mediaTypes: ImagePicker.MediaTypeOptions.All,
+          allowsEditing: true,
+          aspect: [4, 3],
+          quality: 1
+        });
+        
+        if (!result.cancelled) {
+            let nombre = TitleChat
+            if(result.type=="image"){
+                
+                uploadImage(result.uri).then((resolve:any)=>{
+                    let ref = firebase
+                    .storage()
+                    .ref()
+                    .child(`media/${nombre}`);
+                    
+                    ref.put(resolve).then(resolve =>{
+                        resolve.ref.getDownloadURL().then(url=>{
+                            firebase.firestore().collection('chats').doc(route.params.chat.id).update({
+                                avatar_url:url
+                            }).then(()=>{
+                                setImageChat(url)
+                            }).catch((err)=>{
+                                console.log(err)
+                            })
+                        })
+                    })
+                }).catch(error=>{
+                    console.log(error);
+                })
+            }
+        }
+    };
 
     const DeleteUserFromChat = async (data:any) => {
         firebase.firestore().collection('chats').doc(route.params.chat?.id).get().then((chat)=>{
@@ -217,15 +273,15 @@ const ChatOptions = ({route,navigation}:any) => {
                     <View style={{height:'93%', flex:1, flexDirection: "column"}}>
                         <View style={{flex:1}}>
                             <Image
-                                source={route.params.chat.avatar_url.length!=0 ? {uri:route.params.chat.avatar_url} : require('../assets/user.png') }
+                                source={ImageChat.length!=0 ? {uri:ImageChat} : require('../assets/user.png') }
                                 style={{ height: '100%', resizeMode: 'cover' }}
                             />
                             <FAB
                                 style={{backgroundColor:'#00bde6', position: 'absolute', margin: 16, padding: 5, right: 0, bottom: 0,}}
                                 small
+                                color="#FFF"
                                 icon="image-edit"
-                                // Funcion para seleccionar una imagen de la galeria o la camara
-                                // onPress={}
+                                onPress={pickImage}
                             />
                         </View>
                         <View style={{ flex: 2}}>
@@ -244,6 +300,7 @@ const ChatOptions = ({route,navigation}:any) => {
                             <FAB
                                 style={{backgroundColor:'#00bde6', position: 'absolute', margin: 16, padding: 5, right: 0, bottom: 0,}}
                                 small
+                                color="#FFF"
                                 icon="account-plus" 
                                 onPress={showModal}
                             />
@@ -270,7 +327,7 @@ const ChatOptions = ({route,navigation}:any) => {
                 <View style={{height:'93%', flex:1, flexDirection: "column"}}>
                     <View style={{flex:1}}>
                         <Image
-                            source={route.params.chat?.avatar_url.length!=0 ? {uri:route.params.chat?.avatar_url} : require('../assets/user.png') }
+                            source={ImageChat.length!=0 ? {uri:ImageChat} : require('../assets/user.png') }
                             style={{ height: '100%', resizeMode: 'cover' }}
                         />
                     </View>

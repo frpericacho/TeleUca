@@ -269,7 +269,7 @@ const Chat = ({route,navigation}:any) => {
         return (
             <Actions
                 {...props}
-                options={{['Enviar imagen/video']:pickImage,['empezar Audio']:startRecording,['Detener Audio']:stopRecording}}
+                options={{['Enviar imagen/video']:pickImage}}
                 icon={()=>(
                     <Icon name="attachment" size={25} color='#6646ee' />
                 )}
