@@ -8,10 +8,6 @@ const UserItem = ({User, navigation, Search}:any) => {
     //MyUser
     const MyUserAuth = firebase.auth().currentUser;
 
-        //Para ver como poder hacer chat 1-1
-        //https://www.youtube.com/watch?v=svlEVg0To_c
-        //1:30:00
-
     const createChatOneToOne = async () => {
         firebase.firestore().collection('chats').add({
             avatar_url: '',

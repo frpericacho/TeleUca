@@ -87,7 +87,7 @@ const ChatOptions = ({route,navigation}:any) => {
         });
         
         if (!result.cancelled) {
-            let nombre = TitleChat
+            let nombre = route.params.chat.id
             if(result.type=="image"){
                 
                 uploadImage(result.uri).then((resolve:any)=>{

@@ -5,9 +5,6 @@ import {Title} from 'react-native-paper'
 import {Badge, Avatar} from 'react-native-elements'
 import firebase from "firebase";
 
-// POSIBLE FORMA DE MARCAR MENSAJES NO LEIDOS
-// https://www.youtube.com/watch?v=k_szzEIYA80
-
 const ChatItem = ({Chat, navigation}:any) => {
     //MyUser
     const MyUserAuth = firebase.auth().currentUser;

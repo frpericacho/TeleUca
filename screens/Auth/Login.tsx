@@ -11,16 +11,6 @@ export default function Login({navigation}:any){
 
     const handleLogin = async (email: string, password: string) => {
       setLoading('Entrando')
-      //  Supabase
-      /*
-      const { error, user } =
-          await supabase.auth.signIn({ email, password })
-      if (!error && !user) Alert.alert('Check your email for the login link!')
-      if (error) Alert.alert(error.message)
-      */
-
-      //  Firebase
-      
       await firebase.auth().signInWithEmailAndPassword(email,password).then((res)=>{
         console.log(res)
       }).catch((error)=>{

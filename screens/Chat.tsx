@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Text, Linking } from 'react-native';
 import { ActionsProps, Actions, GiftedChat, Send } from 'react-native-gifted-chat';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import * as ImagePicker from 'expo-image-picker';
@@ -7,6 +7,7 @@ import { Audio, Video } from 'expo-av';
 import firebase from 'firebase';
 import * as FileSystem from 'expo-file-system'
 import AudioSlider from '../components/AudioPlayer/AudioSlider';
+import * as DocumentPicker from 'expo-document-picker';
 
 const Chat = ({route,navigation}:any) => {
     //MyUser
@@ -28,9 +29,7 @@ const Chat = ({route,navigation}:any) => {
     //Chat
     const [Chat, setChat] = useState<any>()
 
-    //Cada vez que se entra en la vista
     useEffect(() => {
-        //Se ejecuta lo que hay en el listener
         const willFocusSubscription = navigation.addListener('focus', async () => {
             setChat(
                 {
@@ -51,7 +50,8 @@ const Chat = ({route,navigation}:any) => {
                     user: doc.data().user,
                     image: doc.data().image,
                     video: doc.data().video,
-                    audio: doc.data().audio
+                    audio: doc.data().audio,
+                    document: doc.data().document,
                 }))
             )
         })
@@ -197,6 +197,40 @@ const Chat = ({route,navigation}:any) => {
         );
     }
 
+    const pickDocument = async () => {
+        let result = await DocumentPicker.getDocumentAsync({});
+        
+        if(result.type!='cancel'){
+            let nombre = new Date().toString()
+            uploadImage(result.uri).then((resolve:any)=>{
+                let ref = firebase
+                .storage()
+                .ref()
+                .child(`media/${nombre}`);
+                
+                ref.put(resolve).then(resolve =>{
+                    resolve.ref.getDownloadURL().then(url=>{
+                        firebase.firestore().collection('messages').add({
+                            _id: new Date().toString(),
+                            chat_id: route.params.id,
+                            createdAt: new Date(),
+                            user: {
+                                _id: firebase.auth().currentUser?.email,
+                                name: firebase.auth().currentUser?.email
+                            },
+                            document: url,
+                        }).catch((err)=>{
+                            console.log(err)
+                        })
+                    })
+                })
+
+            }).catch(error=>{
+                console.log(error);
+            })
+        }
+    }
+
     const pickImage = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
           mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -269,7 +303,7 @@ const Chat = ({route,navigation}:any) => {
         return (
             <Actions
                 {...props}
-                options={{['Enviar imagen/video']:pickImage}}
+                options={{['Enviar imagen/video']:pickImage, ['Enviar documento']:pickDocument}}
                 icon={()=>(
                     <Icon name="attachment" size={25} color='#6646ee' />
                 )}
@@ -295,15 +329,15 @@ const Chat = ({route,navigation}:any) => {
 
     const renderMessageVideo = (props: any) => {
         return (
-          <View style={{height:250, width:250}}>
-             <Video
-              resizeMode="stretch"
-              useNativeControls
-              shouldPlay={false}
-              source={{ uri: props.currentMessage.video }}
-              style={{height:250, width:250}}
-            />
-          </View>
+            <View style={{height:250, width:250}}>
+                <Video
+                    resizeMode="stretch"
+                    useNativeControls
+                    shouldPlay={false}
+                    source={{ uri: props.currentMessage.video }}
+                    style={{height:250, width:250}}
+                />
+            </View>
         );
     };
 
@@ -314,6 +348,17 @@ const Chat = ({route,navigation}:any) => {
             </View>
         );
     };
+
+    const renderMessageDocument = (props: any) => {
+        if(props.currentMessage.document){
+            return(
+                <View style={props.containerStyle}>
+                    <Icon onPress={()=>Linking.openURL(props.currentMessage.document)} name="file-pdf" size={35} color="#FFF" style={{padding:20}}/>
+                </View>
+            );
+        }
+        return null
+    }
 
     async function startRecording() {
         try {
@@ -406,6 +451,7 @@ const Chat = ({route,navigation}:any) => {
                 renderLoading={rendLoading}
                 renderSend={rendSend}
                 renderMessageAudio={renderMessageAudio}
+                renderCustomView={renderMessageDocument}
                 user={{
                     _id: firebase.auth().currentUser?.email,
                     name: firebase.auth().currentUser?.email
