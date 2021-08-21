@@ -217,24 +217,32 @@ const ChatOptions = ({route,navigation}:any) => {
                     <View style={{height:'93%', flex:1, flexDirection: "column"}}>
                         <View style={{flex:1}}>
                             <Image
-                                source={{uri:route.params.chat.avatar_url}}
-                                style={{ height: '100%', resizeMode: 'contain' }}
-                                />
+                                source={route.params.chat.avatar_url.length!=0 ? {uri:route.params.chat.avatar_url} : require('../assets/user.png') }
+                                style={{ height: '100%', resizeMode: 'cover' }}
+                            />
+                            <FAB
+                                style={{backgroundColor:'#00bde6', position: 'absolute', margin: 16, padding: 5, right: 0, bottom: 0,}}
+                                small
+                                icon="image-edit"
+                                // Funcion para seleccionar una imagen de la galeria o la camara
+                                // onPress={}
+                            />
                         </View>
-                        <View style={{ flex: 2, backgroundColor: "darkorange" }}>
-                            <Text>
+                        <View style={{ flex: 2}}>
+                            <Text style={{margin:10, fontWeight:'bold', fontSize:20}}>
                                 Participantes
                             </Text>
                             <SwipeListView
                                 data={users}
                                 renderItem={renderUserItem}
+                                keyExtractor={(item:any) => item.email.toString()}
                                 renderHiddenItem={ (data) => (
                                     renderHiddenUserItem(data)
                                 )}
                                 rightOpenValue={-75}
                             />
                             <FAB
-                                style={{ position: 'absolute', margin: 16, padding: 5, right: 0, bottom: 0,}}
+                                style={{backgroundColor:'#00bde6', position: 'absolute', margin: 16, padding: 5, right: 0, bottom: 0,}}
                                 small
                                 icon="account-plus" 
                                 onPress={showModal}
@@ -250,7 +258,7 @@ const ChatOptions = ({route,navigation}:any) => {
                 <View style={{backgroundColor:'white', height:'7%', flexDirection:'row', justifyContent: 'space-between', alignItems: 'center'}}>
                     <View style={{ marginLeft:15}}>
                         <TouchableOpacity>
-                            <Icon name="arrow-left" size={30} color="#900" onPress={async () => await navigation.navigate('Chat',route.params.chat)}/>
+                            <Icon name="arrow-left" size={30} color="#900" onPress={()=>navigation.push('Chat',route.params.chat)}/>
                         </TouchableOpacity>
                     </View>
                     <View>
@@ -258,16 +266,16 @@ const ChatOptions = ({route,navigation}:any) => {
                             {TitleChat}
                         </Text>
                     </View>
-                    <View style={{marginRight:15}}>
-                        <Icon name="dots-vertical" size={30} color="white"/>
-                    </View> 
                 </View>
                 <View style={{height:'93%', flex:1, flexDirection: "column"}}>
                     <View style={{flex:1}}>
                         <Image
-                            source={{uri:route.params.chat.avatar_url}}
-                            style={{ height: '100%', resizeMode: 'contain' }}
+                            source={route.params.chat?.avatar_url.length!=0 ? {uri:route.params.chat?.avatar_url} : require('../assets/user.png') }
+                            style={{ height: '100%', resizeMode: 'cover' }}
                         />
+                    </View>
+                    <View style={{flex:2}}>
+
                     </View>
                 </View>
             </View>

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { TouchableOpacity } from 'react-native';
 import { View, StyleSheet } from 'react-native';
-import {Avatar,Title} from 'react-native-paper'
-import {Badge, withBadge} from 'react-native-elements'
+import {Title} from 'react-native-paper'
+import {Badge, Avatar} from 'react-native-elements'
 import firebase from "firebase";
 
 // POSIBLE FORMA DE MARCAR MENSAJES NO LEIDOS
@@ -18,10 +18,12 @@ const ChatItem = ({Chat, navigation}:any) => {
                 <TouchableOpacity onPress={()=>{navigation.navigate('Chat',Chat)}}>
                     <View style={{flexDirection:'row', backgroundColor: '#00bde6', height:75, width:'100%', alignItems:'center', marginBottom:1}}>
                         <View style={{flexDirection:'column'}}>
-                            <Avatar.Image
-                                source={Chat.avatar_url ? {uri:Chat.avatar_url} : {uri:'../assets/icon.png'}}
-                                size={50}
-                                style={{marginLeft:20}}
+                            <Avatar
+                                source={Chat.avatar_url ? {uri:Chat.avatar_url} : require('../assets/user.png')}
+                                size="medium"
+                                imageProps={{resizeMode: 'cover'}}
+                                rounded
+                                containerStyle={{marginLeft:20}}
                             />
                             <Badge
                                 status="success"
@@ -44,10 +46,12 @@ const ChatItem = ({Chat, navigation}:any) => {
                 <TouchableOpacity onPress={()=>{navigation.navigate('Chat',Chat)}}>
                     <View style={{flexDirection:'row', backgroundColor: '#00bde6', height:75, width:'100%', alignItems:'center', marginBottom:1}}>
                         <View style={{flexDirection:'column'}}>
-                            <Avatar.Image
-                                source={Chat.avatar_url ? {uri:Chat.avatar_url} : {uri:'../assets/icon.png'}}
-                                size={50}
-                                style={{marginLeft:20}}
+                            <Avatar
+                                source={Chat.avatar_url ? {uri:Chat.avatar_url} : require('../assets/user.png')}
+                                size="medium"
+                                imageProps={{resizeMode: 'cover'}} 
+                                rounded
+                                containerStyle={{marginLeft:20}}
                             />
                             <Badge
                                 status="success"
@@ -68,10 +72,12 @@ const ChatItem = ({Chat, navigation}:any) => {
                 <TouchableOpacity onPress={()=>{navigation.navigate('Chat',Chat)}}>
                     <View style={{flexDirection:'row', backgroundColor: '#00bde6', height:75, width:'100%', alignItems:'center', marginBottom:1}}>
                         <View style={{flexDirection:'column'}}>
-                            <Avatar.Image
-                                source={Chat.avatar_url ? {uri:Chat.avatar_url} : {uri:'../assets/icon.png'}}
-                                size={50}
-                                style={{marginLeft:20}}
+                            <Avatar
+                                source={Chat.avatar_url ? {uri:Chat.avatar_url} : require('../assets/user.png')}
+                                size="medium"
+                                imageProps={{resizeMode: 'cover'}} 
+                                rounded
+                                containerStyle={{marginLeft:20}}
                             />
                         </View>
                         <View style={{marginLeft:15, flexDirection:'column', width:'60%'}}>
@@ -89,10 +95,12 @@ const ChatItem = ({Chat, navigation}:any) => {
                 <TouchableOpacity onPress={()=>{navigation.navigate('Chat',Chat)}}>
                     <View style={{flexDirection:'row', backgroundColor: '#00bde6', height:75, width:'100%', alignItems:'center', marginBottom:1}}>
                         <View style={{flexDirection:'column'}}>
-                            <Avatar.Image
-                                source={Chat.avatar_url ? {uri:Chat.avatar_url} : {uri:'../assets/icon.png'}}
-                                size={50}
-                                style={{marginLeft:20}}
+                            <Avatar
+                                source={Chat.avatar_url ? {uri:Chat.avatar_url} : require('../assets/user.png')}
+                                size="medium"
+                                imageProps={{resizeMode: 'cover'}} 
+                                rounded
+                                containerStyle={{marginLeft:20}}
                             />
                         </View>
                         <View style={{marginLeft:15, flexDirection:'column', width:'60%'}}>

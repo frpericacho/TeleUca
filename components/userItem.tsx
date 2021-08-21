@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
-import {Avatar,Title} from 'react-native-paper'
-import { ListItem } from 'react-native-elements'
+import {Title} from 'react-native-paper'
+import { Avatar } from 'react-native-elements'
 import firebase from "firebase";
 
 const UserItem = ({User, navigation, Search}:any) => {
@@ -79,10 +79,12 @@ const UserItem = ({User, navigation, Search}:any) => {
         return(
             <TouchableOpacity onPress={HandleChatOneToOne} >
                 <View style={{flexDirection:'row', backgroundColor: '#00bde6', height:75, alignItems:'center', marginBottom:1}}>
-                    <Avatar.Image
-                        source={User.avatar_url ? {uri:User.avatar_url} : {uri:'../assets/icon.png'}}
-                        size={50}
-                        style={{marginLeft:20}}
+                    <Avatar
+                        source={User.avatar_url ? {uri:User.avatar_url} : require('../assets/user.png')}
+                        size="medium"
+                        imageProps={{resizeMode: 'cover'}}
+                        rounded
+                        containerStyle={{marginLeft:20}}
                     />
                     <View style={{marginLeft:15, flexDirection:'column'}}>
                         <Title style={styles.title}>{User.email.split('@')[0]}</Title>
@@ -94,10 +96,12 @@ const UserItem = ({User, navigation, Search}:any) => {
         return(
             <TouchableOpacity onPress={HandleChatOneToOne} >
                 <View style={{flexDirection:'row', backgroundColor: '#00bde6', height:75, alignItems:'center', marginBottom:1}}>
-                    <Avatar.Image
-                        source={User.avatar_url ? {uri:User.avatar_url} : {uri:'../assets/icon.png'}}
-                        size={50}
-                        style={{marginLeft:20}}
+                    <Avatar
+                        source={User.avatar_url ? {uri:User.avatar_url} : require('../assets/user.png')}
+                        size="medium"
+                        imageProps={{resizeMode: 'cover'}}
+                        rounded
+                        containerStyle={{marginLeft:20}}
                     />
                     <View style={{marginLeft:15, flexDirection:'column'}}>
                         <Title style={styles.title}>{User.email.split('@')[0]}</Title>
