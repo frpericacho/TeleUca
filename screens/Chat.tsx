@@ -505,10 +505,6 @@ const Chat = ({ route, navigation }: any) => {
     if (props.currentMessage.document) {
       return (
         <View style={props.containerStyle}>
-          {/* PROBAR A USAR FILESYSTEM PARA DESCARGARLO
-                        https://stackoverflow.com/questions/44546199/how-to-download-a-file-with-react-native
-                        LA SEGUNDA RESPUESTA 
-                    */}
           <Icon
             onPress={() => Linking.openURL(props.currentMessage.document)}
             name="file-pdf"
@@ -640,27 +636,35 @@ const Chat = ({ route, navigation }: any) => {
           </TouchableOpacity>
         </View>
         <View>
-          <Text>{Title}</Text>
+          {route.params.id == MyUserAuth?.email ? (
+            <Text>Mensages guardados</Text>
+          ) : (
+            <Text>{Title}</Text>
+          )}
         </View>
         <View style={{ marginRight: 15 }}>
-          <Icon
-            name="dots-vertical"
-            size={30}
-            color="#900"
-            onPress={async () =>
-              (await Admin)
-                ? navigation.navigate("ChatOptions", {
-                    title: Title,
-                    chat: Chat,
-                    Admin: true,
-                  })
-                : navigation.navigate("ChatOptions", {
-                    title: Title,
-                    chat: Chat,
-                    Admin: false,
-                  })
-            }
-          />
+          {route.params.id == MyUserAuth?.email ? (
+            <Icon name="dots-vertical" size={30} color="white" />
+          ) : (
+            <Icon
+              name="dots-vertical"
+              size={30}
+              color="#900"
+              onPress={async () =>
+                (await Admin)
+                  ? navigation.navigate("ChatOptions", {
+                      title: Title,
+                      chat: Chat,
+                      Admin: true,
+                    })
+                  : navigation.navigate("ChatOptions", {
+                      title: Title,
+                      chat: Chat,
+                      Admin: false,
+                    })
+              }
+            />
+          )}
         </View>
       </View>
       <GiftedChat

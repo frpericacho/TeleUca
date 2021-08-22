@@ -468,7 +468,7 @@ const ChatOptions = ({ route, navigation }: any) => {
           <View style={{ flex: 1 }}>
             <Image
               source={
-                ImageChat.length != 0
+                ImageChat?.length != 0
                   ? { uri: ImageChat }
                   : require("../assets/user.png")
               }
