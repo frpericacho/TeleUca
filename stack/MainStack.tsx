@@ -8,7 +8,7 @@ const Drawer = createDrawerNavigator();
 const MainStack = () => {
     return (
       <Drawer.Navigator drawerContent={props => <DrawerContent {...props}/>}>
-        <Drawer.Screen name="Home" component={HomeStack} />
+        <Drawer.Screen name="HomeStack" component={HomeStack} />
       </Drawer.Navigator>
     );
 }

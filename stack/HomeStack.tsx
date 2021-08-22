@@ -5,6 +5,7 @@ import Search from '../screens/Search';
 import Header from '../components/header';
 import Chat from '../screens/Chat';
 import ChatOptions from '../screens/ChatOptions';
+import UserProfileEdit from '../screens/UserProfileEdit';
 
 const Stack = createStackNavigator();
 
@@ -19,6 +20,8 @@ const HomeStack = ({navigation}:any) => {
         name="Chat" component={Chat} />
       <Stack.Screen options={{header: () => null}}
         name="ChatOptions" component={ChatOptions} />
+      <Stack.Screen options={{header: () => null}}
+        name="UserProfileEdit" component={UserProfileEdit} />
     </Stack.Navigator>
   );
 }

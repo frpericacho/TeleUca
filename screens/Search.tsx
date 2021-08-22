@@ -68,6 +68,7 @@ export default function Search({navigation}:any) {
                     placeholder="Search"
                     onChangeText={updateSearch}
                     value={search}
+                    autoCapitalize={'none'}
                 />
             </View>
             <View style={{marginTop:10}}>
