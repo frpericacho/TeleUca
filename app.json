@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "TeleUca",
-    "slug": "TeleUca",
+    "name": "UcaChat",
+    "slug": "UcaChat",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icono-ios.png",
@@ -18,14 +18,15 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.frpericacho.TeleUca"
+      "bundleIdentifier": "com.frpericacho.UcaChat"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/icono.png",
         "backgroundColor": "#FFFFFF"
       },
-      "package": "com.frpericacho.TeleUca"
+      "package": "com.frpericacho.UcaChat",
+      "googleServicesFile": "./google-services.json",
     },
     "web": {
       "favicon": "./assets/favicon.png"
