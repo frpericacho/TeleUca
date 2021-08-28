@@ -41,6 +41,10 @@ const Chat = ({ route, navigation }: any) => {
   const [Chat, setChat] = useState<any>();
 
   useEffect(() => {
+    readNewMessages()
+  })
+
+  useEffect(() => {
     const willFocusSubscription = navigation.addListener("focus", async () => {
       setChat({
         id: firebase.firestore().collection("chats").doc(route.params.id).id,
@@ -106,7 +110,7 @@ const Chat = ({ route, navigation }: any) => {
   };
 
   const readNewMessages = async () => {
-    firebase
+   firebase
       .firestore()
       .collection("chats")
       .doc(route.params.id)

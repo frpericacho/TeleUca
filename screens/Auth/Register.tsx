@@ -11,7 +11,6 @@ export default function Register({ navigation }: any) {
 
   const handleRegister = async (email: string, password: string) => {
     setLoading("Registrando");
-    //COMPROBAR AQUI SI ES @ALUM.UCA.ES O @PROF.UCA.ES
     if (!email.includes("@alum.uca.es") || !email.includes("@uca.es")) {
       Alert.alert("Correo fuera del domino de la UCA");
     } else {
@@ -25,6 +24,8 @@ export default function Register({ navigation }: any) {
             .collection("users")
             .add({
               email: email,
+              avatar_url: '',
+              token: ''
             })
             .then(() => {
               console.log("Usuario guardado correctamente");

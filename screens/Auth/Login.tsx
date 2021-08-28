@@ -3,6 +3,7 @@ import { StyleSheet, View } from "react-native";
 import { Button, Input, Image } from "react-native-elements";
 import React from 'react';
 import firebase from "firebase";
+import { registerForPushNotificationsAsync } from "../../App";
 
 export default function Login({navigation}:any){
     const [email, setEmail] = useState('')
@@ -13,6 +14,7 @@ export default function Login({navigation}:any){
       setLoading('Entrando')
       await firebase.auth().signInWithEmailAndPassword(email,password).then((res)=>{
         console.log(res)
+        registerForPushNotificationsAsync()
       }).catch((error)=>{
         console.log(error)
       })

@@ -16,7 +16,7 @@ Notifications.setNotificationHandler({
   }),
 });
 
-const registerForPushNotificationsAsync = async () => {
+export async function registerForPushNotificationsAsync () {
   let token:any;
   if (Constants.isDevice) {
     const { status: existingStatus } = await Notifications.getPermissionsAsync();
