@@ -135,6 +135,7 @@ export default function Home({ navigation }: any) {
         avatar_url: "",
         description: DescriptionChat,
         title: titleChat,
+        titleLowerCase: titleChat.toLowerCase(),
         group: true,
         users: {
           UserList,

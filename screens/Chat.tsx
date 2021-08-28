@@ -4,6 +4,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   Text,
+  Clipboard,
   Linking,
 } from "react-native";
 import {
@@ -11,6 +12,8 @@ import {
   Actions,
   GiftedChat,
   Send,
+  Bubble,
+  MessageImage
 } from "react-native-gifted-chat";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import * as ImagePicker from "expo-image-picker";
@@ -41,8 +44,8 @@ const Chat = ({ route, navigation }: any) => {
   const [Chat, setChat] = useState<any>();
 
   useEffect(() => {
-    readNewMessages()
-  })
+    readNewMessages();
+  });
 
   useEffect(() => {
     const willFocusSubscription = navigation.addListener("focus", async () => {
@@ -110,7 +113,7 @@ const Chat = ({ route, navigation }: any) => {
   };
 
   const readNewMessages = async () => {
-   firebase
+    firebase
       .firestore()
       .collection("chats")
       .doc(route.params.id)
@@ -322,7 +325,135 @@ const Chat = ({ route, navigation }: any) => {
     }
   };
 
-  const pickImage = async () => {
+  const pickImageCamera = async () => {
+    ImagePicker.requestCameraPermissionsAsync();
+    let result = await ImagePicker.launchCameraAsync();
+
+    if (!result.cancelled) {
+      let nombre = new Date().toString();
+      if (result.type == "image") {
+        uploadImage(result.uri)
+          .then((resolve: any) => {
+            let ref = firebase.storage().ref().child(`media/${nombre}`);
+
+            ref.put(resolve).then((resolve) => {
+              resolve.ref.getDownloadURL().then((url) => {
+                firebase
+                  .firestore()
+                  .collection("messages")
+                  .add({
+                    _id: new Date().toString(),
+                    chat_id: route.params.id,
+                    createdAt: new Date(),
+                    user: {
+                      _id: firebase.auth().currentUser?.email,
+                      name: firebase.auth().currentUser?.email,
+                    },
+                    image: url,
+                  })
+                  .then(() => {
+                    firebase
+                      .firestore()
+                      .collection("chats")
+                      .doc(route.params.id)
+                      .get()
+                      .then((chat) => {
+                        let NewMessagesAux = chat.data()?.NewMessages;
+
+                        NewMessagesAux.filter((users: any) => {
+                          return (
+                            users.email != firebase.auth().currentUser?.email
+                          );
+                        }).map((users: any) => {
+                          users.NewMessage = true;
+                        });
+                        chat.ref.update({
+                          LastMessage: {
+                            _id: nombre,
+                            text: "",
+                            user: {
+                              _id: firebase.auth().currentUser?.email,
+                              name: firebase.auth().currentUser?.email,
+                            },
+                            createdAt: nombre,
+                          },
+                          NewMessages: NewMessagesAux,
+                        });
+                      });
+                  })
+                  .catch((err) => {
+                    console.log(err);
+                  });
+              });
+            });
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      } else {
+        uploadImage(result.uri)
+          .then((resolve: any) => {
+            let ref = firebase.storage().ref().child(`media/${nombre}`);
+
+            ref.put(resolve).then((resolve) => {
+              resolve.ref.getDownloadURL().then((url) => {
+                firebase
+                  .firestore()
+                  .collection("messages")
+                  .add({
+                    _id: new Date().toString(),
+                    chat_id: route.params.id,
+                    createdAt: new Date(),
+                    user: {
+                      _id: firebase.auth().currentUser?.email,
+                      name: firebase.auth().currentUser?.email,
+                    },
+                    video: url,
+                  })
+                  .then(() => {
+                    firebase
+                      .firestore()
+                      .collection("chats")
+                      .doc(route.params.id)
+                      .get()
+                      .then((chat) => {
+                        let NewMessagesAux = chat.data()?.NewMessages;
+
+                        NewMessagesAux.filter((users: any) => {
+                          return (
+                            users.email != firebase.auth().currentUser?.email
+                          );
+                        }).map((users: any) => {
+                          users.NewMessage = true;
+                        });
+                        chat.ref.update({
+                          LastMessage: {
+                            _id: nombre,
+                            text: "",
+                            user: {
+                              _id: firebase.auth().currentUser?.email,
+                              name: firebase.auth().currentUser?.email,
+                            },
+                            createdAt: nombre,
+                          },
+                          NewMessages: NewMessagesAux,
+                        });
+                      });
+                  })
+                  .catch((err) => {
+                    console.log(err);
+                  });
+              });
+            });
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
+    }
+  };
+
+  const pickImageGallery = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
@@ -459,7 +590,8 @@ const Chat = ({ route, navigation }: any) => {
       <Actions
         {...props}
         options={{
-          ["Enviar imagen/video"]: pickImage,
+          ["Abrir galería"]: pickImageGallery,
+          ["Abrir cámara"]: pickImageCamera,
           ["Enviar documento"]: pickDocument,
         }}
         icon={() => <Icon name="attachment" size={25} color="#6646ee" />}
@@ -510,6 +642,9 @@ const Chat = ({ route, navigation }: any) => {
       return (
         <View style={props.containerStyle}>
           <Icon
+            onLongPress={() =>
+              console.log("props.currentMessage", props.currentMessage)
+            }
             onPress={() => Linking.openURL(props.currentMessage.document)}
             name="file-pdf"
             size={35}
@@ -520,6 +655,22 @@ const Chat = ({ route, navigation }: any) => {
       );
     }
     return null;
+  };
+
+  const renderBubble = (props: any) => {
+    if (props.currentMessage.user.name == MyUserAuth?.email)
+      return <Bubble {...props} />;
+    else
+      return (
+        <Bubble
+          {...props}
+          wrapperStyle={{
+            left: {
+              backgroundColor: "#DEDEDE",
+            },
+          }}
+        />
+      );
   };
 
   async function startRecording() {
@@ -618,6 +769,154 @@ const Chat = ({ route, navigation }: any) => {
       });
   }
 
+  const onLongPress = async (context: any, currentMessage: any) => {
+    if (currentMessage.text) {
+      const options = ["Copy Text", "Guardar", "Cancel"];
+      const cancelButtonIndex = options.length - 1;
+      context.actionSheet().showActionSheetWithOptions(
+        {
+          options,
+          cancelButtonIndex,
+        },
+        async (buttonIndex: any) => {
+          switch (buttonIndex) {
+            case 0:
+              Clipboard.setString(currentMessage.text);
+              break;
+            case 1:
+              await saveMessage(currentMessage);
+              break;
+          }
+        }
+      );
+    }
+    if (currentMessage.audio) {
+      const options = ["Guardar", "Cancel"];
+      const cancelButtonIndex = options.length - 1;
+      context.actionSheet().showActionSheetWithOptions(
+        {
+          options,
+          cancelButtonIndex,
+        },
+        async (buttonIndex: any) => {
+          switch (buttonIndex) {
+            case 0:
+              await saveMessage(currentMessage);
+              break;
+          }
+        }
+      );
+    }
+    if (currentMessage.video) {
+      const options = ["Guardar", "Cancel"];
+      const cancelButtonIndex = options.length - 1;
+      context.actionSheet().showActionSheetWithOptions(
+        {
+          options,
+          cancelButtonIndex,
+        },
+        async (buttonIndex: any) => {
+          switch (buttonIndex) {
+            case 0:
+              await saveMessage(currentMessage);
+              break;
+          }
+        }
+      );
+    }
+    if (currentMessage.image) {
+      const options = ["Guardar", "Cancel"];
+      const cancelButtonIndex = options.length - 1;
+      context.actionSheet().showActionSheetWithOptions(
+        {
+          options,
+          cancelButtonIndex,
+        },
+        async (buttonIndex: any) => {
+          switch (buttonIndex) {
+            case 0:
+              await saveMessage(currentMessage);
+              break;
+          }
+        }
+      );
+    }
+  };
+
+  const saveMessage = async (data: any) => {
+    if (data.image) {
+      firebase
+        .firestore()
+        .collection("messages")
+        .add({
+          _id: data._id,
+          chat_id: MyUserAuth?.email,
+          image: data.image,
+          createdAt: new Date(),
+          user: {
+            _id: MyUserAuth?.email,
+            name: MyUserAuth?.email,
+          },
+        });
+    } else if (data.audio) {
+      firebase
+        .firestore()
+        .collection("messages")
+        .add({
+          _id: data._id,
+          chat_id: MyUserAuth?.email,
+          audio: data.audio,
+          createdAt: new Date(),
+          user: {
+            _id: MyUserAuth?.email,
+            name: MyUserAuth?.email,
+          },
+        });
+    } else if (data.video) {
+      firebase
+        .firestore()
+        .collection("messages")
+        .add({
+          _id: data._id,
+          chat_id: MyUserAuth?.email,
+          video: data.video,
+          createdAt: new Date(),
+          user: {
+            _id: MyUserAuth?.email,
+            name: MyUserAuth?.email,
+          },
+        });
+    } else if (data.document) {
+      firebase
+        .firestore()
+        .collection("messages")
+        .add({
+          _id: data._id,
+          chat_id: MyUserAuth?.email,
+          document: data.document,
+          createdAt: new Date(),
+          user: {
+            _id: MyUserAuth?.email,
+            name: MyUserAuth?.email,
+          },
+        });
+    } else {
+      firebase
+        .firestore()
+        .collection("messages")
+        .add({
+          _id: data._id,
+          chat_id: MyUserAuth?.email,
+          text: data.text,
+          createdAt: new Date(),
+          user: {
+            _id: MyUserAuth?.email,
+            name: MyUserAuth?.email,
+          },
+        });
+    }
+  };
+
   return (
     <View style={{ display: "flex", height: "100%" }}>
       <View
@@ -679,12 +978,16 @@ const Chat = ({ route, navigation }: any) => {
         messageIdGenerator={() => Date().toString()}
         scrollToBottom
         isTyping
-        renderMessageVideo={renderMessageVideo}
         renderActions={renderActions}
         renderLoading={rendLoading}
         renderSend={rendSend}
+        renderBubble={renderBubble}
+        renderMessageVideo={renderMessageVideo}
         renderMessageAudio={renderMessageAudio}
         renderCustomView={renderMessageDocument}
+        onLongPress={(context, currentMessage) =>
+          onLongPress(context, currentMessage)
+        }
         user={{
           _id: firebase.auth().currentUser?.email,
           name: firebase.auth().currentUser?.email,

@@ -170,6 +170,40 @@ const ChatOptions = ({ route, navigation }: any) => {
       });
   };
 
+  const DeleteMySelfFromChat = async () => {
+    firebase
+      .firestore()
+      .collection("chats")
+      .doc(route.params.chat?.id)
+      .get()
+      .then((chat) => {
+        let UserListAux = chat.data()?.users.UserList;
+        let NewMessagesAux = chat.data()?.NewMessages;
+        let usersAux = users.filter((user: any) => {
+          return user.email != MyUserAuth?.email;
+        });
+
+        NewMessagesAux = NewMessagesAux.filter((user: any) => {
+          return user.email != MyUserAuth?.email;
+        });
+        UserListAux = UserListAux.filter((email: string) => {
+          return email != MyUserAuth?.email;
+        });
+
+        setUsers(usersAux);
+
+        chat.ref.update({
+          NewMessages: NewMessagesAux,
+          users: {
+            UserList: UserListAux,
+          },
+        });
+      })
+      .then(() => {
+        navigation.navigate("Home");
+      });
+  };
+
   const deleteItem = async (item: any) => {
     let arr = UserList.filter(function (it) {
       return it !== item;
@@ -178,9 +212,9 @@ const ChatOptions = ({ route, navigation }: any) => {
   };
 
   const deleteChat = async () => {
-    firebase.firestore().collection('chats').doc(route.params.chat.id).delete()
-    navigation.navigate('Home')
-  }
+    firebase.firestore().collection("chats").doc(route.params.chat.id).delete();
+    navigation.navigate("Home");
+  };
 
   const renderUserItemFlatList = ({ item }: any) => {
     return (
@@ -266,9 +300,202 @@ const ChatOptions = ({ route, navigation }: any) => {
       });
   };
 
-  if (route.params.Admin) {
-    return (
-      <Provider>
+  if (route.params.chat.group) {
+    if (route.params.Admin) {
+      return (
+        <Provider>
+          <View
+            style={{
+              flexDirection: "column",
+              height: "100%",
+              justifyContent: "flex-start",
+            }}
+          >
+            <Portal>
+              <Modal
+                visible={visible}
+                onDismiss={hideModal}
+                contentContainerStyle={styles.containerStyle}
+              >
+                <Input
+                  label="Añadir usuario:"
+                  ref={(input) => {
+                    textInput = input;
+                  }}
+                  onChangeText={(value) => setUser(value)}
+                  placeholder="email usuario"
+                  clearTextOnFocus
+                  rightIcon={
+                    <TouchableOpacity onPress={addUserChat}>
+                      <Icon name="account-plus" size={20} color="#00bde6" />
+                    </TouchableOpacity>
+                  }
+                />
+                <FlatList
+                  style={{ marginBottom: 3 }}
+                  data={UserList}
+                  renderItem={renderUserItemFlatList}
+                  keyExtractor={(item: any) => item.toString()}
+                />
+                <Button onPress={() => AddUserToChat()}>Enviar</Button>
+              </Modal>
+              <Modal
+                visible={visibleTitle}
+                onDismiss={hideModalTitle}
+                contentContainerStyle={styles.containerStyle}
+              >
+                <Input
+                  value={Title}
+                  label="Nuevo nombre de chat:"
+                  ref={(input) => {
+                    textInputTitle = input;
+                  }}
+                  onChangeText={(value) => setTitle(value)}
+                  placeholder="Título chat"
+                  clearTextOnFocus
+                />
+                <Button onPress={() => ChangeTitleChat()}>Enviar</Button>
+              </Modal>
+              <Modal
+                visible={visibleDeleteChat}
+                onDismiss={hideModalDeleteChat}
+                contentContainerStyle={styles.containerStyle}
+              >
+                <View>
+                  <Text style={{ fontWeight: "bold", fontSize: 20 }}>
+                    ¿Esta seguro de querer borrar este chat?
+                  </Text>
+                  <Text
+                    style={{
+                      fontWeight: "normal",
+                      fontSize: 15,
+                      marginTop: 10,
+                      color: "red",
+                    }}
+                  >
+                    ¡Está acción no es revertible!
+                  </Text>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      justifyContent: "space-around",
+                      marginTop: 20,
+                    }}
+                  >
+                    <Button
+                      labelStyle={{ fontWeight: "bold" }}
+                      onPress={hideModalDeleteChat}
+                    >
+                      Cancelar
+                    </Button>
+                    <Button
+                      labelStyle={{ color: "red", fontWeight: "bold" }}
+                      onPress={() => deleteChat()}
+                    >
+                      Borrar
+                    </Button>
+                  </View>
+                </View>
+              </Modal>
+            </Portal>
+            <View
+              style={{
+                backgroundColor: "white",
+                height: "7%",
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <View style={{ marginLeft: 15 }}>
+                <TouchableOpacity>
+                  <Icon
+                    name="arrow-left"
+                    size={30}
+                    color="#900"
+                    onPress={() => navigation.push("Chat", route.params.chat)}
+                  />
+                </TouchableOpacity>
+              </View>
+              <View>
+                <Text>{TitleChat}</Text>
+              </View>
+              <View style={{ flexDirection: "row" }}>
+                <View style={{ marginRight: 15 }}>
+                  <Icon
+                    name="circle-edit-outline"
+                    size={30}
+                    color="#900"
+                    onPress={showModalTitle}
+                  />
+                </View>
+                <View style={{ marginRight: 15 }}>
+                  <Icon
+                    name="delete"
+                    size={30}
+                    color="red"
+                    onPress={showModalDeleteChat}
+                  />
+                </View>
+              </View>
+            </View>
+            <View style={{ height: "93%", flex: 1, flexDirection: "column" }}>
+              <View style={{ flex: 1 }}>
+                <Image
+                  source={
+                    ImageChat.length != 0
+                      ? { uri: ImageChat }
+                      : require("../assets/user.png")
+                  }
+                  style={{ height: "100%", resizeMode: "cover" }}
+                />
+                <FAB
+                  style={{
+                    backgroundColor: "#00bde6",
+                    position: "absolute",
+                    margin: 16,
+                    padding: 5,
+                    right: 0,
+                    bottom: 0,
+                  }}
+                  small
+                  color="#FFF"
+                  icon="image-edit"
+                  onPress={pickImage}
+                />
+              </View>
+              <View style={{ flex: 2 }}>
+                <Text style={{ margin: 10, fontWeight: "bold", fontSize: 20 }}>
+                  Participantes
+                </Text>
+                <SwipeListView
+                  data={users}
+                  renderItem={renderUserItem}
+                  keyExtractor={(item: any) => item.email.toString()}
+                  renderHiddenItem={(data) => renderHiddenUserItem(data)}
+                  rightOpenValue={-75}
+                />
+                <FAB
+                  style={{
+                    backgroundColor: "#00bde6",
+                    position: "absolute",
+                    margin: 16,
+                    padding: 5,
+                    right: 0,
+                    bottom: 0,
+                  }}
+                  small
+                  color="#FFF"
+                  icon="account-plus"
+                  onPress={showModal}
+                />
+              </View>
+            </View>
+          </View>
+        </Provider>
+      );
+    } else {
+      return (
         <View
           style={{
             flexDirection: "column",
@@ -276,66 +503,6 @@ const ChatOptions = ({ route, navigation }: any) => {
             justifyContent: "flex-start",
           }}
         >
-          <Portal>
-            <Modal
-              visible={visible}
-              onDismiss={hideModal}
-              contentContainerStyle={styles.containerStyle}
-            >
-              <Input
-                label="Añadir usuario:"
-                ref={(input) => {
-                  textInput = input;
-                }}
-                onChangeText={(value) => setUser(value)}
-                placeholder="email usuario"
-                clearTextOnFocus
-                rightIcon={
-                  <TouchableOpacity onPress={addUserChat}>
-                    <Icon name="account-plus" size={20} color="#00bde6" />
-                  </TouchableOpacity>
-                }
-              />
-              <FlatList
-                style={{ marginBottom: 3 }}
-                data={UserList}
-                renderItem={renderUserItemFlatList}
-                keyExtractor={(item: any) => item.toString()}
-              />
-              <Button onPress={() => AddUserToChat()}>Enviar</Button>
-            </Modal>
-            <Modal
-              visible={visibleTitle}
-              onDismiss={hideModalTitle}
-              contentContainerStyle={styles.containerStyle}
-            >
-              <Input
-                value={Title}
-                label="Nuevo nombre de chat:"
-                ref={(input) => {
-                  textInputTitle = input;
-                }}
-                onChangeText={(value) => setTitle(value)}
-                placeholder="Título chat"
-                clearTextOnFocus
-              />
-              <Button onPress={() => ChangeTitleChat()}>Enviar</Button>
-            </Modal>
-            <Modal visible={visibleDeleteChat} onDismiss={hideModalDeleteChat} contentContainerStyle={styles.containerStyle}>
-                <View>
-                  <Text style={{fontWeight:'bold', fontSize: 20}}>
-                    ¿Esta seguro de querer borrar este chat?
-                  </Text>
-                  <Text style={{fontWeight:'normal', fontSize: 15, marginTop:10, color:'red'}}>
-                    ¡Está acción no es revertible!
-                  </Text>
-                  <View style={{flexDirection:'row', justifyContent:'space-around', marginTop:20}}>
-                    <Button labelStyle={{fontWeight:'bold'}} onPress={hideModalDeleteChat}>Cancelar</Button>
-                    <Button labelStyle={{color:'red', fontWeight:'bold'}} onPress={() => deleteChat()}>Borrar</Button>
-                  </View>
-                </View>
-            </Modal>
-          </Portal>
           <View
             style={{
               backgroundColor: "white",
@@ -358,80 +525,41 @@ const ChatOptions = ({ route, navigation }: any) => {
             <View>
               <Text>{TitleChat}</Text>
             </View>
-            <View style={{flexDirection:'row'}}>
-              <View style={{ marginRight: 15 }}>
-                <Icon
-                  name="circle-edit-outline"
-                  size={30}
-                  color="#900"
-                  onPress={showModalTitle}
-                />
-              </View>
-              <View style={{ marginRight: 15 }}>
-                <Icon
-                  name="delete"
-                  size={30}
-                  color="red"
-                  onPress={showModalDeleteChat}
-                />
-              </View>
+            <View style={{ marginRight: 10 }}>
+              <Icon
+                name="account-remove"
+                size={30}
+                color="red"
+                onPress={() => DeleteMySelfFromChat()}
+              />
             </View>
           </View>
           <View style={{ height: "93%", flex: 1, flexDirection: "column" }}>
             <View style={{ flex: 1 }}>
               <Image
                 source={
-                  ImageChat.length != 0
+                  ImageChat?.length != 0
                     ? { uri: ImageChat }
                     : require("../assets/user.png")
                 }
                 style={{ height: "100%", resizeMode: "cover" }}
-              />
-              <FAB
-                style={{
-                  backgroundColor: "#00bde6",
-                  position: "absolute",
-                  margin: 16,
-                  padding: 5,
-                  right: 0,
-                  bottom: 0,
-                }}
-                small
-                color="#FFF"
-                icon="image-edit"
-                onPress={pickImage}
               />
             </View>
             <View style={{ flex: 2 }}>
               <Text style={{ margin: 10, fontWeight: "bold", fontSize: 20 }}>
                 Participantes
               </Text>
-              <SwipeListView
+              <FlatList
+                style={{ marginBottom: 3 }}
                 data={users}
                 renderItem={renderUserItem}
-                keyExtractor={(item: any) => item.email.toString()}
-                renderHiddenItem={(data) => renderHiddenUserItem(data)}
-                rightOpenValue={-75}
-              />
-              <FAB
-                style={{
-                  backgroundColor: "#00bde6",
-                  position: "absolute",
-                  margin: 16,
-                  padding: 5,
-                  right: 0,
-                  bottom: 0,
-                }}
-                small
-                color="#FFF"
-                icon="account-plus"
-                onPress={showModal}
+                keyExtractor={(item: any) => item.toString()}
               />
             </View>
           </View>
         </View>
-      </Provider>
-    );
+      );
+    }
   } else {
     return (
       <View
@@ -462,6 +590,9 @@ const ChatOptions = ({ route, navigation }: any) => {
           </View>
           <View>
             <Text>{TitleChat}</Text>
+          </View>
+          <View>
+            <Icon name="dots-vertical" size={30} color="white" />
           </View>
         </View>
         <View style={{ height: "93%", flex: 1, flexDirection: "column" }}>
