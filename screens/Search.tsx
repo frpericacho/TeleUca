@@ -67,14 +67,13 @@ export default function Search({ navigation }: any) {
   );
 
   const renderChatItem = ({ item }: any) => (
-    <ChatItem navigation={navigation} Chat={item} />
+    <ChatItem navigation={navigation} Chat={item} Search={true} />
   );
 
   return (
     <View>
       <View
         style={{
-          backgroundColor: "white",
           flexDirection: "row",
           display: "flex",
           width: "100%",

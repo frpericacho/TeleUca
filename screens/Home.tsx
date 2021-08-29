@@ -57,7 +57,7 @@ export default function Home({ navigation }: any) {
   };
 
   const Item = ({ item }: any) => (
-    <ChatItem navigation={navigation} Chat={item} />
+    <ChatItem navigation={navigation} Chat={item} Search={false} />
   );
 
   useEffect(() => {
@@ -223,7 +223,7 @@ export default function Home({ navigation }: any) {
         </Modal>
       </Portal>
       <View>
-        <ChatItem navigation={navigation} Chat={Saved} />
+        <ChatItem navigation={navigation} Chat={Saved} Search={false} />
         <FlatList
           style={{ marginBottom: 1 }}
           data={chats.sort((a, b) => sortChat(a, b))}

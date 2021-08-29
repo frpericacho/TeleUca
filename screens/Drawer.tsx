@@ -24,7 +24,7 @@ export function DrawerContent({ props, navigation }: any) {
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor:'#B3E5FC' }}>
+    <View style={{ flex: 1, backgroundColor: "#B3E5FC" }}>
       <DrawerContentScrollView {...props}>
         <TouchableOpacity
           onPress={() => {

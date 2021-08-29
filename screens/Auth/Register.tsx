@@ -24,8 +24,8 @@ export default function Register({ navigation }: any) {
             .collection("users")
             .add({
               email: email,
-              avatar_url: '',
-              token: ''
+              avatar_url: "",
+              token: "",
             })
             .then(() => {
               console.log("Usuario guardado correctamente");

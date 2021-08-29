@@ -464,7 +464,7 @@ const ChatOptions = ({ route, navigation }: any) => {
                   onPress={pickImage}
                 />
               </View>
-              <View style={{ flex: 2, backgroundColor:'#B3E5FC' }}>
+              <View style={{ flex: 2, backgroundColor: "#B3E5FC" }}>
                 <Text style={{ margin: 10, fontWeight: "bold", fontSize: 20 }}>
                   Participantes
                 </Text>
@@ -545,7 +545,7 @@ const ChatOptions = ({ route, navigation }: any) => {
                 style={{ height: "100%", resizeMode: "cover" }}
               />
             </View>
-            <View style={{ flex: 2, backgroundColor:'#B3E5FC' }}>
+            <View style={{ flex: 2, backgroundColor: "#B3E5FC" }}>
               <Text style={{ margin: 10, fontWeight: "bold", fontSize: 20 }}>
                 Participantes
               </Text>
@@ -606,7 +606,7 @@ const ChatOptions = ({ route, navigation }: any) => {
               style={{ height: "100%", resizeMode: "cover" }}
             />
           </View>
-          <View style={{ flex: 2, backgroundColor:'#B3E5FC' }}></View>
+          <View style={{ flex: 2, backgroundColor: "#B3E5FC" }}></View>
         </View>
       </View>
     );
