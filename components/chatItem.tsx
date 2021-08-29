@@ -13,7 +13,7 @@ const ChatItem = ({Chat, navigation}:any) => {
         if(Chat.group){
             return(
                 <TouchableOpacity onPress={()=>{navigation.navigate('Chat',Chat)}}>
-                    <View style={{flexDirection:'row', backgroundColor: '#00bde6', height:75, width:'100%', alignItems:'center', marginBottom:1}}>
+                    <View style={{flexDirection:'row', backgroundColor: '#81D4FA', height:75, width:'100%', alignItems:'center', marginBottom:1}}>
                         <View style={{flexDirection:'column'}}>
                             <Avatar
                                 source={Chat.avatar_url ? {uri:Chat.avatar_url} : require('../assets/user.png')}
@@ -41,7 +41,7 @@ const ChatItem = ({Chat, navigation}:any) => {
             })
             return(
                 <TouchableOpacity onPress={()=>{navigation.navigate('Chat',Chat)}}>
-                    <View style={{flexDirection:'row', backgroundColor: '#00bde6', height:75, width:'100%', alignItems:'center', marginBottom:1}}>
+                    <View style={{flexDirection:'row', backgroundColor: '#81D4FA', height:75, width:'100%', alignItems:'center', marginBottom:1}}>
                         <View style={{flexDirection:'column'}}>
                             <Avatar
                                 source={Chat.avatar_url ? {uri:Chat.avatar_url} : require('../assets/user.png')}
@@ -67,7 +67,7 @@ const ChatItem = ({Chat, navigation}:any) => {
         if(Chat.group){
             return(
                 <TouchableOpacity onPress={()=>{navigation.navigate('Chat',Chat)}}>
-                    <View style={{flexDirection:'row', backgroundColor: '#00bde6', height:75, width:'100%', alignItems:'center', marginBottom:1}}>
+                    <View style={{flexDirection:'row', backgroundColor: '#81D4FA', height:75, width:'100%', alignItems:'center', marginBottom:1}}>
                         <View style={{flexDirection:'column'}}>
                             <Avatar
                                 source={Chat.avatar_url ? {uri:Chat.avatar_url} : require('../assets/user.png')}
@@ -90,7 +90,7 @@ const ChatItem = ({Chat, navigation}:any) => {
             })
             return(
                 <TouchableOpacity onPress={()=>{navigation.navigate('Chat',Chat)}}>
-                    <View style={{flexDirection:'row', backgroundColor: '#00bde6', height:75, width:'100%', alignItems:'center', marginBottom:1}}>
+                    <View style={{flexDirection:'row', backgroundColor: '#81D4FA', height:75, width:'100%', alignItems:'center', marginBottom:1}}>
                         <View style={{flexDirection:'column'}}>
                             <Avatar
                                 source={Chat.avatar_url ? {uri:Chat.avatar_url} : require('../assets/user.png')}

@@ -1,9 +1,9 @@
 import {StyleSheet} from 'react-native';
 
 export const standardsStylesObject = {
-    backgroundColor: "white",
+    backgroundColor: "black",
     borderColor: "grey",
-    color: "white",
+    color: "black",
     borderRadius: 5,
     borderWidth: 0.5,
     fontSizeNormal: 14,

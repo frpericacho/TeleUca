@@ -327,7 +327,7 @@ const ChatOptions = ({ route, navigation }: any) => {
                   clearTextOnFocus
                   rightIcon={
                     <TouchableOpacity onPress={addUserChat}>
-                      <Icon name="account-plus" size={20} color="#00bde6" />
+                      <Icon name="account-plus" size={20} color="#03A9F4" />
                     </TouchableOpacity>
                   }
                 />
@@ -451,7 +451,7 @@ const ChatOptions = ({ route, navigation }: any) => {
                 />
                 <FAB
                   style={{
-                    backgroundColor: "#00bde6",
+                    backgroundColor: "#03A9F4",
                     position: "absolute",
                     margin: 16,
                     padding: 5,
@@ -464,7 +464,7 @@ const ChatOptions = ({ route, navigation }: any) => {
                   onPress={pickImage}
                 />
               </View>
-              <View style={{ flex: 2 }}>
+              <View style={{ flex: 2, backgroundColor:'#B3E5FC' }}>
                 <Text style={{ margin: 10, fontWeight: "bold", fontSize: 20 }}>
                   Participantes
                 </Text>
@@ -477,7 +477,7 @@ const ChatOptions = ({ route, navigation }: any) => {
                 />
                 <FAB
                   style={{
-                    backgroundColor: "#00bde6",
+                    backgroundColor: "#03A9F4",
                     position: "absolute",
                     margin: 16,
                     padding: 5,
@@ -545,7 +545,7 @@ const ChatOptions = ({ route, navigation }: any) => {
                 style={{ height: "100%", resizeMode: "cover" }}
               />
             </View>
-            <View style={{ flex: 2 }}>
+            <View style={{ flex: 2, backgroundColor:'#B3E5FC' }}>
               <Text style={{ margin: 10, fontWeight: "bold", fontSize: 20 }}>
                 Participantes
               </Text>
@@ -606,7 +606,7 @@ const ChatOptions = ({ route, navigation }: any) => {
               style={{ height: "100%", resizeMode: "cover" }}
             />
           </View>
-          <View style={{ flex: 2 }}></View>
+          <View style={{ flex: 2, backgroundColor:'#B3E5FC' }}></View>
         </View>
       </View>
     );

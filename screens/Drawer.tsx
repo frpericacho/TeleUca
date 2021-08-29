@@ -24,7 +24,7 @@ export function DrawerContent({ props, navigation }: any) {
   };
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, backgroundColor:'#B3E5FC' }}>
       <DrawerContentScrollView {...props}>
         <TouchableOpacity
           onPress={() => {
@@ -33,7 +33,7 @@ export function DrawerContent({ props, navigation }: any) {
           }}
           style={{ margin: 20 }}
         >
-          <Icon name="home" color="grey" size={30} />
+          <Icon name="home" color="#0277BD" size={30} />
         </TouchableOpacity>
         <View style={{ flexDirection: "row", marginTop: 15 }}>
           <Avatar
@@ -58,7 +58,7 @@ export function DrawerContent({ props, navigation }: any) {
           style={{ marginLeft: 30, marginTop: 20 }}
         >
           <View style={{ flex: 2, flexDirection: "row", alignItems: "center" }}>
-            <Icon name="cog" color="grey" size={30} />
+            <Icon name="cog" color="#0277BD" size={30} />
             <Title style={{ marginLeft: 15, fontSize: 16 }}>
               Editar mi perfil
             </Title>

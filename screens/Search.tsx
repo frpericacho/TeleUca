@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, FlatList } from "react-native";
+import { View, FlatList, TouchableOpacity } from "react-native";
 import { Searchbar } from "react-native-paper";
 import { Button } from "react-native-paper";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
@@ -88,14 +88,16 @@ export default function Search({ navigation }: any) {
             alignContent: "center",
           }}
         >
-          <Button onPress={() => navigation.goBack()}>
-            <Icon
-              name="arrow-left"
-              style={{ width: "100%", height: "100%" }}
-              size={20}
-              color="#00bde6"
-            />
-          </Button>
+          <View style={{ marginLeft: 15, marginRight: 15 }}>
+            <TouchableOpacity>
+              <Icon
+                name="arrow-left"
+                size={30}
+                color="#900"
+                onPress={() => navigation.goBack()}
+              />
+            </TouchableOpacity>
+          </View>
         </View>
         <Searchbar
           style={{ width: "100%" }}

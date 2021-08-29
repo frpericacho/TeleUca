@@ -9,7 +9,7 @@ import {
 import React, { useState } from "react";
 import ChatItem from "../components/chatItem";
 import { useEffect } from "react";
-import { Modal, Portal, Button, Provider } from "react-native-paper";
+import { Modal, Portal, Button, Provider, FAB } from "react-native-paper";
 import { Input } from "react-native-elements";
 import Chat from "../lib/Types/Chat";
 import * as ImagePicker from "expo-image-picker";
@@ -207,7 +207,7 @@ export default function Home({ navigation }: any) {
             clearTextOnFocus
             rightIcon={
               <TouchableOpacity onPress={addUserChat}>
-                <Icon name="account-plus" size={20} color="#00bde6" />
+                <Icon name="account-plus" size={20} color="#03A9F4" />
               </TouchableOpacity>
             }
           />
@@ -230,12 +230,20 @@ export default function Home({ navigation }: any) {
           renderItem={renderChatItem}
         />
       </View>
-
-      <Button
+      <FAB
+        style={{
+          backgroundColor: "#03A9F4",
+          position: "absolute",
+          margin: 16,
+          padding: 5,
+          right: 0,
+          bottom: 0,
+        }}
+        small
+        color="#FFF"
         icon="chat-plus"
-        style={{ marginTop: 30 }}
         onPress={showModal}
-      ></Button>
+      />
     </Provider>
   );
 }

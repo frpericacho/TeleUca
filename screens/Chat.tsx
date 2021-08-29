@@ -13,7 +13,7 @@ import {
   GiftedChat,
   Send,
   Bubble,
-  MessageImage
+  MessageImage,
 } from "react-native-gifted-chat";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import * as ImagePicker from "expo-image-picker";
@@ -229,7 +229,7 @@ const Chat = ({ route, navigation }: any) => {
             <Icon
               name={IsRecording ? "microphone" : "microphone-outline"}
               size={35}
-              color="#00bde6"
+              color="#03A9F4"
               style={{ marginBottom: 5, marginRight: 5 }}
             />
           </TouchableOpacity>
@@ -242,7 +242,7 @@ const Chat = ({ route, navigation }: any) => {
             <Icon
               name="send-circle"
               size={35}
-              color="#00bde6"
+              color="#03A9F4"
               style={{ marginBottom: 5, marginRight: 5 }}
             />
           </View>
@@ -594,7 +594,7 @@ const Chat = ({ route, navigation }: any) => {
           ["Abrir cámara"]: pickImageCamera,
           ["Enviar documento"]: pickDocument,
         }}
-        icon={() => <Icon name="attachment" size={25} color="#6646ee" />}
+        icon={() => <Icon name="attachment" size={25} color="#03A9F4" />}
       />
     );
   };
@@ -659,7 +659,12 @@ const Chat = ({ route, navigation }: any) => {
 
   const renderBubble = (props: any) => {
     if (props.currentMessage.user.name == MyUserAuth?.email)
-      return <Bubble {...props} />;
+      return (
+        <Bubble
+          {...props}
+          wrapperStyle={{ right: { backgroundColor: "#29B6F6" } }}
+        />
+      );
     else
       return (
         <Bubble
@@ -771,7 +776,7 @@ const Chat = ({ route, navigation }: any) => {
 
   const onLongPress = async (context: any, currentMessage: any) => {
     if (currentMessage.text) {
-      const options = ["Copy Text", "Guardar", "Cancel"];
+      const options = ["Copiar texto", "Guardar", "Cancelar"];
       const cancelButtonIndex = options.length - 1;
       context.actionSheet().showActionSheetWithOptions(
         {
@@ -791,7 +796,7 @@ const Chat = ({ route, navigation }: any) => {
       );
     }
     if (currentMessage.audio) {
-      const options = ["Guardar", "Cancel"];
+      const options = ["Guardar", "Cancelar"];
       const cancelButtonIndex = options.length - 1;
       context.actionSheet().showActionSheetWithOptions(
         {
@@ -978,6 +983,7 @@ const Chat = ({ route, navigation }: any) => {
         messageIdGenerator={() => Date().toString()}
         scrollToBottom
         isTyping
+        placeholder="Mensaje"
         renderActions={renderActions}
         renderLoading={rendLoading}
         renderSend={rendSend}

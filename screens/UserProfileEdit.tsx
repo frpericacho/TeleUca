@@ -106,14 +106,14 @@ const UserProfileEdit = ({route, navigation}:any) => {
                         style={{ height: '100%', resizeMode: 'cover' }}
                     />
                     <FAB
-                        style={{backgroundColor:'#00bde6', position: 'absolute', margin: 16, padding: 5, right: 0, bottom: 0,}}
+                        style={{backgroundColor:'#03A9F4', position: 'absolute', margin: 16, padding: 5, right: 0, bottom: 0,}}
                         small
                         color="#FFF"
                         icon="image-edit"
                         onPress={pickImage}
                     />
                 </View>
-                <View style={{flex:2, marginLeft: 20}}>
+                <View style={{flex:2, paddingLeft: 20, backgroundColor:'#B3E5FC'}}>
                     <View>
                         <Text style={{fontWeight:'bold', marginTop:20}}>
                             Email:

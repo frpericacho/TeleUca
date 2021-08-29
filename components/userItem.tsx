@@ -87,7 +87,7 @@ const UserItem = ({ User, navigation, Search }: any) => {
         <View
           style={{
             flexDirection: "row",
-            backgroundColor: "#00bde6",
+            backgroundColor: "#81D4FA",
             height: 75,
             alignItems: "center",
             marginBottom: 1,
@@ -116,7 +116,7 @@ const UserItem = ({ User, navigation, Search }: any) => {
         <View
           style={{
             flexDirection: "row",
-            backgroundColor: "#00bde6",
+            backgroundColor: "#81D4FA",
             height: 75,
             alignItems: "center",
             marginBottom: 1,
