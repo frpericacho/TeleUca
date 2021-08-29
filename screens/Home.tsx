@@ -1,16 +1,16 @@
-import {
-  Text,
-  View,
-  FlatList,
-  StyleSheet,
-  Platform,
-  TouchableOpacity,
-} from "react-native";
+import { Text, View, FlatList, Platform, TouchableOpacity } from "react-native";
 import React, { useState } from "react";
 import ChatItem from "../components/chatItem";
 import { useEffect } from "react";
-import { Modal, Portal, Button, Provider, FAB } from "react-native-paper";
-import { Input } from "react-native-elements";
+import {
+  Modal,
+  Portal,
+  Button,
+  Provider,
+  FAB,
+  Snackbar,
+} from "react-native-paper";
+import { Input, SpeedDial } from "react-native-elements";
 import Chat from "../lib/Types/Chat";
 import * as ImagePicker from "expo-image-picker";
 import firebase from "firebase";
@@ -28,18 +28,21 @@ export default function Home({ navigation }: any) {
   let textInput: any;
 
   //Modal
-  const [visible, setVisible] = React.useState(false);
+  const [visible, setVisible] = useState(false);
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
   const containerStyle = { backgroundColor: "white", padding: 20 };
+  const [open, setOpen] = useState(false);
+  const onOpenSnackBar = () => setOpen(!open);
+  const onDismissSnackBar = () => setOpen(false);
 
   //InputModal
-  const [titleChat, setTitleChat] = React.useState("");
-  const [DescriptionChat, setDescriptionChat] = React.useState("");
+  const [titleChat, setTitleChat] = useState("");
+  const [DescriptionChat, setDescriptionChat] = useState("");
 
   const Saved = {
     id: MyUserAuth?.email,
-    title: "Mensages guardados",
+    title: "Mensajes guardados",
     group: true,
     users: {
       UserList: MyUserAuth?.email,
@@ -128,39 +131,46 @@ export default function Home({ navigation }: any) {
   };
 
   const submit = async (title: string, description: string) => {
-    firebase
-      .firestore()
-      .collection("chats")
-      .add({
-        avatar_url: "",
-        description: DescriptionChat,
-        title: titleChat,
-        titleLowerCase: titleChat.toLowerCase(),
-        group: true,
-        users: {
-          UserList,
-        },
-        LastMessage: {},
-        NewMessages: [],
-        Admin: MyUserAuth?.email,
-      })
-      .then((chat) => {
-        let NewMessages: any = [];
-        UserList.forEach((user: string) => {
-          NewMessages.push({
-            email: user,
-            NewMessage: false,
+    if (title == "") {
+      onOpenSnackBar();
+    } else {
+      firebase
+        .firestore()
+        .collection("chats")
+        .add({
+          avatar_url: "",
+          description: DescriptionChat,
+          title: titleChat,
+          titleLowerCase: titleChat.toLowerCase(),
+          group: true,
+          users: {
+            UserList,
+          },
+          LastMessage: {},
+          NewMessages: [],
+          Admin: MyUserAuth?.email,
+        })
+        .then(async(chat) => {
+          let NewMessages: any = [];
+          UserList.forEach((user: string) => {
+            NewMessages.push({
+              email: user,
+              NewMessage: false,
+            });
           });
+          chat.update({
+            NewMessages: NewMessages,
+          });
+          setUserList([firebase.auth().currentUser?.email]);
+          hideModal();
+
+          await setTitleChat('')
+          await setDescriptionChat('')
+        })
+        .catch((err) => {
+          console.log(err);
         });
-        chat.update({
-          NewMessages: NewMessages,
-        });
-        setUserList([firebase.auth().currentUser?.email]);
-        hideModal();
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    }
   };
 
   const addUserChat = async () => {
@@ -169,12 +179,18 @@ export default function Home({ navigation }: any) {
         Alert.alert("No puedes incluir a un profesor");
         textInput.clear();
       } else {
-        setUserList([...UserList, user]);
-        textInput.clear();
+        if(user != ""){
+          setUserList([...UserList, user]);
+          textInput.clear();
+          await setUser('')
+        }
       }
     } else {
-      setUserList([...UserList, user]);
-      textInput.clear();
+      if(user != ""){
+        setUserList([...UserList, user]);
+        textInput.clear();
+        await setUser('')
+      }
     }
   };
 
@@ -221,6 +237,9 @@ export default function Home({ navigation }: any) {
             Enviar
           </Button>
         </Modal>
+        <Snackbar duration={1000} visible={open} onDismiss={onDismissSnackBar}>
+          El chat requiere un título
+        </Snackbar>
       </Portal>
       <View>
         <ChatItem navigation={navigation} Chat={Saved} Search={false} />

@@ -39,6 +39,7 @@ const Chat = ({ route, navigation }: any) => {
   //Audio
   const [recording, setRecording] = React.useState<Audio.Recording>();
   const [IsRecording, setIsRecording] = React.useState(false);
+  const [sound, setSound] = React.useState<Audio.Sound>();
 
   //Chat
   const [Chat, setChat] = useState<any>();
@@ -144,13 +145,24 @@ const Chat = ({ route, navigation }: any) => {
             return user.data().email != firebase.auth().currentUser?.email;
           })
           .forEach(async (user) => {
-            const message = {
-              to: user.data().token,
-              sound: "default",
-              title: "Mensaje Nuevo",
-              body: text,
-              data: { someData: "goes here" },
-            };
+            let message;
+            if (route.params.group) {
+              message = {
+                to: user.data().token,
+                sound: "default",
+                title: Title,
+                body: text,
+                data: { someData: "goes here" },
+              };
+            } else {
+              message = {
+                to: user.data().token,
+                sound: "default",
+                title: MyUserAuth?.email?.split("@")[0],
+                body: text,
+                data: { someData: "goes here" },
+              };
+            }
 
             await fetch("https://exp.host/--/api/v2/push/send", {
               method: "POST",
@@ -302,7 +314,7 @@ const Chat = ({ route, navigation }: any) => {
                       chat.ref.update({
                         LastMessage: {
                           _id: nombre,
-                          text: "",
+                          text: "Documento 📄",
                           user: {
                             _id: firebase.auth().currentUser?.email,
                             name: firebase.auth().currentUser?.email,
@@ -370,7 +382,7 @@ const Chat = ({ route, navigation }: any) => {
                         chat.ref.update({
                           LastMessage: {
                             _id: nombre,
-                            text: "",
+                            text: "Imagen 📷",
                             user: {
                               _id: firebase.auth().currentUser?.email,
                               name: firebase.auth().currentUser?.email,
@@ -429,7 +441,7 @@ const Chat = ({ route, navigation }: any) => {
                         chat.ref.update({
                           LastMessage: {
                             _id: nombre,
-                            text: "",
+                            text: "Video 🎬",
                             user: {
                               _id: firebase.auth().currentUser?.email,
                               name: firebase.auth().currentUser?.email,
@@ -502,7 +514,7 @@ const Chat = ({ route, navigation }: any) => {
                         chat.ref.update({
                           LastMessage: {
                             _id: nombre,
-                            text: "",
+                            text: "Imagen 📷",
                             user: {
                               _id: firebase.auth().currentUser?.email,
                               name: firebase.auth().currentUser?.email,
@@ -561,7 +573,7 @@ const Chat = ({ route, navigation }: any) => {
                         chat.ref.update({
                           LastMessage: {
                             _id: nombre,
-                            text: "",
+                            text: "Video 🎬",
                             user: {
                               _id: firebase.auth().currentUser?.email,
                               name: firebase.auth().currentUser?.email,
@@ -642,9 +654,6 @@ const Chat = ({ route, navigation }: any) => {
       return (
         <View style={props.containerStyle}>
           <Icon
-            onLongPress={() =>
-              console.log("props.currentMessage", props.currentMessage)
-            }
             onPress={() => Linking.openURL(props.currentMessage.document)}
             name="file-pdf"
             size={35}
@@ -679,14 +688,18 @@ const Chat = ({ route, navigation }: any) => {
   };
 
   async function startRecording() {
+    const { sound } = await Audio.Sound.createAsync(
+      require('../assets/pop.mp3')
+    );
+    setSound(sound);
+    await sound.playAsync();
+
     try {
-      console.log("Requesting permissions..");
       await Audio.requestPermissionsAsync();
       await Audio.setAudioModeAsync({
         allowsRecordingIOS: true,
         playsInSilentModeIOS: true,
       });
-      console.log("Starting recording..");
       const recording = new Audio.Recording();
       await recording.prepareToRecordAsync(
         Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY
@@ -701,7 +714,13 @@ const Chat = ({ route, navigation }: any) => {
   }
 
   async function stopRecording() {
-    console.log("Stopping recording..");
+
+    const { sound } = await Audio.Sound.createAsync(
+      require('../assets/pop.mp3')
+    );
+    setSound(sound);
+    await sound.playAsync();
+
     setRecording(undefined);
     setIsRecording(false);
     await recording.stopAndUnloadAsync();
@@ -709,7 +728,6 @@ const Chat = ({ route, navigation }: any) => {
     await FileSystem.getInfoAsync(uri || "")
       .then((file) => {
         let nombre = new Date().toString();
-        console.log("file.uri", file.uri);
         uploadImage(file.uri)
           .then((resolve: any) => {
             let ref = firebase.storage().ref().child(`media/${nombre}`);
@@ -748,7 +766,7 @@ const Chat = ({ route, navigation }: any) => {
                         chat.ref.update({
                           LastMessage: {
                             _id: nombre,
-                            text: "",
+                            text: "Audio",
                             user: {
                               _id: firebase.auth().currentUser?.email,
                               name: firebase.auth().currentUser?.email,
@@ -945,7 +963,7 @@ const Chat = ({ route, navigation }: any) => {
         </View>
         <View>
           {route.params.id == MyUserAuth?.email ? (
-            <Text>Mensages guardados</Text>
+            <Text>Mensajes guardados</Text>
           ) : (
             <Text>{Title}</Text>
           )}

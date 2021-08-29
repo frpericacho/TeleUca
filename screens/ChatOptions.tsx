@@ -363,7 +363,7 @@ const ChatOptions = ({ route, navigation }: any) => {
               >
                 <View>
                   <Text style={{ fontWeight: "bold", fontSize: 20 }}>
-                    ¿Esta seguro de querer borrar este chat?
+                    Seguro que quieres borrar este chat?
                   </Text>
                   <Text
                     style={{
@@ -373,7 +373,7 @@ const ChatOptions = ({ route, navigation }: any) => {
                       color: "red",
                     }}
                   >
-                    ¡Está acción no es revertible!
+                    ¡Está acción no se puede deshacer!
                   </Text>
                   <View
                     style={{
@@ -465,6 +465,9 @@ const ChatOptions = ({ route, navigation }: any) => {
                 />
               </View>
               <View style={{ flex: 2, backgroundColor: "#B3E5FC" }}>
+                <Text style={{ margin: 10, fontSize: 15 }}>
+                  {route.params.chat.description}
+                </Text>
                 <Text style={{ margin: 10, fontWeight: "bold", fontSize: 20 }}>
                   Participantes
                 </Text>
@@ -546,6 +549,9 @@ const ChatOptions = ({ route, navigation }: any) => {
               />
             </View>
             <View style={{ flex: 2, backgroundColor: "#B3E5FC" }}>
+              <Text style={{ margin: 10, fontSize: 15 }}>
+                {route.params.chat.description}
+              </Text>
               <Text style={{ margin: 10, fontWeight: "bold", fontSize: 20 }}>
                 Participantes
               </Text>

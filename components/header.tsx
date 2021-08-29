@@ -8,7 +8,6 @@ const Header = ({ navigation, Page }: any) => {
   const [search, setState] = useState("");
   const updateSearch = (search: string) => {
     setState(search);
-    console.log("search", search);
   };
 
   switch (Page) {
