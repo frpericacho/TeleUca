@@ -66,9 +66,15 @@ const ChatItem = ({ Chat, navigation, Search }: any) => {
           </TouchableOpacity>
         );
       } else {
+
+        //AQUI
+        
         let titleDisplay = Chat.users.UserList.filter((email: string) => {
           return email != MyUserAuth?.email;
         });
+        let avatarDisplay = Chat.avatar_url.filter((user:any)=>{
+          return user.email == titleDisplay;
+        })
         return (
           <TouchableOpacity
             onPress={() => {
@@ -88,8 +94,8 @@ const ChatItem = ({ Chat, navigation, Search }: any) => {
               <View style={{ flexDirection: "column" }}>
                 <Avatar
                   source={
-                    Chat.avatar_url
-                      ? { uri: Chat.avatar_url }
+                    avatarDisplay[0].avatar_url!=""
+                      ? { uri: avatarDisplay[0].avatar_url }
                       : require("../assets/user.png")
                   }
                   size="medium"
@@ -180,9 +186,15 @@ const ChatItem = ({ Chat, navigation, Search }: any) => {
           </TouchableOpacity>
         );
       } else {
+
+        //AQUI
+        
         let titleDisplay = Chat.users.UserList.filter((email: string) => {
           return email != MyUserAuth?.email;
         });
+        let avatarDisplay = Chat.avatar_url.filter((user:any)=>{
+          return user.email == titleDisplay;
+        })
         return (
           <TouchableOpacity
             onPress={() => {
@@ -202,8 +214,8 @@ const ChatItem = ({ Chat, navigation, Search }: any) => {
               <View style={{ flexDirection: "column" }}>
                 <Avatar
                   source={
-                    Chat.avatar_url
-                      ? { uri: Chat.avatar_url }
+                    avatarDisplay[0].avatar_url!=""
+                      ? { uri: avatarDisplay[0].avatar_url }
                       : require("../assets/user.png")
                   }
                   size="medium"
@@ -289,9 +301,15 @@ const ChatItem = ({ Chat, navigation, Search }: any) => {
           </TouchableOpacity>
         );
       } else {
+
+        //AQUI
+
         let titleDisplay = Chat.users.UserList.filter((email: string) => {
           return email != MyUserAuth?.email;
         });
+        let avatarDisplay = Chat.avatar_url.filter((user:any)=>{
+          return user.email == titleDisplay;
+        })
         return (
           <TouchableOpacity
             onPress={() => {
@@ -311,8 +329,8 @@ const ChatItem = ({ Chat, navigation, Search }: any) => {
               <View style={{ flexDirection: "column" }}>
                 <Avatar
                   source={
-                    Chat.avatar_url
-                      ? { uri: Chat.avatar_url }
+                    avatarDisplay[0].avatar_url!=""
+                      ? { uri: avatarDisplay[0].avatar_url }
                       : require("../assets/user.png")
                   }
                   size="medium"
@@ -394,9 +412,15 @@ const ChatItem = ({ Chat, navigation, Search }: any) => {
           </TouchableOpacity>
         );
       } else {
+
+        //AQUI
+
         let titleDisplay = Chat.users.UserList.filter((email: string) => {
           return email != MyUserAuth?.email;
         });
+        let avatarDisplay = Chat.avatar_url.filter((user:any)=>{
+          return user.email == titleDisplay;
+        })
         return (
           <TouchableOpacity
             onPress={() => {
@@ -416,8 +440,8 @@ const ChatItem = ({ Chat, navigation, Search }: any) => {
               <View style={{ flexDirection: "column" }}>
                 <Avatar
                   source={
-                    Chat.avatar_url
-                      ? { uri: Chat.avatar_url }
+                    avatarDisplay[0].avatar_url!=""
+                      ? { uri: avatarDisplay[0].avatar_url }
                       : require("../assets/user.png")
                   }
                   size="medium"

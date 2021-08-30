@@ -51,6 +51,8 @@ const UserProfileEdit = ({ route, navigation }: any) => {
 
             ref.put(resolve).then((resolve) => {
               resolve.ref.getDownloadURL().then((url) => {
+                //Modificar tambien los chats individuales
+
                 firebase
                   .firestore()
                   .collection("users")
@@ -60,6 +62,7 @@ const UserProfileEdit = ({ route, navigation }: any) => {
                   })
                   .then(() => {
                     setImageUser(url);
+                    changeImageChats();
                   })
                   .catch((err) => {
                     console.log(err);
@@ -72,6 +75,29 @@ const UserProfileEdit = ({ route, navigation }: any) => {
           });
       }
     }
+  };
+
+  const changeImageChats = async () => {
+    firebase
+      .firestore()
+      .collection("chats")
+      .where("group", "==", false)
+      .where("users.UserList", "array-contains", route.params.User.email)
+      .get()
+      .then((docs) => {
+        docs.forEach((chat) => {
+          let MyAvatar = chat.data().avatar_url.filter((user:any)=>{
+            return user.email == route.params.User.email;
+          })
+          let OtherAvatar = chat.data().avatar_url.filter((user:any)=>{
+            return user.email != route.params.User.email;
+          })
+          MyAvatar[0].avatar_url = ImageUser
+
+          let avatar_aux=[...MyAvatar,...OtherAvatar]
+          chat.ref.update({avatar_url: avatar_aux})
+        });
+      });
   };
 
   const changePassword = async () => {

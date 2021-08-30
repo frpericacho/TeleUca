@@ -38,7 +38,13 @@ const ChatOptions = ({ route, navigation }: any) => {
   let textInputTitle: any;
 
   //ChatImage
-  const [ImageChat, setImageChat] = useState(route.params.chat.avatar_url);
+  let titleDisplay = route.params.chat.users.UserList.filter((email: string) => {
+    return email != MyUserAuth?.email;
+  });
+  let avatarDisplay = route.params.chat.avatar_url.filter((user:any)=>{
+    return user.email == titleDisplay;
+  })
+  const [ImageChat, setImageChat] = useState(avatarDisplay[0].avatar_url);
 
   //DeleteChat
   const [visibleDeleteChat, setDeleteChat] = React.useState(false);
