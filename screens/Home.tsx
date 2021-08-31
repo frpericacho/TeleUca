@@ -87,11 +87,16 @@ export default function Home({ navigation }: any) {
       .firestore()
       .collection("chats")
       .where("users.UserList", "array-contains", MyUserAuth?.email)
-      .onSnapshot((snapshot) => {
+      .orderBy('LastMessage.createdAt','desc')
+      .onSnapshot(async (snapshot) => {
         docs = snapshot.docs.map((doc) => {
           return { id: doc.id, ...doc.data() };
         });
-        setChats(docs);
+        await setChats(docs);
+        /*sort(function(a:Chat, b:Chat){
+          return a.LastMessage.createdAt - b.LastMessage.createdAt;
+        })
+        */
       });
   };
 
@@ -207,6 +212,10 @@ export default function Home({ navigation }: any) {
     }
   };
 
+  const sortChat = async (a: Chat, b: Chat) => {
+    return a.LastMessage.createdAt > b.LastMessage.createdAt;
+  }
+
   return (
     <Provider>
       <Portal>
@@ -259,7 +268,7 @@ export default function Home({ navigation }: any) {
         <ChatItem navigation={navigation} Chat={Saved} Search={false} />
         <FlatList
           style={{ marginBottom: 1 }}
-          data={chats.sort((a, b) => sortChat(a, b))}
+          data={chats}
           renderItem={renderChatItem}
         />
       </View>
@@ -281,6 +290,6 @@ export default function Home({ navigation }: any) {
   );
 }
 
-function sortChat(a: Chat, b: Chat) {
+/*function sortChat(a: Chat, b: Chat) {
   return a.LastMessage.createdAt < b.LastMessage.createdAt;
-}
+}*/
