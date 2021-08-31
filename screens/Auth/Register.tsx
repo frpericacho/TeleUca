@@ -10,10 +10,8 @@ export default function Register({ navigation }: any) {
   const [loading, setLoading] = useState("");
 
   const handleRegister = async (email: string, password: string) => {
-    setLoading("Registrando");
-    if (!email.includes("@alum.uca.es") || !email.includes("@uca.es")) {
-      Alert.alert("Correo fuera del domino de la UCA");
-    } else {
+    setLoading("Registrando")
+    if (email.includes("@alum.uca.es") || email.includes("@uca.es")) {
       await firebase
         .auth()
         .createUserWithEmailAndPassword(email, password)
@@ -35,9 +33,27 @@ export default function Register({ navigation }: any) {
             });
         })
         .catch((error) => {
-          console.log(error);
+          switch(error.code){
+            case 'auth/email-already-in-use':
+              Alert.alert("Este email se encuentra ya en uso");
+              setEmail("")
+              setPassword("")
+              break;
+            default:
+              Alert.alert("Se ha producido un error en el email y/o contraseña");
+              setEmail("")
+              setPassword("")
+              break;
+          }
+          console.log(error.code);
         });
       setLoading("");
+    } else {
+      console.log("email", email)
+      Alert.alert("Correo fuera del domino de la UCA");
+      setEmail("")
+      setPassword("")
+      setLoading("")
     }
   };
 

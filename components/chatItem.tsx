@@ -67,8 +67,6 @@ const ChatItem = ({ Chat, navigation, Search }: any) => {
         );
       } else {
 
-        //AQUI
-        
         let titleDisplay = Chat.users.UserList.filter((email: string) => {
           return email != MyUserAuth?.email;
         });
@@ -187,8 +185,6 @@ const ChatItem = ({ Chat, navigation, Search }: any) => {
         );
       } else {
 
-        //AQUI
-        
         let titleDisplay = Chat.users.UserList.filter((email: string) => {
           return email != MyUserAuth?.email;
         });
@@ -302,8 +298,6 @@ const ChatItem = ({ Chat, navigation, Search }: any) => {
         );
       } else {
 
-        //AQUI
-
         let titleDisplay = Chat.users.UserList.filter((email: string) => {
           return email != MyUserAuth?.email;
         });
@@ -412,8 +406,6 @@ const ChatItem = ({ Chat, navigation, Search }: any) => {
           </TouchableOpacity>
         );
       } else {
-
-        //AQUI
 
         let titleDisplay = Chat.users.UserList.filter((email: string) => {
           return email != MyUserAuth?.email;

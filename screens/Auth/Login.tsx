@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, Alert } from "react-native";
 import { Button, Input, Image } from "react-native-elements";
 import React from "react";
 import firebase from "firebase";
@@ -11,7 +11,7 @@ export default function Login({ navigation }: any) {
   const [loading, setLoading] = useState("");
 
   const handleLogin = async (email: string, password: string) => {
-    setLoading("Entrando");
+    setLoading("Entrando")
     await firebase
       .auth()
       .signInWithEmailAndPassword(email, password)
@@ -20,10 +20,33 @@ export default function Login({ navigation }: any) {
         registerForPushNotificationsAsync();
       })
       .catch((error) => {
-        console.log(error);
+        console.log('error',error.message)
+        switch (error.message) {
+          case 'There is no user record corresponding to this identifier. The user may have been deleted.':
+            Alert.alert("No se ha encontrado a ningún usuario con esta email");
+            setEmail("")
+            setPassword("")
+            break;
+          case 'The password is invalid or the user does not have a password.':
+            Alert.alert("Contraseña incorrecta");
+            setEmail("")
+            setPassword("")
+            break;
+          case 'A network error (such as timeout, interrupted connection or unreachable host) has occurred.':
+            Alert.alert("Error en la red, compruebe que dispone de una conexión de internet");
+            break;
+          case 'The email address is badly formatted.':
+            Alert.alert("Formato de email incorrecto");
+            setEmail("")
+            setPassword("")
+            break;
+          default:
+            Alert.alert("Se ha producido un error inesperado, inténtelo más tarde");
+            setEmail("")
+            setPassword("")
+        }
       });
-
-    setLoading("");
+    setLoading("")
   };
 
   return (

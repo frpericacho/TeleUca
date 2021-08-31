@@ -178,18 +178,31 @@ export default function Home({ navigation }: any) {
       if (user.includes("@uca.es")) {
         Alert.alert("No puedes incluir a un profesor");
         textInput.clear();
+        await setUser('')
       } else {
         if(user != ""){
-          setUserList([...UserList, user]);
-          textInput.clear();
-          await setUser('')
+          if(UserList.includes(user)){
+            Alert.alert("Este usuario ya está añadido al chat");
+            textInput.clear();
+            await setUser('')
+          }else{
+            setUserList([...UserList, user]);
+            textInput.clear();
+            await setUser('')
+          }
         }
       }
     } else {
       if(user != ""){
-        setUserList([...UserList, user]);
-        textInput.clear();
-        await setUser('')
+        if(UserList.includes(user)){
+          Alert.alert("Este usuario ya está añadido al chat");
+          textInput.clear();
+          await setUser('')
+        }else{
+          setUserList([...UserList, user]);
+          textInput.clear();
+          await setUser('')
+        }
       }
     }
   };
@@ -221,6 +234,7 @@ export default function Home({ navigation }: any) {
             onChangeText={(value) => setUser(value)}
             placeholder="email usuario"
             clearTextOnFocus
+            autoCapitalize={"none"}
             rightIcon={
               <TouchableOpacity onPress={addUserChat}>
                 <Icon name="account-plus" size={20} color="#03A9F4" />

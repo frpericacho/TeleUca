@@ -13,6 +13,7 @@ import { SwipeListView } from "react-native-swipe-list-view";
 import firebase from "firebase";
 import { Button, Provider, Portal, Modal, FAB } from "react-native-paper";
 import * as ImagePicker from "expo-image-picker";
+import { useEffect } from "react";
 
 const ChatOptions = ({ route, navigation }: any) => {
   //MyUser
@@ -38,22 +39,34 @@ const ChatOptions = ({ route, navigation }: any) => {
   let textInputTitle: any;
 
   //ChatImage
-  let titleDisplay = route.params.chat.users.UserList.filter((email: string) => {
-    return email != MyUserAuth?.email;
-  });
-  let avatarDisplay = route.params.chat.avatar_url.filter((user:any)=>{
-    return user.email == titleDisplay;
-  })
-  const [ImageChat, setImageChat] = useState(avatarDisplay[0].avatar_url);
+  const [ImageChat, setImageChat] = useState<string>('')
 
   //DeleteChat
   const [visibleDeleteChat, setDeleteChat] = React.useState(false);
   const showModalDeleteChat = () => setDeleteChat(true);
   const hideModalDeleteChat = () => setDeleteChat(false);
 
+  useEffect(()=>{
+    getChatImagen()
+  }, []);
+
   useLayoutEffect(() => {
     fetchUsers(route.params.chat.users.UserList);
   }, []);
+
+  const getChatImagen = async () => {
+    if(!route.params.chat.group){
+      let titleDisplay = route.params.chat.users.UserList.filter((email: string) => {
+        return email != MyUserAuth?.email;
+      });
+      let avatarDisplay = route.params.chat.avatar_url.filter((user:any)=>{
+        return user.email == titleDisplay;
+      })
+      await setImageChat(avatarDisplay[0].avatar_url)
+    }else{
+      await setImageChat(route.params.chat.avatar_url)
+    }
+  }
 
   const fetchUsers = async (UserList: any) => {
     let userDocs: any = [];
@@ -449,7 +462,7 @@ const ChatOptions = ({ route, navigation }: any) => {
               <View style={{ flex: 1 }}>
                 <Image
                   source={
-                    ImageChat.length != 0
+                    ImageChat?.length != 0
                       ? { uri: ImageChat }
                       : require("../assets/user.png")
                   }
@@ -573,6 +586,7 @@ const ChatOptions = ({ route, navigation }: any) => {
       );
     }
   } else {
+    // HASTA AQUI
     return (
       <View
         style={{
