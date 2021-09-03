@@ -13,7 +13,6 @@ import {
   GiftedChat,
   Send,
   Bubble,
-  MessageImage,
 } from "react-native-gifted-chat";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import * as ImagePicker from "expo-image-picker";
@@ -26,6 +25,7 @@ import * as DocumentPicker from "expo-document-picker";
 const Chat = ({ route, navigation }: any) => {
   //MyUser
   const MyUserAuth = firebase.auth().currentUser;
+  const [UserFirestore, setUserFirestore] = useState<firebase.firestore.DocumentData>();
 
   //Messages
   const [Messages, setMessages] = useState<any>([]);
@@ -45,6 +45,9 @@ const Chat = ({ route, navigation }: any) => {
   const [Chat, setChat] = useState<any>();
 
   useEffect(() => {
+    firebase.firestore().collection('users').where('email','==',MyUserAuth?.email).get().then(async (user) => {
+      setUserFirestore(user.docs[0].data())
+    })
     readNewMessages();
   });
 
@@ -286,7 +289,7 @@ const Chat = ({ route, navigation }: any) => {
                 .firestore()
                 .collection("messages")
                 .add({
-                  _id: new Date().toString(),
+                  _id: nombre,
                   chat_id: route.params.id,
                   createdAt: new Date(),
                   user: {
@@ -354,7 +357,7 @@ const Chat = ({ route, navigation }: any) => {
                   .firestore()
                   .collection("messages")
                   .add({
-                    _id: new Date().toString(),
+                    _id: nombre,
                     chat_id: route.params.id,
                     createdAt: new Date(),
                     user: {
@@ -413,7 +416,7 @@ const Chat = ({ route, navigation }: any) => {
                   .firestore()
                   .collection("messages")
                   .add({
-                    _id: new Date().toString(),
+                    _id: nombre,
                     chat_id: route.params.id,
                     createdAt: new Date(),
                     user: {
@@ -486,7 +489,7 @@ const Chat = ({ route, navigation }: any) => {
                   .firestore()
                   .collection("messages")
                   .add({
-                    _id: new Date().toString(),
+                    _id: nombre,
                     chat_id: route.params.id,
                     createdAt: new Date(),
                     user: {
@@ -545,7 +548,7 @@ const Chat = ({ route, navigation }: any) => {
                   .firestore()
                   .collection("messages")
                   .add({
-                    _id: new Date().toString(),
+                    _id: nombre,
                     chat_id: route.params.id,
                     createdAt: new Date(),
                     user: {
@@ -740,7 +743,7 @@ const Chat = ({ route, navigation }: any) => {
                   .add({
                     _id: nombre,
                     chat_id: route.params.id,
-                    createdAt: new Date(),
+                    createdAt: nombre,
                     user: {
                       _id: firebase.auth().currentUser?.email,
                       name: firebase.auth().currentUser?.email,
@@ -940,6 +943,89 @@ const Chat = ({ route, navigation }: any) => {
     }
   };
 
+  const createChatOneToOne = async (User:any) => {
+    const MyUser = (await firebase.firestore().collection('users').where('email','==',MyUserAuth?.email).get()).docs[0].data()
+    firebase
+      .firestore()
+      .collection("chats")
+      .add({
+        avatar_url: [
+          {
+            email: MyUserAuth?.email,
+            avatar_url: MyUser.avatar_url
+          },
+          {
+            email: User.name,
+            avatar_url: User.avatar_url
+          }
+        ],
+        description: "",
+        title: "",
+        titleLowerCase: "",
+        group: false,
+        users: {
+          UserList: [MyUserAuth?.email, User.name],
+        },
+        LastMessage: {},
+        NewMessages: [
+          {
+            email: MyUserAuth?.email,
+            NewMessage: false,
+          },
+          {
+            email: User.name,
+            NewMessage: false,
+          },
+        ],
+        Admin: "",
+      })
+      .then((chat) => {
+        chat.get().then((docs) => {
+          navigation.navigate("Chat", { id: docs.id, ...docs.data() });
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const HandleChatOneToOne = async (User:any) => {
+    let docsOther: any = [];
+    let docsMe: any = [];
+    let docs: any = [];
+
+    firebase
+      .firestore()
+      .collection("chats")
+      .where("group", "==", false)
+      .where("users.UserList", "==", [User.name, MyUserAuth?.email])
+      .get()
+      .then((snapshotOther) => {
+        firebase
+          .firestore()
+          .collection("chats")
+          .where("group", "==", false)
+          .where("users.UserList", "==", [MyUserAuth?.email, User.name])
+          .get()
+          .then((snapshotMe) => {
+            docsOther = snapshotOther.docs.map((doc) => {
+              return { id: doc.id, ...doc.data() };
+            });
+            docsMe = snapshotMe.docs.map((doc) => {
+              return { id: doc.id, ...doc.data() };
+            });
+
+            docs = [...docsOther, ...docsMe];
+
+            if (docs.length != 0) {
+              navigation.push("Chat", docs[0]);
+            } else {
+              createChatOneToOne(User);
+            }
+          });
+      });
+  };
+
   return (
     <View style={{ display: "flex", height: "100%" }}>
       <View
@@ -998,7 +1084,6 @@ const Chat = ({ route, navigation }: any) => {
         onSend={(messages) => onSend(messages)}
         alwaysShowSend
         showAvatarForEveryMessage
-        messageIdGenerator={() => Date().toString()}
         scrollToBottom
         isTyping
         placeholder="Mensaje"
@@ -1012,9 +1097,11 @@ const Chat = ({ route, navigation }: any) => {
         onLongPress={(context, currentMessage) =>
           onLongPress(context, currentMessage)
         }
+        onPressAvatar={(message) => HandleChatOneToOne(message)}
         user={{
           _id: firebase.auth().currentUser?.email,
           name: firebase.auth().currentUser?.email,
+          avatar: UserFirestore?.avatar_url,
         }}
       />
     </View>

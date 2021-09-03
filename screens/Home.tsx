@@ -93,10 +93,6 @@ export default function Home({ navigation }: any) {
           return { id: doc.id, ...doc.data() };
         });
         await setChats(docs);
-        /*sort(function(a:Chat, b:Chat){
-          return a.LastMessage.createdAt - b.LastMessage.createdAt;
-        })
-        */
       });
   };
 
@@ -151,7 +147,9 @@ export default function Home({ navigation }: any) {
           users: {
             UserList,
           },
-          LastMessage: {},
+          LastMessage: {
+            createdAt: new Date()
+          },
           NewMessages: [],
           Admin: MyUserAuth?.email,
         })
@@ -290,6 +288,3 @@ export default function Home({ navigation }: any) {
   );
 }
 
-/*function sortChat(a: Chat, b: Chat) {
-  return a.LastMessage.createdAt < b.LastMessage.createdAt;
-}*/

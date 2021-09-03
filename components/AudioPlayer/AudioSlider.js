@@ -14,6 +14,8 @@ import DigitalTimeString from './DigitalTimeString';
 const TRACK_SIZE = 4;
 const THUMB_SIZE = 20;
 
+//  URL:
+//  https://github.com/olapiv/expo-audio-player/tree/cf69f7731ac7faec9d0fcd38c057a8ab72781097
 
 export default class AudioSlider extends PureComponent {
 

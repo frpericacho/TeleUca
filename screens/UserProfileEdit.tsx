@@ -86,6 +86,7 @@ const UserProfileEdit = ({ route, navigation }: any) => {
       .get()
       .then((docs) => {
         docs.forEach((chat) => {
+          console.log('este es el chat',chat.data())
           let MyAvatar = chat.data().avatar_url.filter((user:any)=>{
             return user.email == route.params.User.email;
           })

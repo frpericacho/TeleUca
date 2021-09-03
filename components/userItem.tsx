@@ -8,7 +8,6 @@ const UserItem = ({ User, navigation, Search }: any) => {
   //MyUser
   const MyUserAuth = firebase.auth().currentUser
 
-
   const createChatOneToOne = async () => {
     const MyUser = (await firebase.firestore().collection('users').where('email','==',MyUserAuth?.email).get()).docs[0].data()
     firebase
