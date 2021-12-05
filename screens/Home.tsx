@@ -28,9 +28,18 @@ export default function Home({ navigation }: any) {
   let textInput: any;
 
   //Modal
+  /* 
+  // FAB
   const [visible, setVisible] = useState(false);
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
+  */
+ // Speeddial
+  const [visible, setVisible] = useState(false);
+  const showModal = () => setVisible(true);
+  const hideModal = () => setVisible(false);
+  const [openSpeedDial, setOpenSpeedDial] = React.useState(false);
+
   const containerStyle = { backgroundColor: "white", padding: 20 };
   const [open, setOpen] = useState(false);
   const onOpenSnackBar = () => setOpen(!open);
@@ -270,6 +279,7 @@ export default function Home({ navigation }: any) {
           renderItem={renderChatItem}
         />
       </View>
+      {/*
       <FAB
         style={{
           backgroundColor: "#03A9F4",
@@ -284,6 +294,28 @@ export default function Home({ navigation }: any) {
         icon="chat-plus"
         onPress={showModal}
       />
+      */}
+      <SpeedDial
+        isOpen={openSpeedDial} 
+        icon={{ name: 'edit', color: '#fff' }} 
+        openIcon={{ name: 'close', color: '#fff' }} 
+        onOpen={() => setOpenSpeedDial(!openSpeedDial)} 
+        onClose={() => setOpenSpeedDial(!openSpeedDial)}
+        color='#03A9F4'
+      >
+        <SpeedDial.Action 
+          icon={{ name: 'add', color: '#fff' }} 
+          title="Add" 
+          onPress={() => {showModal(); setOpenSpeedDial(!openSpeedDial)}}
+          color='#03A9F4'
+        />  
+        <SpeedDial.Action 
+          icon={{ name: 'delete', color: '#fff' }} 
+          title="Delete" 
+          onPress={() => console.log('Delete Something')}
+          color='#03A9F4'
+        />
+      </SpeedDial>
     </Provider>
   );
 }
