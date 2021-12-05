@@ -90,7 +90,7 @@ const UserItem = ({ User, navigation, Search }: any) => {
           });
       });
   };
-
+/*
   if (Search) {
     return (
       <TouchableOpacity onPress={HandleChatOneToOne}>
@@ -150,6 +150,35 @@ const UserItem = ({ User, navigation, Search }: any) => {
       </TouchableOpacity>
     );
   }
+  */
+  return (
+    <TouchableOpacity onPress={HandleChatOneToOne}>
+      <View
+        style={{
+          flexDirection: "row",
+          backgroundColor: "#81D4FA",
+          height: 75,
+          alignItems: "center",
+          marginBottom: 1,
+        }}
+      >
+        <Avatar
+          source={
+            User.avatar_url
+              ? { uri: User.avatar_url }
+              : require("../assets/user.png")
+          }
+          size="medium"
+          imageProps={{ resizeMode: "cover" }}
+          rounded
+          containerStyle={{ marginLeft: 20 }}
+        />
+        <View style={{ marginLeft: 15, flexDirection: "column" }}>
+          <Title style={styles.title}>{User.email.split("@")[0]}</Title>
+        </View>
+      </View>
+    </TouchableOpacity>
+  );
 };
 export default UserItem;
 
