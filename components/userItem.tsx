@@ -10,6 +10,7 @@ const UserItem = ({ User, navigation, Search }: any) => {
 
   const createChatOneToOne = async () => {
     const MyUser = (await firebase.firestore().collection('users').where('email','==',MyUserAuth?.email).get()).docs[0].data()
+    //type: individual
     firebase
       .firestore()
       .collection("chats")
@@ -27,7 +28,7 @@ const UserItem = ({ User, navigation, Search }: any) => {
         description: "",
         title: "",
         titleLowerCase: "",
-        group: false,
+        type: "individual",
         users: {
           UserList: [MyUserAuth?.email, User.email],
         },
@@ -58,18 +59,18 @@ const UserItem = ({ User, navigation, Search }: any) => {
     let docsOther: any = [];
     let docsMe: any = [];
     let docs: any = [];
-
+    //type: individual(ambos)
     firebase
       .firestore()
       .collection("chats")
-      .where("group", "==", false)
+      .where("type", "==", "individual")
       .where("users.UserList", "==", [User.email, MyUserAuth?.email])
       .get()
       .then((snapshotOther) => {
         firebase
           .firestore()
           .collection("chats")
-          .where("group", "==", false)
+          .where("type", "==", "individual")
           .where("users.UserList", "==", [MyUserAuth?.email, User.email])
           .get()
           .then((snapshotMe) => {

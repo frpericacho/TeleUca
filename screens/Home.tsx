@@ -27,17 +27,14 @@ export default function Home({ navigation }: any) {
   const [UserList, setUserList] = useState<Array<any>>([]);
   let textInput: any;
 
-  //Modal
-  /* 
-  // FAB
   const [visible, setVisible] = useState(false);
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
-  */
- // Speeddial
-  const [visible, setVisible] = useState(false);
-  const showModal = () => setVisible(true);
-  const hideModal = () => setVisible(false);
+
+  const [visible2, setVisible2] = useState(false);
+  const showModal2 = () => setVisible2(true);
+  const hideModal2 = () => setVisible2(false);
+  
   const [openSpeedDial, setOpenSpeedDial] = React.useState(false);
 
   const containerStyle = { backgroundColor: "white", padding: 20 };
@@ -52,7 +49,8 @@ export default function Home({ navigation }: any) {
   const Saved = {
     id: MyUserAuth?.email,
     title: "Mensajes guardados",
-    group: true,
+    //type: group
+    type: "group",
     users: {
       UserList: MyUserAuth?.email,
     },
@@ -140,7 +138,7 @@ export default function Home({ navigation }: any) {
     }
   };
 
-  const submit = async (title: string, description: string) => {
+  const submitGroup = async (title: string, description: string) => {
     if (title == "") {
       onOpenSnackBar();
     } else {
@@ -152,7 +150,8 @@ export default function Home({ navigation }: any) {
           description: DescriptionChat,
           title: titleChat,
           titleLowerCase: titleChat.toLowerCase(),
-          group: true,
+          //type: group
+          type: "group",
           users: {
             UserList,
           },
@@ -184,6 +183,51 @@ export default function Home({ navigation }: any) {
         });
     }
   };
+  const submitDiffusion = async (title: string, description: string) => {
+    if (title == "") {
+      onOpenSnackBar();
+    } else {
+      firebase
+        .firestore()
+        .collection("chats")
+        .add({
+          avatar_url: "",
+          description: DescriptionChat,
+          title: titleChat,
+          titleLowerCase: titleChat.toLowerCase(),
+          //type: difusion
+          type: "difusion",
+          users: {
+            UserList,
+          },
+          LastMessage: {
+            createdAt: new Date()
+          },
+          NewMessages: [],
+          Admin: MyUserAuth?.email,
+        })
+        .then(async(chat) => {
+          let NewMessages: any = [];
+          UserList.forEach((user: string) => {
+            NewMessages.push({
+              email: user,
+              NewMessage: false,
+            });
+          });
+          chat.update({
+            NewMessages: NewMessages,
+          });
+          setUserList([firebase.auth().currentUser?.email]);
+          hideModal();
+
+          await setTitleChat('')
+          await setDescriptionChat('')
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  }
 
   const addUserChat = async () => {
     if (MyUserAuth?.email?.includes("@alum.uca.es")) {
@@ -228,10 +272,10 @@ export default function Home({ navigation }: any) {
       <Portal>
         <Modal
           visible={visible}
-          onDismiss={hideModal}
+          onDismiss={()=> {hideModal(); setUserList([firebase.auth().currentUser?.email]);} }
           contentContainerStyle={containerStyle}
         >
-          <Text>Añadir Chat</Text>
+          <Text>Crear Chat</Text>
           <Input
             label="Titulo:"
             onChangeText={(value) => setTitleChat(value)}
@@ -263,7 +307,53 @@ export default function Home({ navigation }: any) {
             renderItem={renderUserItem}
             keyExtractor={(item) => item}
           />
-          <Button onPress={() => submit(titleChat, DescriptionChat)}>
+          <Button onPress={() => submitGroup(titleChat, DescriptionChat)}>
+            Enviar
+          </Button>
+        </Modal>
+        <Snackbar duration={1000} visible={open} onDismiss={onDismissSnackBar}>
+          El chat requiere un título
+        </Snackbar>
+      </Portal>
+      <Portal>
+        <Modal
+          visible={visible2}
+          onDismiss={()=> {hideModal2(); setUserList([firebase.auth().currentUser?.email]);} }
+          contentContainerStyle={containerStyle}
+        >
+          <Text>Crear Chat de difusión</Text>
+          <Input
+            label="Titulo:"
+            onChangeText={(value) => setTitleChat(value)}
+            placeholder="Titulo"
+          />
+          <Input
+            label="Descripcion:"
+            onChangeText={(value) => setDescriptionChat(value)}
+            placeholder="Descripcion"
+          />
+          <Input
+            label="Añadir usuario:"
+            ref={(input) => {
+              textInput = input;
+            }}
+            onChangeText={(value) => setUser(value)}
+            placeholder="email usuario"
+            clearTextOnFocus
+            autoCapitalize={"none"}
+            rightIcon={
+              <TouchableOpacity onPress={addUserChat}>
+                <Icon name="account-plus" size={20} color="#03A9F4" />
+              </TouchableOpacity>
+            }
+          />
+          <FlatList
+            style={{ marginBottom: 3 }}
+            data={UserList}
+            renderItem={renderUserItem}
+            keyExtractor={(item) => item}
+          />
+          <Button onPress={() => submitDiffusion(titleChat, DescriptionChat)}>
             Enviar
           </Button>
         </Modal>
@@ -305,14 +395,14 @@ export default function Home({ navigation }: any) {
       >
         <SpeedDial.Action 
           icon={{ name: 'add', color: '#fff' }} 
-          title="Add" 
+          title="Crear Chat" 
           onPress={() => {showModal(); setOpenSpeedDial(!openSpeedDial)}}
           color='#03A9F4'
         />  
         <SpeedDial.Action 
           icon={{ name: 'delete', color: '#fff' }} 
-          title="Delete" 
-          onPress={() => console.log('Delete Something')}
+          title="Crear Chat Difusión" 
+          onPress={() => {showModal2(); setOpenSpeedDial(!openSpeedDial)}}
           color='#03A9F4'
         />
       </SpeedDial>

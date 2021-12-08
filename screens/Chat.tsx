@@ -13,6 +13,7 @@ import {
   GiftedChat,
   Send,
   Bubble,
+  InputToolbar,
 } from "react-native-gifted-chat";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import * as ImagePicker from "expo-image-picker";
@@ -98,7 +99,8 @@ const Chat = ({ route, navigation }: any) => {
   };
 
   const getTitleChat = async () => {
-    if (route.params.group) {
+    //type: group || difusion
+    if (route.params.type == "group" || route.params.type == "difusion") {
       setTitle(
         (
           await firebase
@@ -149,7 +151,8 @@ const Chat = ({ route, navigation }: any) => {
           })
           .forEach(async (user) => {
             let message;
-            if (route.params.group) {
+            //type: group || difusion
+            if (route.params.type == "group" || route.params.type == "difusion") {
               message = {
                 to: user.data().token,
                 sound: "default",
@@ -690,6 +693,18 @@ const Chat = ({ route, navigation }: any) => {
       );
   };
 
+  const renderInputToolbar = (props: any) => {
+    //type: difusion
+    if (route.params.type == "difusion") {
+    } else {
+    return(
+      <InputToolbar
+        {...props}
+      />
+    ); 
+  }
+  };
+
   async function startRecording() {
     const { sound } = await Audio.Sound.createAsync(
       require('../assets/pop.mp3')
@@ -945,6 +960,7 @@ const Chat = ({ route, navigation }: any) => {
 
   const createChatOneToOne = async (User:any) => {
     const MyUser = (await firebase.firestore().collection('users').where('email','==',MyUserAuth?.email).get()).docs[0].data()
+    //type: individual
     firebase
       .firestore()
       .collection("chats")
@@ -962,7 +978,7 @@ const Chat = ({ route, navigation }: any) => {
         description: "",
         title: "",
         titleLowerCase: "",
-        group: false,
+        type: "individual",
         users: {
           UserList: [MyUserAuth?.email, User.name],
         },
@@ -994,17 +1010,18 @@ const Chat = ({ route, navigation }: any) => {
     let docsMe: any = [];
     let docs: any = [];
 
+    //type: individual(ambos)
     firebase
       .firestore()
       .collection("chats")
-      .where("group", "==", false)
+      .where("type", "==", "individual")
       .where("users.UserList", "==", [User.name, MyUserAuth?.email])
       .get()
       .then((snapshotOther) => {
         firebase
           .firestore()
           .collection("chats")
-          .where("group", "==", false)
+          .where("type", "==", "individual")
           .where("users.UserList", "==", [MyUserAuth?.email, User.name])
           .get()
           .then((snapshotMe) => {
@@ -1094,6 +1111,7 @@ const Chat = ({ route, navigation }: any) => {
         renderMessageVideo={renderMessageVideo}
         renderMessageAudio={renderMessageAudio}
         renderCustomView={renderMessageDocument}
+        renderInputToolbar={renderInputToolbar}
         onLongPress={(context, currentMessage) =>
           onLongPress(context, currentMessage)
         }

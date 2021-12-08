@@ -8,9 +8,12 @@ import firebase from "firebase";
 const ChatItem = ({ Chat, navigation, Search }: any) => {
   //MyUser
   const MyUserAuth = firebase.auth().currentUser;
+
+  // ChatItem vista Home
   if (!Search) {
     if (checkNewMessages(Chat, MyUserAuth)) {
-      if (Chat.group) {
+      //type: group || difusion
+      if (Chat.type == "group" || Chat.type == "difusion") {
         return (
           <TouchableOpacity
             onPress={() => {
@@ -18,14 +21,7 @@ const ChatItem = ({ Chat, navigation, Search }: any) => {
             }}
           >
             <View
-              style={{
-                flexDirection: "row",
-                backgroundColor: "#81D4FA",
-                height: 75,
-                width: "100%",
-                alignItems: "center",
-                marginBottom: 1,
-              }}
+              style={styles.wrapperItem}
             >
               <View style={{ flexDirection: "column" }}>
                 <Avatar
@@ -41,11 +37,7 @@ const ChatItem = ({ Chat, navigation, Search }: any) => {
                 />
               </View>
               <View
-                style={{
-                  marginLeft: 15,
-                  flexDirection: "column",
-                  width: "60%",
-                }}
+                style={styles.innerWrapper}
               >
                 <Title adjustsFontSizeToFit style={styles.title}>
                   {Chat.title}
@@ -80,14 +72,7 @@ const ChatItem = ({ Chat, navigation, Search }: any) => {
             }}
           >
             <View
-              style={{
-                flexDirection: "row",
-                backgroundColor: "#81D4FA",
-                height: 75,
-                width: "100%",
-                alignItems: "center",
-                marginBottom: 1,
-              }}
+              style={styles.wrapperItem}
             >
               <View style={{ flexDirection: "column" }}>
                 <Avatar
@@ -103,11 +88,7 @@ const ChatItem = ({ Chat, navigation, Search }: any) => {
                 />
               </View>
               <View
-                style={{
-                  marginLeft: 15,
-                  flexDirection: "column",
-                  width: "60%",
-                }}
+                style={styles.innerWrapper}
               >
                 <Title adjustsFontSizeToFit style={styles.title}>
                   {titleDisplay[0].split("@")[0]}
@@ -131,7 +112,8 @@ const ChatItem = ({ Chat, navigation, Search }: any) => {
         );
       }
     } else {
-      if (Chat.group) {
+      //type: group || difusion
+      if (Chat.type == "group" || Chat.type == "difusion") {
         return (
           <TouchableOpacity
             onPress={() => {
@@ -139,14 +121,7 @@ const ChatItem = ({ Chat, navigation, Search }: any) => {
             }}
           >
             <View
-              style={{
-                flexDirection: "row",
-                backgroundColor: "#81D4FA",
-                height: 75,
-                width: "100%",
-                alignItems: "center",
-                marginBottom: 1,
-              }}
+              style={styles.wrapperItem}
             >
               <View style={{ flexDirection: "column" }}>
                 <Avatar
@@ -162,11 +137,7 @@ const ChatItem = ({ Chat, navigation, Search }: any) => {
                 />
               </View>
               <View
-                style={{
-                  marginLeft: 15,
-                  flexDirection: "column",
-                  width: "60%",
-                }}
+                style={styles.innerWrapper}
               >
                 <Title adjustsFontSizeToFit style={styles.title}>
                   {Chat.title}
@@ -198,14 +169,7 @@ const ChatItem = ({ Chat, navigation, Search }: any) => {
             }}
           >
             <View
-              style={{
-                flexDirection: "row",
-                backgroundColor: "#81D4FA",
-                height: 75,
-                width: "100%",
-                alignItems: "center",
-                marginBottom: 1,
-              }}
+              style={styles.wrapperItem}
             >
               <View style={{ flexDirection: "column" }}>
                 <Avatar
@@ -221,11 +185,7 @@ const ChatItem = ({ Chat, navigation, Search }: any) => {
                 />
               </View>
               <View
-                style={{
-                  marginLeft: 15,
-                  flexDirection: "column",
-                  width: "60%",
-                }}
+                style={styles.innerWrapper}
               >
                 <Title adjustsFontSizeToFit style={styles.title}>
                   {titleDisplay[0].split("@")[0]}
@@ -242,8 +202,10 @@ const ChatItem = ({ Chat, navigation, Search }: any) => {
       }
     }
   } else {
+    // ChatItem vista Search
     if (checkNewMessages(Chat, MyUserAuth)) {
-      if (Chat.group) {
+      //type: group || difusion
+      if (Chat.type == "group" || Chat.type == "difusion") {
         return (
           <TouchableOpacity
             onPress={() => {
@@ -251,14 +213,7 @@ const ChatItem = ({ Chat, navigation, Search }: any) => {
             }}
           >
             <View
-              style={{
-                flexDirection: "row",
-                backgroundColor: "#81D4FA",
-                height: 75,
-                width: "100%",
-                alignItems: "center",
-                marginBottom: 1,
-              }}
+              style={styles.wrapperItem}
             >
               <View style={{ flexDirection: "column" }}>
                 <Avatar
@@ -274,11 +229,7 @@ const ChatItem = ({ Chat, navigation, Search }: any) => {
                 />
               </View>
               <View
-                style={{
-                  marginLeft: 15,
-                  flexDirection: "column",
-                  width: "60%",
-                }}
+                style={styles.innerWrapper}
               >
                 <Title adjustsFontSizeToFit style={styles.title}>
                   {Chat.title}
@@ -311,14 +262,7 @@ const ChatItem = ({ Chat, navigation, Search }: any) => {
             }}
           >
             <View
-              style={{
-                flexDirection: "row",
-                backgroundColor: "#81D4FA",
-                height: 75,
-                width: "100%",
-                alignItems: "center",
-                marginBottom: 1,
-              }}
+              style={styles.wrapperItem}
             >
               <View style={{ flexDirection: "column" }}>
                 <Avatar
@@ -334,11 +278,7 @@ const ChatItem = ({ Chat, navigation, Search }: any) => {
                 />
               </View>
               <View
-                style={{
-                  marginLeft: 15,
-                  flexDirection: "column",
-                  width: "60%",
-                }}
+                style={styles.innerWrapper}
               >
                 <Title adjustsFontSizeToFit style={styles.title}>
                   {titleDisplay[0].split("@")[0]}
@@ -358,7 +298,8 @@ const ChatItem = ({ Chat, navigation, Search }: any) => {
         );
       }
     } else {
-      if (Chat.group) {
+      //type: group || difusion
+      if (Chat.type == "group" || Chat.type == "difusion") {
         return (
           <TouchableOpacity
             onPress={() => {
@@ -366,14 +307,7 @@ const ChatItem = ({ Chat, navigation, Search }: any) => {
             }}
           >
             <View
-              style={{
-                flexDirection: "row",
-                backgroundColor: "#81D4FA",
-                height: 75,
-                width: "100%",
-                alignItems: "center",
-                marginBottom: 1,
-              }}
+              style={styles.wrapperItem}
             >
               <View style={{ flexDirection: "column" }}>
                 <Avatar
@@ -389,11 +323,7 @@ const ChatItem = ({ Chat, navigation, Search }: any) => {
                 />
               </View>
               <View
-                style={{
-                  marginLeft: 15,
-                  flexDirection: "column",
-                  width: "60%",
-                }}
+                style={styles.innerWrapper}
               >
                 <Title adjustsFontSizeToFit style={styles.title}>
                   {Chat.title}
@@ -420,14 +350,7 @@ const ChatItem = ({ Chat, navigation, Search }: any) => {
             }}
           >
             <View
-              style={{
-                flexDirection: "row",
-                backgroundColor: "#81D4FA",
-                height: 75,
-                width: "100%",
-                alignItems: "center",
-                marginBottom: 1,
-              }}
+              style={styles.wrapperItem}
             >
               <View style={{ flexDirection: "column" }}>
                 <Avatar
@@ -443,11 +366,7 @@ const ChatItem = ({ Chat, navigation, Search }: any) => {
                 />
               </View>
               <View
-                style={{
-                  marginLeft: 15,
-                  flexDirection: "column",
-                  width: "60%",
-                }}
+                style={styles.innerWrapper}
               >
                 <Title adjustsFontSizeToFit style={styles.title}>
                   {titleDisplay[0].split("@")[0]}
@@ -497,4 +416,17 @@ const styles = StyleSheet.create({
   subTitle: {
     fontSize: 12,
   },
+  wrapperItem: {
+    flexDirection: "row",
+    backgroundColor: "#81D4FA",
+    height: 75,
+    width: "100%",
+    alignItems: "center",
+    marginBottom: 1,
+  },
+  innerWrapper: {
+    marginLeft: 15,
+    flexDirection: "column",
+    width: "60%",
+  }
 });

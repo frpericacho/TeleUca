@@ -55,7 +55,8 @@ const ChatOptions = ({ route, navigation }: any) => {
   }, []);
 
   const getChatImagen = async () => {
-    if(!route.params.chat.group){
+    //type: individual
+    if(route.params.chat.type == "individual"){
       let titleDisplay = route.params.chat.users.UserList.filter((email: string) => {
         return email != MyUserAuth?.email;
       });
@@ -318,8 +319,8 @@ const ChatOptions = ({ route, navigation }: any) => {
         hideModalTitle();
       });
   };
-
-  if (route.params.chat.group) {
+  //type: group || difusion
+  if (route.params.chat.type == "group" || route.params.chat.type == "difusion") {
     if (route.params.Admin) {
       return (
         <Provider>

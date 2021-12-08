@@ -78,10 +78,11 @@ const UserProfileEdit = ({ route, navigation }: any) => {
   };
 
   const changeImageChats = async () => {
+    //type: individual
     firebase
       .firestore()
       .collection("chats")
-      .where("group", "==", false)
+      .where("type", "==", "individual")
       .where("users.UserList", "array-contains", route.params.User.email)
       .get()
       .then((docs) => {
