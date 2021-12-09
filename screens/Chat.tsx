@@ -695,7 +695,7 @@ const Chat = ({ route, navigation }: any) => {
 
   const renderInputToolbar = (props: any) => {
     //type: difusion
-    if (route.params.type == "difusion") {
+    if (route.params.type == "difusion" && route.params.Admin != MyUserAuth?.email) {
     } else {
     return(
       <InputToolbar

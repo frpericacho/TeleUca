@@ -15,7 +15,9 @@ import Chat from "../lib/Types/Chat";
 import * as ImagePicker from "expo-image-picker";
 import firebase from "firebase";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import { Alert } from "react-native";
+import { Alert, ScrollView } from "react-native";
+import * as Notifications from 'expo-notifications';
+import Constants from 'expo-constants';
 
 export default function Home({ navigation }: any) {
   //MyUser
@@ -66,6 +68,42 @@ export default function Home({ navigation }: any) {
     ],
   };
 
+  const registerForPushNotificationsAsync = async () => {
+    let token:any;
+    if (Constants.isDevice) {
+      const { status: existingStatus } = await Notifications.getPermissionsAsync();
+      let finalStatus = existingStatus;
+      if (existingStatus !== 'granted') {
+        const { status } = await Notifications.requestPermissionsAsync();
+        finalStatus = status;
+      }
+      if (finalStatus !== 'granted') {
+        alert('Failed to get push token for push notification!');
+        return;
+      }
+      token = (await Notifications.getExpoPushTokenAsync()).data;
+    } else {
+      alert('Must use physical device for Push Notifications');
+    }
+  
+    if(token){
+      firebase.firestore().collection('users').where('email','==',firebase.auth().currentUser?.email).get().then((doc)=>{
+        firebase.firestore().collection('users').doc(doc.docs[0].id).update({token: token})
+      })
+    }
+  
+    if (Platform.OS === 'android') {
+      await Notifications.setNotificationChannelAsync('default', {
+        name: 'default',
+        importance: Notifications.AndroidImportance.MAX,
+        vibrationPattern: [0, 250, 250, 250],
+        lightColor: '#FF231F7C',
+      });
+    }
+  
+    return token;
+  }
+
   const Item = ({ item }: any) => (
     <ChatItem navigation={navigation} Chat={item} Search={false} />
   );
@@ -73,6 +111,7 @@ export default function Home({ navigation }: any) {
   useEffect(() => {
     fetchChat();
     retrieveUser();
+    registerForPushNotificationsAsync();
     (async () => {
       if (Platform.OS !== "web") {
         const { status } =
@@ -274,42 +313,46 @@ export default function Home({ navigation }: any) {
           visible={visible}
           onDismiss={()=> {hideModal(); setUserList([firebase.auth().currentUser?.email]);} }
           contentContainerStyle={containerStyle}
+          style={{height: "80%"}}
         >
-          <Text>Crear Chat</Text>
-          <Input
-            label="Titulo:"
-            onChangeText={(value) => setTitleChat(value)}
-            placeholder="Titulo"
-          />
-          <Input
-            label="Descripcion:"
-            onChangeText={(value) => setDescriptionChat(value)}
-            placeholder="Descripcion"
-          />
-          <Input
-            label="Añadir usuario:"
-            ref={(input) => {
-              textInput = input;
-            }}
-            onChangeText={(value) => setUser(value)}
-            placeholder="email usuario"
-            clearTextOnFocus
-            autoCapitalize={"none"}
-            rightIcon={
-              <TouchableOpacity onPress={addUserChat}>
-                <Icon name="account-plus" size={20} color="#03A9F4" />
-              </TouchableOpacity>
-            }
-          />
-          <FlatList
-            style={{ marginBottom: 3 }}
-            data={UserList}
-            renderItem={renderUserItem}
-            keyExtractor={(item) => item}
-          />
-          <Button onPress={() => submitGroup(titleChat, DescriptionChat)}>
-            Enviar
-          </Button>
+          <ScrollView>
+            <Text>Crear Chat</Text>
+            <Input
+              label="Titulo:"
+              onChangeText={(value) => setTitleChat(value)}
+              placeholder="Titulo"
+            />
+            <Input
+              label="Descripcion:"
+              onChangeText={(value) => setDescriptionChat(value)}
+              placeholder="Descripcion"
+            />
+            <Input
+              label="Añadir usuario:"
+              ref={(input) => {
+                textInput = input;
+              }}
+              onChangeText={(value) => setUser(value)}
+              placeholder="email usuario"
+              clearTextOnFocus
+              autoCapitalize={"none"}
+              rightIcon={
+                <TouchableOpacity onPress={addUserChat}>
+                  <Icon name="account-plus" size={20} color="#03A9F4" />
+                </TouchableOpacity>
+              }
+            />
+            <FlatList
+              style={{ marginBottom: 3 }}
+              data={UserList}
+              renderItem={renderUserItem}
+              keyExtractor={(item) => item}
+            />
+            <Button onPress={() => submitGroup(titleChat, DescriptionChat)}>
+              Crear
+            </Button>
+            
+          </ScrollView>
         </Modal>
         <Snackbar duration={1000} visible={open} onDismiss={onDismissSnackBar}>
           El chat requiere un título
@@ -320,42 +363,45 @@ export default function Home({ navigation }: any) {
           visible={visible2}
           onDismiss={()=> {hideModal2(); setUserList([firebase.auth().currentUser?.email]);} }
           contentContainerStyle={containerStyle}
+          style={{height: "80%"}}
         >
-          <Text>Crear Chat de difusión</Text>
-          <Input
-            label="Titulo:"
-            onChangeText={(value) => setTitleChat(value)}
-            placeholder="Titulo"
-          />
-          <Input
-            label="Descripcion:"
-            onChangeText={(value) => setDescriptionChat(value)}
-            placeholder="Descripcion"
-          />
-          <Input
-            label="Añadir usuario:"
-            ref={(input) => {
-              textInput = input;
-            }}
-            onChangeText={(value) => setUser(value)}
-            placeholder="email usuario"
-            clearTextOnFocus
-            autoCapitalize={"none"}
-            rightIcon={
-              <TouchableOpacity onPress={addUserChat}>
-                <Icon name="account-plus" size={20} color="#03A9F4" />
-              </TouchableOpacity>
-            }
-          />
-          <FlatList
-            style={{ marginBottom: 3 }}
-            data={UserList}
-            renderItem={renderUserItem}
-            keyExtractor={(item) => item}
-          />
-          <Button onPress={() => submitDiffusion(titleChat, DescriptionChat)}>
-            Enviar
-          </Button>
+          <ScrollView>
+            <Text>Crear Chat de difusión</Text>
+            <Input
+              label="Titulo:"
+              onChangeText={(value) => setTitleChat(value)}
+              placeholder="Titulo"
+            />
+            <Input
+              label="Descripcion:"
+              onChangeText={(value) => setDescriptionChat(value)}
+              placeholder="Descripcion"
+            />
+            <Input
+              label="Añadir usuario:"
+              ref={(input) => {
+                textInput = input;
+              }}
+              onChangeText={(value) => setUser(value)}
+              placeholder="email usuario"
+              clearTextOnFocus
+              autoCapitalize={"none"}
+              rightIcon={
+                <TouchableOpacity onPress={addUserChat}>
+                  <Icon name="account-plus" size={20} color="#03A9F4" />
+                </TouchableOpacity>
+              }
+            />
+            <FlatList
+              style={{ marginBottom: 3 }}
+              data={UserList}
+              renderItem={renderUserItem}
+              keyExtractor={(item) => item}
+            />
+            <Button onPress={() => submitDiffusion(titleChat, DescriptionChat)}>
+              Crear
+            </Button>
+          </ScrollView>
         </Modal>
         <Snackbar duration={1000} visible={open} onDismiss={onDismissSnackBar}>
           El chat requiere un título
