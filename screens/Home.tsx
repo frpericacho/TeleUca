@@ -48,6 +48,11 @@ export default function Home({ navigation }: any) {
   const [titleChat, setTitleChat] = useState("");
   const [DescriptionChat, setDescriptionChat] = useState("");
 
+  //Add users
+  const [showIndUser, setShowIndUser] = useState(false);
+  const [showGroupUser, setShowGroupUser] = useState(false);
+  const [showOptUser, setShowOptUser] = useState(true);
+
   const Saved = {
     id: MyUserAuth?.email,
     title: "Mensajes guardados",
@@ -311,47 +316,73 @@ export default function Home({ navigation }: any) {
       <Portal>
         <Modal
           visible={visible}
-          onDismiss={()=> {hideModal(); setUserList([firebase.auth().currentUser?.email]);} }
+          onDismiss={()=> {hideModal(); setUserList([firebase.auth().currentUser?.email]); setShowGroupUser(false); setShowIndUser(false); setShowOptUser(true)} }
           contentContainerStyle={containerStyle}
           style={{height: "80%"}}
         >
           <ScrollView>
-            <Text>Crear Chat</Text>
+            <Text style={{marginLeft:10, marginBottom:10, fontWeight: 'bold', fontSize: 20, color: 'grey'}}>Crear Chat</Text>
             <Input
               label="Titulo:"
+              labelStyle={{fontWeight: 'bold', fontSize: 15, color: 'grey'}}
               onChangeText={(value) => setTitleChat(value)}
               placeholder="Titulo"
             />
             <Input
               label="Descripcion:"
+              labelStyle={{fontWeight: 'bold', fontSize: 15, color: 'grey'}}
               onChangeText={(value) => setDescriptionChat(value)}
               placeholder="Descripcion"
             />
-            <Input
-              label="Añadir usuario:"
-              ref={(input) => {
-                textInput = input;
-              }}
-              onChangeText={(value) => setUser(value)}
-              placeholder="email usuario"
-              clearTextOnFocus
-              autoCapitalize={"none"}
-              rightIcon={
-                <TouchableOpacity onPress={addUserChat}>
-                  <Icon name="account-plus" size={20} color="#03A9F4" />
-                </TouchableOpacity>
-              }
-            />
-            <FlatList
-              style={{ marginBottom: 3 }}
-              data={UserList}
-              renderItem={renderUserItem}
-              keyExtractor={(item) => item}
-            />
+            {showOptUser ? 
+              <View>
+                <Text style={{marginLeft:10, marginBottom:10, fontWeight: 'bold', fontSize: 15, color: 'grey'}}>Añadir usuarios</Text>
+                <View style={{flexDirection:'row', justifyContent:'space-evenly'}}>
+                  <Button style={{backgroundColor:'#039BE5'}} labelStyle={{color:'white'}} onPress={()=> {setShowIndUser(true); setShowOptUser(false)}}>
+                    Individual
+                  </Button>
+                  <Button style={{backgroundColor:'#039BE5'}} labelStyle={{color:'white'}} onPress={()=> {setShowGroupUser(true); setShowOptUser(false)}}>
+                    Por Grupos
+                  </Button>
+                </View>
+              </View>
+            : null}
+            {showIndUser ?
+              <View>
+                <Input
+                  label="Añadir usuario:"
+                  ref={(input) => {
+                    textInput = input;
+                  }}
+                  onChangeText={(value) => setUser(value)}
+                  placeholder="email usuario"
+                  clearTextOnFocus
+                  autoCapitalize={"none"}
+                  rightIcon={
+                    <TouchableOpacity onPress={addUserChat}>
+                      <Icon name="account-plus" size={20} color="#03A9F4" />
+                    </TouchableOpacity>
+                  }
+                />
+                <FlatList
+                  style={{ marginBottom: 3 }}
+                  data={UserList}
+                  renderItem={renderUserItem}
+                  keyExtractor={(item) => item}
+                />
+              </View>
+            : null}
+            {showGroupUser ? 
+              // TODO: añadir multiselect para que el usuario seleccione por grupo de carrera o asignatura/s
+              <View>
+                <Text>
+                  Hola
+                </Text>
+              </View>
+            : null}
             <Button onPress={() => submitGroup(titleChat, DescriptionChat)}>
               Crear
             </Button>
-            
           </ScrollView>
         </Modal>
         <Snackbar duration={1000} visible={open} onDismiss={onDismissSnackBar}>

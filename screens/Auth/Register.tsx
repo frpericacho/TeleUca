@@ -3,7 +3,7 @@ import { Alert, StyleSheet, View, ScrollView } from "react-native";
 import { Button, Input, Image, Icon } from "react-native-elements";
 import MultiSelect from 'react-native-multiple-select';
 import firebase from "firebase";
-import React from "react";
+import React, {useEffect} from "react";
 
 export default function Register({ navigation }: any) {
   const [email, setEmail] = useState("");
@@ -11,89 +11,51 @@ export default function Register({ navigation }: any) {
   const [loading, setLoading] = useState("");
 
   // MultiSelect
+  const [selectedSubjects, setSelectedSubjects] = React.useState([]);
   const [subjects, setSubjects] = React.useState([]);
-  const [career, setCareer] = React.useState([]);
+
+  const [selectedCareer, setSelectedCareer] = React.useState([]);
+  const [careers, setCareer] = React.useState([]);
+
   const [selected, setSelected] = useState(false);
 
-  const initialArr = [
-    {
-      id: '92iijs7yta',
-      name: 'Ondo',
-      color: 'red'
-    }, {
-      id: 'a0s0a8ssbsd',
-      name: 'Ogun',
-      color: 'yellow'
-    }, {
-      id: '16hbajsabsd',
-      name: 'Calabar',
-      color: 'white'
-    }, {
-      id: 'nahs75a5sg',
-      name: 'Lagos',
-      color: 'black'
-    }, {
-      id: '667atsas',
-      name: 'Maiduguri',
-      color: 'blue'
-    }, {
-      id: 'hsyasajs',
-      name: 'Anambra',
-      color: 'grey'
-    }, {
-      id: 'djsjudksjd',
-      name: 'Benue',
-      color: 'orange'
-    }, {
-      id: 'sdhyaysdj',
-      name: 'Kaduna',
-      color: 'purple'
-    }, {
-      id: 'suudydjsjd',
-      name: 'Abuja',
-      color: 'pink'
-      }
-  ];
+  useEffect(() => {
+    fetchCareers();
+  }, []);
 
-  const initialArrTwo = [
-    {
-      id: '92iijs7yta',
-      name: 'Ondo',
-      color: 'red'
-    }, {
-      id: 'a0s0a8ssbsd',
-      name: 'Ogun',
-      color: 'yellow'
-    }, {
-      id: '16hbajsabsd',
-      name: 'Calabar',
-      color: 'white'
-    }, {
-      id: 'nahs75a5sg',
-      name: 'Lagos',
-      color: 'black'
-    }, {
-      id: '667atsas',
-      name: 'Maiduguri',
-      color: 'blue'
-    }, {
-      id: 'hsyasajs',
-      name: 'Anambra',
-      color: 'grey'
-    }, {
-      id: 'djsjudksjd',
-      name: 'Benue',
-      color: 'orange'
-    }, {
-      id: 'sdhyaysdj',
-      name: 'Kaduna',
-      color: 'purple'
-    }, {
-      id: 'suudydjsjd',
-      name: 'Abuja',
-      color: 'pink'
-      }
-  ];
+  const fetchCareers = async () => {
+    await firebase
+      .firestore()
+      .collection("careers")
+      .get().then((snapshot)=>{
+        snapshot.docs.forEach((element)=>{
+          let career = {
+            id: element.id,
+            name: element.data().name
+          }
+          careers.push(career)
+        })
+      })
+  }
+
+  const fetchSubjects = async (selectedItem) => {
+    await firebase
+      .firestore()
+      .collection("careers")
+      .where("name","==",selectedItem)
+      .get().then((snapshot)=>{
+        snapshot.docs[0].data().subjects.forEach(element => {
+          element.get().then((doc)=>{
+            let subject = {
+              id: doc.id,
+              name: doc.data().name,
+              acronym: doc.data().acronym
+            }
+            subjects.push(subject)
+          })
+        });
+      })
+  }
 
   const handleRegister = async (email: string, password: string) => {
     setLoading("Registrando")
@@ -115,6 +77,8 @@ export default function Register({ navigation }: any) {
                 email: email,
                 avatar_url: "",
                 token: "",
+                career: selectedCareer[0],
+                subjects: selectedSubjects
               })
               .then(() => {
                 console.log("Usuario guardado correctamente");
@@ -221,9 +185,9 @@ export default function Register({ navigation }: any) {
         </View>
         <View style={styles.ListCareer}>
           <MultiSelect
-            items={initialArrTwo}
-            selectedItems={career}
-            onSelectedItemsChange={(selectedItems)=>{setCareer(selectedItems); setSelected(true)}}
+            items={careers}
+            selectedItems={selectedCareer}
+            onSelectedItemsChange={(selectedItems)=>{setSelectedCareer(selectedItems); setSelected(true); fetchSubjects(selectedItems[0])}}
             selectText="Escoge titulación"
             searchInputPlaceholderText="Buscar titulaciones..."
             noItemsText="No se encuentran coincidencias"
@@ -233,26 +197,30 @@ export default function Register({ navigation }: any) {
             hideDropdown
             single
             textInputProps={{autoFocus:false}}
-            displayKey="color"
-            uniqueKey="id"
+            displayKey="name"
+            uniqueKey="name"
           />
         </View>
         {selected ? 
         <View style={styles.List}>
           <MultiSelect
-            items={initialArr}
-            selectedItems={subjects}
-            onSelectedItemsChange={(selectedItems)=>setSubjects(selectedItems)}
+            items={subjects}
+            selectedItems={selectedSubjects}
+            onSelectedItemsChange={(selectedItems)=>setSelectedSubjects(selectedItems)}
             selectText="Escoge asignaturas"
             searchInputPlaceholderText="Buscar asignaturas..."
             noItemsText="No se encuentran coincidencias"
             submitButtonText="Añadir asignaturas"
+            hideSubmitButton
             styleTextDropdown={{marginLeft:10}}
             styleTextDropdownSelected={{marginLeft:10}}
             searchInputStyle={{height:40}}
+            tagContainerStyle={{
+              maxWidth: '90%'
+            }}
             hideDropdown
             textInputProps={{autoFocus:false}}
-            displayKey="color"
+            displayKey="name"
             uniqueKey="id"
           />
         </View>
