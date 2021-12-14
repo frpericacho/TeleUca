@@ -23,6 +23,19 @@ export function DrawerContent({ props, navigation }: any) {
       });
   };
 
+  const signOut = async () => {
+    firebase.auth().signOut();
+    await firebase
+    .firestore()
+    .collection("users")
+    .where("email", "==", firebase.auth().currentUser?.email)
+    .get().then((user)=>{
+      user.docs[0].ref.update({
+        token: ""
+      })
+    })
+  }
+
   return (
     <View style={{ flex: 1, backgroundColor: "#B3E5FC" }}>
       <DrawerContentScrollView {...props}>
@@ -72,7 +85,7 @@ export function DrawerContent({ props, navigation }: any) {
           icon={({ size }) => (
             <Icon name="exit-to-app" color="white" size={size} />
           )}
-          onPress={() => firebase.auth().signOut()}
+          onPress={() => signOut()}
         />
       </Drawer.Section>
     </View>

@@ -18,6 +18,7 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { Alert, ScrollView } from "react-native";
 import * as Notifications from 'expo-notifications';
 import Constants from 'expo-constants';
+import MultiSelect from 'react-native-multiple-select';
 
 export default function Home({ navigation }: any) {
   //MyUser
@@ -52,6 +53,15 @@ export default function Home({ navigation }: any) {
   const [showIndUser, setShowIndUser] = useState(false);
   const [showGroupUser, setShowGroupUser] = useState(false);
   const [showOptUser, setShowOptUser] = useState(true);
+
+  // MultiSelect
+  const [selectedSubjects, setSelectedSubjects] = React.useState([]);
+  const [subjects, setSubjects] = React.useState([]);
+
+  const [selectedCareer, setSelectedCareer] = React.useState([]);
+  const [careers, setCareer] = React.useState([]);
+
+  const [selected, setSelected] = useState(false);
 
   const Saved = {
     id: MyUserAuth?.email,
@@ -113,9 +123,25 @@ export default function Home({ navigation }: any) {
     <ChatItem navigation={navigation} Chat={item} Search={false} />
   );
 
+  const fetchCareers = async () => {
+    await firebase
+      .firestore()
+      .collection("careers")
+      .get().then((snapshot)=>{
+        snapshot.docs.forEach((element)=>{
+          let career = {
+            id: element.id,
+            name: element.data().name
+          }
+          careers.push(career)
+        })
+      })
+  }
+
   useEffect(() => {
     fetchChat();
     retrieveUser();
+    fetchCareers();
     registerForPushNotificationsAsync();
     (async () => {
       if (Platform.OS !== "web") {
@@ -182,10 +208,89 @@ export default function Home({ navigation }: any) {
     }
   };
 
+  const handleSubmit = async (title: string, description: string) => {
+    if(visible){
+      if(showIndUser){
+        submitGroup(title, description)
+      }else if(showGroupUser){
+        submitGroupSubjects(title, description)
+      }
+    }else if(visible2){
+      console.log('le has dado a crear chat de difusion')
+      if(showIndUser){
+        submitDiffusion(title, description)
+      }else if(showGroupUser){
+        submitDiffusionSubjects(title, description)
+      }
+    }
+  }
+
+  const submitDiffusionSubjects = async (title: string, description: string) => {
+    if(selectedCareer.length == 0) {
+      Alert.alert("Debes seleccionar al menos una titulación");
+    } else if(selectedSubjects.length == 0) {
+      await fetchUsersByCareer()
+      await submitDiffusion(title, description)
+    } else {
+      await fetchUsersBySubjects()
+      await submitDiffusion(title, description)
+    }
+  }
+
+  const submitGroupSubjects = async (title: string, description: string) => {
+    if(selectedCareer.length == 0) {
+      Alert.alert("Debes seleccionar al menos una titulación");
+    } else if(selectedSubjects.length == 0) {
+      await fetchUsersByCareer()
+      await submitGroup(title, description)
+    } else {
+      await fetchUsersBySubjects()
+      await submitGroup(title, description)
+    }
+  }
+
+  const fetchUsersBySubjects = async () => {
+    let auxArray=[]
+    setUserList([])
+    await firebase
+    .firestore()
+    .collection('users')
+    .where("subjects","array-contains-any",selectedSubjects)
+    .get().then((users)=>{
+      users.docs.forEach((user)=>{
+        auxArray.push(user.data().email)
+      })
+    })
+    auxArray.forEach((item)=>{
+      if(item !== MyUserAuth?.email){
+        UserList.push(item)
+      }
+    })
+  }
+
+  const fetchUsersByCareer = async () => {
+    let auxArray=[]
+    setUserList([])
+    await firebase
+    .firestore()
+    .collection('users')
+    .where("career","==",selectedCareer[0])
+    .get().then((users)=>{
+      users.docs.forEach((user)=>{
+        auxArray.push(user.data().email)
+      })
+    })
+    auxArray.forEach((item)=>{
+      if(item !== MyUserAuth?.email){
+        UserList.push(item)
+      }
+    })
+  }
+
   const submitGroup = async (title: string, description: string) => {
     if (title == "") {
       onOpenSnackBar();
-    } else {
+    }  else {
       firebase
         .firestore()
         .collection("chats")
@@ -307,8 +412,37 @@ export default function Home({ navigation }: any) {
     }
   };
 
+  const fetchSubjects = async (selectedItem) => {
+    await firebase
+      .firestore()
+      .collection("careers")
+      .where("name","==",selectedItem)
+      .get().then((snapshot)=>{
+        snapshot.docs[0].data().subjects.forEach(element => {
+          element.get().then((doc)=>{
+            let subject = {
+              id: doc.id,
+              name: doc.data().name,
+              acronym: doc.data().acronym
+            }
+            subjects.push(subject)
+          })
+        });
+      })
+  }
+
   const sortChat = async (a: Chat, b: Chat) => {
     return a.LastMessage.createdAt > b.LastMessage.createdAt;
+  }
+
+  const resetStates = async () => {
+    setShowGroupUser(false);
+    setShowIndUser(false);
+    setSelected(false);
+    setShowOptUser(true);
+    setSelectedCareer([]);
+    setSelectedSubjects([]);
+    setSubjects([])
   }
 
   return (
@@ -316,7 +450,7 @@ export default function Home({ navigation }: any) {
       <Portal>
         <Modal
           visible={visible}
-          onDismiss={()=> {hideModal(); setUserList([firebase.auth().currentUser?.email]); setShowGroupUser(false); setShowIndUser(false); setShowOptUser(true)} }
+          onDismiss={()=> {hideModal(); setUserList([firebase.auth().currentUser?.email]); resetStates()}}
           contentContainerStyle={containerStyle}
           style={{height: "80%"}}
         >
@@ -373,16 +507,56 @@ export default function Home({ navigation }: any) {
               </View>
             : null}
             {showGroupUser ? 
-              // TODO: añadir multiselect para que el usuario seleccione por grupo de carrera o asignatura/s
               <View>
-                <Text>
-                  Hola
-                </Text>
-              </View>
+                <View>
+                  <MultiSelect
+                    items={careers}
+                    selectedItems={selectedCareer}
+                    onSelectedItemsChange={(selectedItems)=>{setSelectedCareer(selectedItems); setSelected(true); fetchSubjects(selectedItems[0])}}
+                    selectText="Escoge titulación"
+                    searchInputPlaceholderText="Buscar titulaciones..."
+                    noItemsText="No se encuentran coincidencias"
+                    styleTextDropdown={{marginLeft:10}}
+                    styleTextDropdownSelected={{marginLeft:10}}
+                    searchInputStyle={{height:40}}
+                    hideDropdown
+                    single
+                    textInputProps={{autoFocus:false}}
+                    displayKey="name"
+                    uniqueKey="name"
+                  />
+                </View>
+                {selected ? 
+                  <View style={{marginTop:20}}>
+                    <MultiSelect
+                      items={subjects}
+                      selectedItems={selectedSubjects}
+                      onSelectedItemsChange={(selectedItems)=>setSelectedSubjects(selectedItems)}
+                      selectText="Escoge asignaturas"
+                      searchInputPlaceholderText="Buscar asignaturas..."
+                      noItemsText="No se encuentran coincidencias"
+                      submitButtonText="Añadir asignaturas"
+                      hideSubmitButton
+                      styleTextDropdown={{marginLeft:10}}
+                      styleTextDropdownSelected={{marginLeft:10}}
+                      searchInputStyle={{height:40}}
+                      tagContainerStyle={{
+                        maxWidth: '90%'
+                      }}
+                      hideDropdown
+                      textInputProps={{autoFocus:false}}
+                      displayKey="name"
+                      uniqueKey="id"
+                    />
+                  </View>
+                : null }
+              </View> 
             : null}
-            <Button onPress={() => submitGroup(titleChat, DescriptionChat)}>
-              Crear
-            </Button>
+            {!showOptUser ?
+              <Button onPress={() => /*submitGroup(titleChat, DescriptionChat)*/handleSubmit(titleChat, DescriptionChat)}>
+                Crear
+              </Button>
+            : null}
           </ScrollView>
         </Modal>
         <Snackbar duration={1000} visible={open} onDismiss={onDismissSnackBar}>
@@ -392,7 +566,7 @@ export default function Home({ navigation }: any) {
       <Portal>
         <Modal
           visible={visible2}
-          onDismiss={()=> {hideModal2(); setUserList([firebase.auth().currentUser?.email]);} }
+          onDismiss={()=> {hideModal2(); setUserList([firebase.auth().currentUser?.email]); resetStates()} }
           contentContainerStyle={containerStyle}
           style={{height: "80%"}}
         >
@@ -400,38 +574,105 @@ export default function Home({ navigation }: any) {
             <Text>Crear Chat de difusión</Text>
             <Input
               label="Titulo:"
+              labelStyle={{fontWeight: 'bold', fontSize: 15, color: 'grey'}}
               onChangeText={(value) => setTitleChat(value)}
               placeholder="Titulo"
             />
             <Input
               label="Descripcion:"
+              labelStyle={{fontWeight: 'bold', fontSize: 15, color: 'grey'}}
               onChangeText={(value) => setDescriptionChat(value)}
               placeholder="Descripcion"
             />
-            <Input
-              label="Añadir usuario:"
-              ref={(input) => {
-                textInput = input;
-              }}
-              onChangeText={(value) => setUser(value)}
-              placeholder="email usuario"
-              clearTextOnFocus
-              autoCapitalize={"none"}
-              rightIcon={
-                <TouchableOpacity onPress={addUserChat}>
-                  <Icon name="account-plus" size={20} color="#03A9F4" />
-                </TouchableOpacity>
-              }
-            />
-            <FlatList
-              style={{ marginBottom: 3 }}
-              data={UserList}
-              renderItem={renderUserItem}
-              keyExtractor={(item) => item}
-            />
-            <Button onPress={() => submitDiffusion(titleChat, DescriptionChat)}>
-              Crear
-            </Button>
+            {showOptUser ? 
+              <View>
+                <Text style={{marginLeft:10, marginBottom:10, fontWeight: 'bold', fontSize: 15, color: 'grey'}}>Añadir usuarios</Text>
+                <View style={{flexDirection:'row', justifyContent:'space-evenly'}}>
+                  <Button style={{backgroundColor:'#039BE5'}} labelStyle={{color:'white'}} onPress={()=> {setShowIndUser(true); setShowOptUser(false)}}>
+                    Individual
+                  </Button>
+                  <Button style={{backgroundColor:'#039BE5'}} labelStyle={{color:'white'}} onPress={()=> {setShowGroupUser(true); setShowOptUser(false)}}>
+                    Por Grupos
+                  </Button>
+                </View>
+              </View>
+            : null}
+            {showIndUser ?
+              <View>
+                <Input
+                  label="Añadir usuario:"
+                  ref={(input) => {
+                    textInput = input;
+                  }}
+                  onChangeText={(value) => setUser(value)}
+                  placeholder="email usuario"
+                  clearTextOnFocus
+                  autoCapitalize={"none"}
+                  rightIcon={
+                    <TouchableOpacity onPress={addUserChat}>
+                      <Icon name="account-plus" size={20} color="#03A9F4" />
+                    </TouchableOpacity>
+                  }
+                />
+                <FlatList
+                  style={{ marginBottom: 3 }}
+                  data={UserList}
+                  renderItem={renderUserItem}
+                  keyExtractor={(item) => item}
+                />
+              </View>
+            : null}
+            {showGroupUser ? 
+              <View>
+                <View>
+                  <MultiSelect
+                    items={careers}
+                    selectedItems={selectedCareer}
+                    onSelectedItemsChange={(selectedItems)=>{setSelectedCareer(selectedItems); setSelected(true); fetchSubjects(selectedItems[0])}}
+                    selectText="Escoge titulación"
+                    searchInputPlaceholderText="Buscar titulaciones..."
+                    noItemsText="No se encuentran coincidencias"
+                    styleTextDropdown={{marginLeft:10}}
+                    styleTextDropdownSelected={{marginLeft:10}}
+                    searchInputStyle={{height:40}}
+                    hideDropdown
+                    single
+                    textInputProps={{autoFocus:false}}
+                    displayKey="name"
+                    uniqueKey="name"
+                  />
+                </View>
+                {selected ? 
+                  <View style={{marginTop:20}}>
+                    <MultiSelect
+                      items={subjects}
+                      selectedItems={selectedSubjects}
+                      onSelectedItemsChange={(selectedItems)=>setSelectedSubjects(selectedItems)}
+                      selectText="Escoge asignaturas"
+                      searchInputPlaceholderText="Buscar asignaturas..."
+                      noItemsText="No se encuentran coincidencias"
+                      submitButtonText="Añadir asignaturas"
+                      hideSubmitButton
+                      styleTextDropdown={{marginLeft:10}}
+                      styleTextDropdownSelected={{marginLeft:10}}
+                      searchInputStyle={{height:40}}
+                      tagContainerStyle={{
+                        maxWidth: '90%'
+                      }}
+                      hideDropdown
+                      textInputProps={{autoFocus:false}}
+                      displayKey="name"
+                      uniqueKey="id"
+                    />
+                  </View>
+                : null }
+              </View> 
+            : null}
+            {!showOptUser ?
+              <Button onPress={() => /*submitDiffusion(titleChat, DescriptionChat)*/handleSubmit(titleChat, DescriptionChat)}>
+                Crear
+              </Button>
+            : null}
           </ScrollView>
         </Modal>
         <Snackbar duration={1000} visible={open} onDismiss={onDismissSnackBar}>
