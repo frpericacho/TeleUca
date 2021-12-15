@@ -3,6 +3,7 @@ import { Button, Input, Image, Icon } from "react-native-elements";
 import MultiSelect from 'react-native-multiple-select';
 import firebase from "firebase";
 import React, {useEffect, useState} from "react";
+import fetchSubjects from "../../components/Multiselect/firebaseAPI";
 
 export default function Register({ navigation }: any) {
   const [UserEmail, setEmail] = useState("");
@@ -37,7 +38,7 @@ export default function Register({ navigation }: any) {
       })
   }
 
-  const fetchSubjects = async (selectedItem) => {
+  /*const fetchSubjects = async (selectedItem) => {
     await firebase
       .firestore()
       .collection("careers")
@@ -54,7 +55,7 @@ export default function Register({ navigation }: any) {
           })
         });
       })
-  }
+  }*/
 
   const handleRegister = async (email: string, password: string) => {
     setLoading("Registrando")
@@ -184,7 +185,7 @@ export default function Register({ navigation }: any) {
           <MultiSelect
             items={careers}
             selectedItems={selectedCareer}
-            onSelectedItemsChange={(selectedItems)=>{setSelectedCareer(selectedItems); setSelected(true); fetchSubjects(selectedItems[0])}}
+            onSelectedItemsChange={(selectedItems)=>{setSelectedCareer(selectedItems); setSelected(true); fetchSubjects(selectedItems[0], subjects)}}
             selectText="Escoge titulación"
             searchInputPlaceholderText="Buscar titulaciones..."
             noItemsText="No se encuentran coincidencias"

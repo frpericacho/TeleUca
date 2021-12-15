@@ -19,6 +19,7 @@ import { Alert, ScrollView } from "react-native";
 import * as Notifications from 'expo-notifications';
 import Constants from 'expo-constants';
 import MultiSelect from 'react-native-multiple-select';
+import fetchSubjects from "../components/Multiselect/firebaseAPI";
 
 export default function Home({ navigation }: any) {
   //MyUser
@@ -412,7 +413,7 @@ export default function Home({ navigation }: any) {
     }
   };
 
-  const fetchSubjects = async (selectedItem) => {
+  /*const fetchSubjects = async (selectedItem) => {
     await firebase
       .firestore()
       .collection("careers")
@@ -429,7 +430,7 @@ export default function Home({ navigation }: any) {
           })
         });
       })
-  }
+  }*/
 
   const sortChat = async (a: Chat, b: Chat) => {
     return a.LastMessage.createdAt > b.LastMessage.createdAt;
@@ -512,7 +513,7 @@ export default function Home({ navigation }: any) {
                   <MultiSelect
                     items={careers}
                     selectedItems={selectedCareer}
-                    onSelectedItemsChange={(selectedItems)=>{setSelectedCareer(selectedItems); setSelected(true); fetchSubjects(selectedItems[0])}}
+                    onSelectedItemsChange={(selectedItems)=>{setSelectedCareer(selectedItems); setSelected(true); fetchSubjects(selectedItems[0], subjects)}}
                     selectText="Escoge titulación"
                     searchInputPlaceholderText="Buscar titulaciones..."
                     noItemsText="No se encuentran coincidencias"
@@ -628,7 +629,7 @@ export default function Home({ navigation }: any) {
                   <MultiSelect
                     items={careers}
                     selectedItems={selectedCareer}
-                    onSelectedItemsChange={(selectedItems)=>{setSelectedCareer(selectedItems); setSelected(true); fetchSubjects(selectedItems[0])}}
+                    onSelectedItemsChange={(selectedItems)=>{setSelectedCareer(selectedItems); setSelected(true); fetchSubjects(selectedItems[0], subjects)}}
                     selectText="Escoge titulación"
                     searchInputPlaceholderText="Buscar titulaciones..."
                     noItemsText="No se encuentran coincidencias"
