@@ -1,21 +1,20 @@
-import { useState } from "react";
 import { Alert, StyleSheet, View, ScrollView } from "react-native";
 import { Button, Input, Image, Icon } from "react-native-elements";
 import MultiSelect from 'react-native-multiple-select';
 import firebase from "firebase";
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 
 export default function Register({ navigation }: any) {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [UserEmail, setEmail] = useState("");
+  const [UserPassword, setPassword] = useState("");
   const [loading, setLoading] = useState("");
 
   // MultiSelect
   const [selectedSubjects, setSelectedSubjects] = React.useState([]);
-  const [subjects, setSubjects] = React.useState([]);
+  const [subjects] = React.useState([]);
 
   const [selectedCareer, setSelectedCareer] = React.useState([]);
-  const [careers, setCareer] = React.useState([]);
+  const [careers] = React.useState([]);
 
   const [selected, setSelected] = useState(false);
 
@@ -88,19 +87,17 @@ export default function Register({ navigation }: any) {
               });
           })
           .catch((error) => {
-            switch(error.code){
-              case 'auth/email-already-in-use':
-                Alert.alert("Este email se encuentra ya en uso");
-                setEmail("")
-                setPassword("")
-                break;
-              default:
-                Alert.alert("Se ha producido un error en el email y/o contraseña");
-                setEmail("")
-                setPassword("")
-                break;
+            if(error.code == 'auth/email-already-in-use'){
+              Alert.alert("Este email se encuentra ya en uso");
+              setEmail("")
+              setPassword("")
+            }else{
+              Alert.alert("Se ha producido un error en el email y/o contraseña");
+              setEmail("")
+              setPassword("")
             }
             console.log(error.code);
+            
           });
         setLoading("");
       }
@@ -155,7 +152,7 @@ export default function Register({ navigation }: any) {
             style={[styles.Input]}
             label="Correo"
             onChangeText={(text) => setEmail(text)}
-            value={email}
+            value={UserEmail}
             labelStyle={{
               color: "black",
               marginHorizontal: 30,
@@ -171,7 +168,7 @@ export default function Register({ navigation }: any) {
             style={[styles.Input]}
             label="Contraseña"
             onChangeText={(text) => setPassword(text)}
-            value={password}
+            value={UserPassword}
             secureTextEntry={true}
             labelStyle={{
               color: "black",
@@ -231,7 +228,7 @@ export default function Register({ navigation }: any) {
             disabled={!!loading.length}
             loading={loading === "SIGNUP"}
             buttonStyle={[styles.Button]}
-            onPress={() => handleRegister(email, password)}
+            onPress={() => handleRegister(UserEmail, UserPassword)}
           />
         </View>
       </ScrollView>

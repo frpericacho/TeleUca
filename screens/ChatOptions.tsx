@@ -633,7 +633,16 @@ const ChatOptions = ({ route, navigation }: any) => {
               style={{ height: "100%", resizeMode: "cover" }}
             />
           </View>
-          <View style={{ flex: 2, backgroundColor: "#B3E5FC" }}></View>
+          <View style={{ flex: 2, backgroundColor: "#B3E5FC" }}>
+            <View style={{marginTop: 20, marginLeft: 20}}>
+              <View>
+                <Text style={{fontWeight:'bold', fontSize:18}}>Email:</Text>
+              </View>
+              <View>
+                <Text style={{fontSize:15, marginTop:10}}>{users[0].email}</Text>
+              </View>
+            </View>
+          </View>
         </View>
       </View>
     );
