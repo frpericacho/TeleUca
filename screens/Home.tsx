@@ -20,6 +20,7 @@ import * as Notifications from 'expo-notifications';
 import Constants from 'expo-constants';
 import MultiSelect from 'react-native-multiple-select';
 import fetchSubjects from "../components/Multiselect/firebaseAPI";
+import CareerMultiselect from "../components/Multiselect/CareerMultiselect";
 
 export default function Home({ navigation }: any) {
   //MyUser
@@ -510,22 +511,25 @@ export default function Home({ navigation }: any) {
             {showGroupUser ? 
               <View>
                 <View>
-                  <MultiSelect
-                    items={careers}
-                    selectedItems={selectedCareer}
-                    onSelectedItemsChange={(selectedItems)=>{setSelectedCareer(selectedItems); setSelected(true); fetchSubjects(selectedItems[0], subjects)}}
-                    selectText="Escoge titulación"
-                    searchInputPlaceholderText="Buscar titulaciones..."
-                    noItemsText="No se encuentran coincidencias"
-                    styleTextDropdown={{marginLeft:10}}
-                    styleTextDropdownSelected={{marginLeft:10}}
-                    searchInputStyle={{height:40}}
-                    hideDropdown
-                    single
-                    textInputProps={{autoFocus:false}}
-                    displayKey="name"
-                    uniqueKey="name"
-                  />
+                  {/*
+                    <MultiSelect
+                      items={careers}
+                      selectedItems={selectedCareer}
+                      onSelectedItemsChange={(selectedItems)=>{setSelectedCareer(selectedItems); setSelected(true); fetchSubjects(selectedItems[0], subjects)}}
+                      selectText="Escoge titulación"
+                      searchInputPlaceholderText="Buscar titulaciones..."
+                      noItemsText="No se encuentran coincidencias"
+                      styleTextDropdown={{marginLeft:10}}
+                      styleTextDropdownSelected={{marginLeft:10}}
+                      searchInputStyle={{height:40}}
+                      hideDropdown
+                      single
+                      textInputProps={{autoFocus:false}}
+                      displayKey="name"
+                      uniqueKey="name"
+                    />
+                  */}
+                  {CareerMultiselect(careers,selectedCareer,subjects,setSelectedCareer,setSelected)}
                 </View>
                 {selected ? 
                   <View style={{marginTop:20}}>
@@ -626,22 +630,25 @@ export default function Home({ navigation }: any) {
             {showGroupUser ? 
               <View>
                 <View>
-                  <MultiSelect
-                    items={careers}
-                    selectedItems={selectedCareer}
-                    onSelectedItemsChange={(selectedItems)=>{setSelectedCareer(selectedItems); setSelected(true); fetchSubjects(selectedItems[0], subjects)}}
-                    selectText="Escoge titulación"
-                    searchInputPlaceholderText="Buscar titulaciones..."
-                    noItemsText="No se encuentran coincidencias"
-                    styleTextDropdown={{marginLeft:10}}
-                    styleTextDropdownSelected={{marginLeft:10}}
-                    searchInputStyle={{height:40}}
-                    hideDropdown
-                    single
-                    textInputProps={{autoFocus:false}}
-                    displayKey="name"
-                    uniqueKey="name"
-                  />
+                  {/*
+                    <MultiSelect
+                      items={careers}
+                      selectedItems={selectedCareer}
+                      onSelectedItemsChange={(selectedItems)=>{setSelectedCareer(selectedItems); setSelected(true); fetchSubjects(selectedItems[0], subjects)}}
+                      selectText="Escoge titulación"
+                      searchInputPlaceholderText="Buscar titulaciones..."
+                      noItemsText="No se encuentran coincidencias"
+                      styleTextDropdown={{marginLeft:10}}
+                      styleTextDropdownSelected={{marginLeft:10}}
+                      searchInputStyle={{height:40}}
+                      hideDropdown
+                      single
+                      textInputProps={{autoFocus:false}}
+                      displayKey="name"
+                      uniqueKey="name"
+                    />
+                  */}
+                  {CareerMultiselect(careers,selectedCareer,subjects,setSelectedCareer,setSelected)}
                 </View>
                 {selected ? 
                   <View style={{marginTop:20}}>
