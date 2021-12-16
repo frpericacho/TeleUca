@@ -497,8 +497,8 @@ export default function Home({ navigation }: any) {
     setSubjects([])
   }
 
-  return (
-    <Provider>
+  const multiSelect = async (groupTitle) =>  {
+    return (
       <Portal>
         <Modal
           visible={visible}
@@ -507,7 +507,11 @@ export default function Home({ navigation }: any) {
           style={{height: "80%"}}
         >
           <ScrollView>
-            <Text style={{marginLeft:10, marginBottom:10, fontWeight: 'bold', fontSize: 20, color: 'grey'}}>Crear Chat</Text>
+            {groupTitle ?
+              <Text style={{marginLeft:10, marginBottom:10, fontWeight: 'bold', fontSize: 20, color: 'grey'}}>Crear Chat</Text>            
+            :
+              <Text style={{marginLeft:10, marginBottom:10, fontWeight: 'bold', fontSize: 20, color: 'grey'}}>Crear Chat de difusión</Text> 
+            }
             <Input
               label="Titulo:"
               labelStyle={{fontWeight: 'bold', fontSize: 15, color: 'grey'}}
@@ -608,7 +612,7 @@ export default function Home({ navigation }: any) {
               </View> 
             : null}
             {!showOptUser ?
-              <Button onPress={() => /*submitGroup(titleChat, DescriptionChat)*/handleSubmit(titleChat, DescriptionChat)}>
+              <Button onPress={() => handleSubmit(titleChat, DescriptionChat)}>
                 Crear
               </Button>
             : null}
@@ -618,125 +622,13 @@ export default function Home({ navigation }: any) {
           El chat requiere un título
         </Snackbar>
       </Portal>
-      <Portal>
-        <Modal
-          visible={visible2}
-          onDismiss={()=> {hideModal2(); setUserList([firebase.auth().currentUser?.email]); resetStates()} }
-          contentContainerStyle={containerStyle}
-          style={{height: "80%"}}
-        >
-          <ScrollView>
-            <Text>Crear Chat de difusión</Text>
-            <Input
-              label="Titulo:"
-              labelStyle={{fontWeight: 'bold', fontSize: 15, color: 'grey'}}
-              onChangeText={(value) => setTitleChat(value)}
-              placeholder="Titulo"
-            />
-            <Input
-              label="Descripcion:"
-              labelStyle={{fontWeight: 'bold', fontSize: 15, color: 'grey'}}
-              onChangeText={(value) => setDescriptionChat(value)}
-              placeholder="Descripcion"
-            />
-            {showOptUser ? 
-              <View>
-                <Text style={{marginLeft:10, marginBottom:10, fontWeight: 'bold', fontSize: 15, color: 'grey'}}>Añadir usuarios</Text>
-                <View style={{flexDirection:'row', justifyContent:'space-evenly'}}>
-                  <Button style={{backgroundColor:'#039BE5'}} labelStyle={{color:'white'}} onPress={()=> {setShowIndUser(true); setShowOptUser(false)}}>
-                    Individual
-                  </Button>
-                  <Button style={{backgroundColor:'#039BE5'}} labelStyle={{color:'white'}} onPress={()=> {setShowGroupUser(true); setShowOptUser(false)}}>
-                    Por Grupos
-                  </Button>
-                </View>
-              </View>
-            : null}
-            {showIndUser ?
-              <View>
-                <Input
-                  label="Añadir usuario:"
-                  ref={(input) => {
-                    textInput = input;
-                  }}
-                  onChangeText={(value) => setUser(value)}
-                  placeholder="email usuario"
-                  clearTextOnFocus
-                  autoCapitalize={"none"}
-                  rightIcon={
-                    <TouchableOpacity onPress={addUserChat}>
-                      <Icon name="account-plus" size={20} color="#03A9F4" />
-                    </TouchableOpacity>
-                  }
-                />
-                <FlatList
-                  style={{ marginBottom: 3 }}
-                  data={UserList}
-                  renderItem={renderUserItem}
-                  keyExtractor={(item) => item}
-                />
-              </View>
-            : null}
-            {showGroupUser ? 
-              <View>
-                <View>
-                  {/*
-                    <MultiSelect
-                      items={careers}
-                      selectedItems={selectedCareer}
-                      onSelectedItemsChange={(selectedItems)=>{setSelectedCareer(selectedItems); setSelected(true); fetchSubjects(selectedItems[0], subjects)}}
-                      selectText="Escoge titulación"
-                      searchInputPlaceholderText="Buscar titulaciones..."
-                      noItemsText="No se encuentran coincidencias"
-                      styleTextDropdown={{marginLeft:10}}
-                      styleTextDropdownSelected={{marginLeft:10}}
-                      searchInputStyle={{height:40}}
-                      hideDropdown
-                      single
-                      textInputProps={{autoFocus:false}}
-                      displayKey="name"
-                      uniqueKey="name"
-                    />
-                  */}
-                  {CareerMultiselect(careers,selectedCareer,subjects,setSelectedCareer,setSelected)}
-                </View>
-                {selected ? 
-                  <View style={{marginTop:20}}>
-                    <MultiSelect
-                      items={subjects}
-                      selectedItems={selectedSubjects}
-                      onSelectedItemsChange={(selectedItems)=>setSelectedSubjects(selectedItems)}
-                      selectText="Escoge asignaturas"
-                      searchInputPlaceholderText="Buscar asignaturas..."
-                      noItemsText="No se encuentran coincidencias"
-                      submitButtonText="Añadir asignaturas"
-                      hideSubmitButton
-                      styleTextDropdown={{marginLeft:10}}
-                      styleTextDropdownSelected={{marginLeft:10}}
-                      searchInputStyle={{height:40}}
-                      tagContainerStyle={{
-                        maxWidth: '90%'
-                      }}
-                      hideDropdown
-                      textInputProps={{autoFocus:false}}
-                      displayKey="name"
-                      uniqueKey="id"
-                    />
-                  </View>
-                : null }
-              </View> 
-            : null}
-            {!showOptUser ?
-              <Button onPress={() => /*submitDiffusion(titleChat, DescriptionChat)*/handleSubmit(titleChat, DescriptionChat)}>
-                Crear
-              </Button>
-            : null}
-          </ScrollView>
-        </Modal>
-        <Snackbar duration={1000} visible={open} onDismiss={onDismissSnackBar}>
-          El chat requiere un título
-        </Snackbar>
-      </Portal>
+    );
+  }
+
+  return (
+    <Provider>
+      {multiSelect(true)}
+      {multiSelect(false)}
       <View>
         <ChatItem navigation={navigation} Chat={Saved} Search={false} />
         <FlatList
