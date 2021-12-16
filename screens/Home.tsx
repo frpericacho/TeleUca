@@ -1,7 +1,6 @@
-import { Text, View, FlatList, Platform, TouchableOpacity } from "react-native";
-import React, { useState } from "react";
+import { Text, View, FlatList, Platform, TouchableOpacity, Alert, ScrollView } from "react-native";
+import React, { useState, useEffect } from "react";
 import ChatItem from "../components/chatItem";
-import { useEffect } from "react";
 import {
   Modal,
   Portal,
@@ -15,11 +14,9 @@ import Chat from "../lib/Types/Chat";
 import * as ImagePicker from "expo-image-picker";
 import firebase from "firebase";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import { Alert, ScrollView } from "react-native";
 import * as Notifications from 'expo-notifications';
 import Constants from 'expo-constants';
 import MultiSelect from 'react-native-multiple-select';
-import fetchSubjects from "../components/Multiselect/firebaseAPI";
 import CareerMultiselect from "../components/Multiselect/CareerMultiselect";
 
 export default function Home({ navigation }: any) {
@@ -61,7 +58,7 @@ export default function Home({ navigation }: any) {
   const [subjects, setSubjects] = React.useState([]);
 
   const [selectedCareer, setSelectedCareer] = React.useState([]);
-  const [careers, setCareer] = React.useState([]);
+  const [careers] = React.useState([]);
 
   const [selected, setSelected] = useState(false);
 
@@ -213,14 +210,16 @@ export default function Home({ navigation }: any) {
   const handleSubmit = async (title: string, description: string) => {
     if(visible){
       if(showIndUser){
-        submitGroup(title, description)
+        submitGroup(title, description, "group")
       }else if(showGroupUser){
+        
         submitGroupSubjects(title, description)
       }
     }else if(visible2){
       console.log('le has dado a crear chat de difusion')
       if(showIndUser){
-        submitDiffusion(title, description)
+        // submitDiffusion
+        submitGroup(title, description, "difusion")
       }else if(showGroupUser){
         submitDiffusionSubjects(title, description)
       }
@@ -232,10 +231,12 @@ export default function Home({ navigation }: any) {
       Alert.alert("Debes seleccionar al menos una titulación");
     } else if(selectedSubjects.length == 0) {
       await fetchUsersByCareer()
-      await submitDiffusion(title, description)
+      // submitDiffusion
+      await submitGroup(title, description, "difusion")
     } else {
       await fetchUsersBySubjects()
-      await submitDiffusion(title, description)
+      // submitDiffusion
+      await submitGroup(title, description, "difusion")
     }
   }
 
@@ -244,10 +245,10 @@ export default function Home({ navigation }: any) {
       Alert.alert("Debes seleccionar al menos una titulación");
     } else if(selectedSubjects.length == 0) {
       await fetchUsersByCareer()
-      await submitGroup(title, description)
+      await submitGroup(title, description, "group")
     } else {
       await fetchUsersBySubjects()
-      await submitGroup(title, description)
+      await submitGroup(title, description, "group")
     }
   }
 
@@ -289,6 +290,53 @@ export default function Home({ navigation }: any) {
     })
   }
 
+  const submitGroup = async (title: string, description: string, type: string) => {
+    if (title == "") {
+      onOpenSnackBar();
+    }  else {
+      firebase
+        .firestore()
+        .collection("chats")
+        .add({
+          avatar_url: "",
+          description: DescriptionChat,
+          title: titleChat,
+          titleLowerCase: titleChat.toLowerCase(),
+          //type: group
+          type: type,
+          users: {
+            UserList,
+          },
+          LastMessage: {
+            createdAt: new Date()
+          },
+          NewMessages: [],
+          Admin: MyUserAuth?.email,
+        })
+        .then(async(chat) => {
+          let NewMessages: any = [];
+          UserList.forEach((user: string) => {
+            NewMessages.push({
+              email: user,
+              NewMessage: false,
+            });
+          });
+          chat.update({
+            NewMessages: NewMessages,
+          });
+          setUserList([firebase.auth().currentUser?.email]);
+          hideModal();
+
+          await setTitleChat('')
+          await setDescriptionChat('')
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  }
+
+  /*
   const submitGroup = async (title: string, description: string) => {
     if (title == "") {
       onOpenSnackBar();
@@ -334,6 +382,8 @@ export default function Home({ navigation }: any) {
         });
     }
   };
+  */
+ /*
   const submitDiffusion = async (title: string, description: string) => {
     if (title == "") {
       onOpenSnackBar();
@@ -379,7 +429,7 @@ export default function Home({ navigation }: any) {
         });
     }
   }
-
+*/
   const addUserChat = async () => {
     if (MyUserAuth?.email?.includes("@alum.uca.es")) {
       if (user.includes("@uca.es")) {
