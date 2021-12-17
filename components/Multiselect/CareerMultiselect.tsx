@@ -2,7 +2,7 @@ import React from "react";
 import MultiSelect from "react-native-multiple-select";
 import fetchSubjects from "./firebaseAPI";
 
-const CareerMultiselect = async (careers, selectedCareer, subjects, setSelectedCareer, setSelected) => {
+const CareerMultiselect = (careers, selectedCareer, subjects, setSelectedCareer, setSelected) => {
     return(
         <MultiSelect
             items={careers}

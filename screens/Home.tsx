@@ -29,13 +29,18 @@ export default function Home({ navigation }: any) {
   const [UserList, setUserList] = useState<Array<any>>([]);
   let textInput: any;
 
-  const [visible, setVisible] = useState(false);
-  const showModal = () => setVisible(true);
-  const hideModal = () => setVisible(false);
-
-  const [visible2, setVisible2] = useState(false);
-  const showModal2 = () => setVisible2(true);
-  const hideModal2 = () => setVisible2(false);
+  const [visibleGroup, setVisibleGroup] = useState(false);
+  const [visibleDifusion, setVisibleDifusion] = useState(false);
+  const showModal = (type:string) => {
+    if(type == "group")
+      setVisibleGroup(true)
+    else
+      setVisibleDifusion(true)
+  };
+  const hideModal = () => {
+    setVisibleGroup(false)
+    setVisibleDifusion(false)
+  };
   
   const [openSpeedDial, setOpenSpeedDial] = React.useState(false);
 
@@ -208,14 +213,14 @@ export default function Home({ navigation }: any) {
   };
 
   const handleSubmit = async (title: string, description: string) => {
-    if(visible){
+    if(visibleGroup){
       if(showIndUser){
         submitGroup(title, description, "group")
       }else if(showGroupUser){
         
         submitGroupSubjects(title, description)
       }
-    }else if(visible2){
+    }else if(visibleDifusion){
       console.log('le has dado a crear chat de difusion')
       if(showIndUser){
         // submitDiffusion
@@ -497,20 +502,25 @@ export default function Home({ navigation }: any) {
     setSubjects([])
   }
 
-  const multiSelect = async (groupTitle) =>  {
+  const multiSelect = () =>  {
     return (
       <Portal>
         <Modal
-          visible={visible}
+          visible={visibleGroup||visibleDifusion}
           onDismiss={()=> {hideModal(); setUserList([firebase.auth().currentUser?.email]); resetStates()}}
           contentContainerStyle={containerStyle}
           style={{height: "80%"}}
         >
           <ScrollView>
-            {groupTitle ?
+            {visibleGroup ?
               <Text style={{marginLeft:10, marginBottom:10, fontWeight: 'bold', fontSize: 20, color: 'grey'}}>Crear Chat</Text>            
             :
-              <Text style={{marginLeft:10, marginBottom:10, fontWeight: 'bold', fontSize: 20, color: 'grey'}}>Crear Chat de difusión</Text> 
+              null
+            }
+            {visibleDifusion ?
+              <Text style={{marginLeft:10, marginBottom:10, fontWeight: 'bold', fontSize: 20, color: 'grey'}}>Crear Chat de difusión</Text>             
+            :
+              null
             }
             <Input
               label="Titulo:"
@@ -627,8 +637,7 @@ export default function Home({ navigation }: any) {
 
   return (
     <Provider>
-      {multiSelect(true)}
-      {multiSelect(false)}
+      {multiSelect()}
       <View>
         <ChatItem navigation={navigation} Chat={Saved} Search={false} />
         <FlatList
@@ -664,13 +673,13 @@ export default function Home({ navigation }: any) {
         <SpeedDial.Action 
           icon={{ name: 'add', color: '#fff' }} 
           title="Crear Chat" 
-          onPress={() => {showModal(); setOpenSpeedDial(!openSpeedDial)}}
+          onPress={() => {showModal("group"); setOpenSpeedDial(!openSpeedDial)}}
           color='#03A9F4'
         />  
         <SpeedDial.Action 
           icon={{ name: 'delete', color: '#fff' }} 
           title="Crear Chat Difusión" 
-          onPress={() => {showModal2(); setOpenSpeedDial(!openSpeedDial)}}
+          onPress={() => {showModal("difusion"); setOpenSpeedDial(!openSpeedDial)}}
           color='#03A9F4'
         />
       </SpeedDial>
