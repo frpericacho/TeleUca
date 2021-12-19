@@ -49,7 +49,7 @@ const Chat = ({ route, navigation }: any) => {
     firebase.firestore().collection('users').where('email','==',MyUserAuth?.email).get().then(async (user) => {
       setUserFirestore(user.docs[0].data())
     })
-    readNewMessages();
+    //readNewMessages();
   });
 
   useEffect(() => {
@@ -132,6 +132,7 @@ const Chat = ({ route, navigation }: any) => {
         }).map((users: any) => {
           users.NewMessage = false;
         });
+        
         chat.ref.update({
           NewMessages: NewMessagesAux,
         });
@@ -219,7 +220,8 @@ const Chat = ({ route, navigation }: any) => {
             }).map((users: any) => {
               users.NewMessage = true;
             });
-            chat.ref.update({
+            
+            chat.ref.update({ 
               LastMessage: {
                 _id,
                 text,

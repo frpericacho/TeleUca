@@ -397,6 +397,7 @@ function checkNewMessages(Chat: any, MyUserAuth: firebase.User | null) {
 
   if (Chat?.NewMessages) {
     let user = search(MyUserAuth?.email, Chat.NewMessages);
+    
     if (user?.NewMessage) {
       check = true;
     } else {
