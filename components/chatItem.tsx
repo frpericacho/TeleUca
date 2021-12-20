@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { TouchableOpacity, Text } from "react-native";
 import { View, StyleSheet } from "react-native";
 import { Title } from "react-native-paper";
-import { Badge, Avatar } from "react-native-elements";
+import { Badge, Avatar, Icon } from "react-native-elements";
 import firebase from "firebase";
 
 const ChatItem = ({ Chat, navigation, Search }: any) => {
@@ -35,6 +35,15 @@ const ChatItem = ({ Chat, navigation, Search }: any) => {
                   rounded
                   containerStyle={{ marginLeft: 20 }}
                 />
+                {Chat.type == 'difusion' ?
+                  <Badge
+                    badgeStyle={{ width: 20, height: 20, backgroundColor:"#B3E5FC" }}
+                    containerStyle={{ position: "absolute", top: 1, right: 1 }}
+                    value={<Icon color="#01579B" size={15} name="campaign" type="material"/>}
+                  />
+                  :
+                  null
+                }
               </View>
               <View
                 style={styles.innerWrapper}
@@ -135,6 +144,15 @@ const ChatItem = ({ Chat, navigation, Search }: any) => {
                   rounded
                   containerStyle={{ marginLeft: 20 }}
                 />
+                {Chat.type == 'difusion' ?
+                  <Badge
+                    badgeStyle={{ width: 20, height: 20, backgroundColor:"#B3E5FC" }}
+                    containerStyle={{ position: "absolute", top: 1, right: 1 }}
+                    value={<Icon color="#01579B" size={15} name="campaign" type="material"/>}
+                  />
+                  :
+                  null
+                }
               </View>
               <View
                 style={styles.innerWrapper}
@@ -227,6 +245,15 @@ const ChatItem = ({ Chat, navigation, Search }: any) => {
                   rounded
                   containerStyle={{ marginLeft: 20 }}
                 />
+                {Chat.type == 'difusion' ?
+                  <Badge
+                    badgeStyle={{ width: 20, height: 20, backgroundColor:"#B3E5FC" }}
+                    containerStyle={{ position: "absolute", top: 1, right: 1 }}
+                    value={<Icon color="#01579B" size={15} name="campaign" type="material"/>}
+                  />
+                  :
+                  null
+                }
               </View>
               <View
                 style={styles.innerWrapper}
@@ -321,6 +348,15 @@ const ChatItem = ({ Chat, navigation, Search }: any) => {
                   rounded
                   containerStyle={{ marginLeft: 20 }}
                 />
+                {Chat.type == 'difusion' ?
+                  <Badge
+                    badgeStyle={{ width: 20, height: 20, backgroundColor:"#B3E5FC" }}
+                    containerStyle={{ position: "absolute", top: 1, right: 1 }}
+                    value={<Icon color="#01579B" size={15} name="campaign" type="material"/>}
+                  />
+                  :
+                  null
+                }
               </View>
               <View
                 style={styles.innerWrapper}
