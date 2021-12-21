@@ -438,7 +438,13 @@ const ChatOptions = ({ route, navigation }: any) => {
                 </TouchableOpacity>
               </View>
               <View>
-                <Text>{TitleChat}</Text>
+                <Text>
+                {TitleChat.length > 30 ?
+                  TitleChat.substring(0, 27).concat("...")
+                  :
+                  TitleChat
+                }
+                </Text>
               </View>
               <View style={{ flexDirection: "row" }}>
                 <View style={{ marginRight: 15 }}>
@@ -546,7 +552,13 @@ const ChatOptions = ({ route, navigation }: any) => {
               </TouchableOpacity>
             </View>
             <View>
-              <Text>{TitleChat}</Text>
+              <Text>
+                {TitleChat.length > 30 ?
+                  TitleChat.substring(0, 27).concat("...")
+                  :
+                  TitleChat
+                }
+              </Text>
             </View>
             <View style={{ marginRight: 10 }}>
               <Icon
@@ -616,7 +628,13 @@ const ChatOptions = ({ route, navigation }: any) => {
             </TouchableOpacity>
           </View>
           <View>
-            <Text>{TitleChat}</Text>
+            <Text>
+              {TitleChat.length > 30 ?
+                TitleChat.substring(0, 27).concat("...")
+                :
+                TitleChat
+              }
+            </Text>
           </View>
           <View>
             <Icon name="dots-vertical" size={30} color="white" />

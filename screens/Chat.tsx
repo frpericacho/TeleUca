@@ -1067,11 +1067,17 @@ const Chat = ({ route, navigation }: any) => {
           </TouchableOpacity>
         </View>
         <View>
-          {route.params.id == MyUserAuth?.email ? (
+          {route.params.id == MyUserAuth?.email ? 
             <Text>Mensajes guardados</Text>
-          ) : (
-            <Text>{Title}</Text>
-          )}
+           : 
+            <Text numberOfLines={1} >
+              {Title.length > 30 ?
+                Title.substring(0, 27).concat("...")
+                :
+                Title
+              }
+            </Text>
+          }
         </View>
         <View style={{ marginRight: 15 }}>
           {route.params.id == MyUserAuth?.email ? (

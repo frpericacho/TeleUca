@@ -48,7 +48,7 @@ const ChatItem = ({ Chat, navigation, Search }: any) => {
               <View
                 style={styles.innerWrapper}
               >
-                <Title adjustsFontSizeToFit style={styles.title}>
+                <Title numberOfLines={1} style={styles.title}>
                   {Chat.title}
                 </Title>
                 {Chat.LastMessage.user ? (
@@ -157,7 +157,7 @@ const ChatItem = ({ Chat, navigation, Search }: any) => {
               <View
                 style={styles.innerWrapper}
               >
-                <Title adjustsFontSizeToFit style={styles.title}>
+                <Title numberOfLines={1} style={styles.title}>
                   {Chat.title}
                 </Title>
                 {Chat.LastMessage.user ? (
@@ -258,7 +258,7 @@ const ChatItem = ({ Chat, navigation, Search }: any) => {
               <View
                 style={styles.innerWrapper}
               >
-                <Title adjustsFontSizeToFit style={styles.title}>
+                <Title numberOfLines={1} style={styles.title}>
                   {Chat.title}
                 </Title>
                 <Title adjustsFontSizeToFit style={styles.subTitle}>
@@ -361,7 +361,7 @@ const ChatItem = ({ Chat, navigation, Search }: any) => {
               <View
                 style={styles.innerWrapper}
               >
-                <Title adjustsFontSizeToFit style={styles.title}>
+                <Title numberOfLines={1} style={styles.title}>
                   {Chat.title}
                 </Title>
                 <Title adjustsFontSizeToFit style={styles.subTitle}>
