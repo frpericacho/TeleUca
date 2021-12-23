@@ -9,6 +9,256 @@ const ChatItem = ({ Chat, navigation, Search }: any) => {
   //MyUser
   const MyUserAuth = firebase.auth().currentUser;
 
+  const chatItemViewHome = (individual: boolean, newMessage: boolean) => {
+    if(individual){
+      let titleDisplay = Chat.users.UserList.filter((email: string) => {
+        return email != MyUserAuth?.email;
+      });
+      let avatarDisplay = Chat.avatar_url.filter((user:any)=>{
+        return user.email == titleDisplay;
+      })
+      return (
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate("Chat", Chat);
+          }}
+        >
+          <View
+            style={styles.wrapperItem}
+          >
+            <View style={{ flexDirection: "column" }}>
+              <Avatar
+                source={
+                  avatarDisplay[0].avatar_url!=""
+                    ? { uri: avatarDisplay[0].avatar_url }
+                    : require("../assets/user.png")
+                }
+                size="medium"
+                imageProps={{ resizeMode: "cover" }}
+                rounded
+                containerStyle={{ marginLeft: 20 }}
+              />
+            </View>
+            <View
+              style={styles.innerWrapper}
+            >
+              <Title adjustsFontSizeToFit style={styles.title}>
+                {titleDisplay[0].split("@")[0]}
+              </Title>
+              {Chat.LastMessage.user ? (
+                <Text numberOfLines={1} style={styles.subTitle}>{Chat?.LastMessage?.text}</Text>
+              ) : (
+                <Title adjustsFontSizeToFit style={styles.subTitle}>
+                  {" "}
+                </Title>
+              )}
+            </View>
+            {newMessage ? 
+              <Badge
+                status="success"
+                badgeStyle={{ width: 25, height: 25 }}
+                containerStyle={{ position: "absolute", top: 10, right: 10 }}
+                value="!"
+              />
+            :
+              null
+            }
+          </View>
+        </TouchableOpacity>
+      );
+    }else{
+      return (
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate("Chat", Chat);
+          }}
+        >
+          <View
+            style={styles.wrapperItem}
+          >
+            <View style={{ flexDirection: "column" }}>
+              <Avatar
+                source={
+                  Chat.avatar_url
+                    ? { uri: Chat.avatar_url }
+                    : require("../assets/user.png")
+                }
+                size="medium"
+                imageProps={{ resizeMode: "cover" }}
+                rounded
+                containerStyle={{ marginLeft: 20 }}
+              />
+              {Chat.type == 'difusion' ?
+                <Badge
+                  badgeStyle={{ width: 20, height: 20, backgroundColor:"#B3E5FC" }}
+                  containerStyle={{ position: "absolute", top: 1, right: 1 }}
+                  value={<Icon color="#01579B" size={15} name="campaign" type="material"/>}
+                />
+                :
+                null
+              }
+            </View>
+            <View
+              style={styles.innerWrapper}
+            >
+              <Title numberOfLines={1} style={styles.title}>
+                {Chat.title}
+              </Title>
+              {Chat.LastMessage.user ? (
+                <Text numberOfLines={1} style={styles.subTitle}>{Chat?.LastMessage?.text}</Text>
+              ) : (
+                <Title adjustsFontSizeToFit style={styles.subTitle}> </Title>
+              )}
+            </View>
+            {newMessage ? 
+              <Badge
+                status="success"
+                badgeStyle={{ width: 25, height: 25 }}
+                containerStyle={{ position: "absolute", top: 10, right: 10 }}
+                value="!"
+              />
+            :
+              null
+            }
+          </View>
+        </TouchableOpacity>
+      );
+    }
+  }
+
+  const chatItemViewSearch = (individual: boolean, newMessage: boolean) => {
+    if(individual){
+      let titleDisplay = Chat.users.UserList.filter((email: string) => {
+        return email != MyUserAuth?.email;
+      });
+      let avatarDisplay = Chat.avatar_url.filter((user:any)=>{
+        return user.email == titleDisplay;
+      })
+      return (
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate("Chat", Chat);
+          }}
+        >
+          <View
+            style={styles.wrapperItem}
+          >
+            <View style={{ flexDirection: "column" }}>
+              <Avatar
+                source={
+                  avatarDisplay[0].avatar_url!=""
+                    ? { uri: avatarDisplay[0].avatar_url }
+                    : require("../assets/user.png")
+                }
+                size="medium"
+                imageProps={{ resizeMode: "cover" }}
+                rounded
+                containerStyle={{ marginLeft: 20 }}
+              />
+            </View>
+            <View
+              style={styles.innerWrapper}
+            >
+              <Title adjustsFontSizeToFit style={styles.title}>
+                {titleDisplay[0].split("@")[0]}
+              </Title>
+              <Title adjustsFontSizeToFit style={styles.subTitle}>
+                {Chat.description}
+              </Title>
+            </View>
+            {newMessage ? 
+              <Badge
+                status="success"
+                badgeStyle={{ width: 25, height: 25 }}
+                containerStyle={{ position: "absolute", top: 10, right: 10 }}
+                value="!"
+              />
+            :
+              null
+            }
+          </View>
+        </TouchableOpacity>
+      );
+    }else{
+      return (
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate("Chat", Chat);
+          }}
+        >
+          <View
+            style={styles.wrapperItem}
+          >
+            <View style={{ flexDirection: "column" }}>
+              <Avatar
+                source={
+                  Chat.avatar_url
+                    ? { uri: Chat.avatar_url }
+                    : require("../assets/user.png")
+                }
+                size="medium"
+                imageProps={{ resizeMode: "cover" }}
+                rounded
+                containerStyle={{ marginLeft: 20 }}
+              />
+              {Chat.type == 'difusion' ?
+                <Badge
+                  badgeStyle={{ width: 20, height: 20, backgroundColor:"#B3E5FC" }}
+                  containerStyle={{ position: "absolute", top: 1, right: 1 }}
+                  value={<Icon color="#01579B" size={15} name="campaign" type="material"/>}
+                />
+                :
+                null
+              }
+            </View>
+            <View
+              style={styles.innerWrapper}
+            >
+              <Title numberOfLines={1} style={styles.title}>
+                {Chat.title}
+              </Title>
+              <Title adjustsFontSizeToFit style={styles.subTitle}>
+                {Chat.description}
+              </Title>
+            </View>
+            {newMessage ?
+              <Badge
+                status="success"
+                badgeStyle={{ width: 25, height: 25 }}
+                containerStyle={{ position: "absolute", top: 10, right: 10 }}
+                value="!"
+              />
+            :
+              null
+            }
+          </View>
+        </TouchableOpacity>
+      );
+    }
+  }
+
+  if(!Search){
+    if (Chat.type == "group" || Chat.type == "difusion") {
+      return(
+        chatItemViewHome(false, checkNewMessages(Chat, MyUserAuth))
+      )
+    }else{
+      return(
+        chatItemViewHome(true, checkNewMessages(Chat, MyUserAuth))
+      )
+    }
+  }else{
+    if (Chat.type == "group" || Chat.type == "difusion") {
+      return(
+        chatItemViewSearch(false, checkNewMessages(Chat, MyUserAuth))
+      )
+    }else{
+      return(
+        chatItemViewSearch(true, checkNewMessages(Chat, MyUserAuth))
+      )
+    }
+  }
+{/*
   // ChatItem vista Home
   if (!Search) {
     if (checkNewMessages(Chat, MyUserAuth)) {
@@ -417,6 +667,7 @@ const ChatItem = ({ Chat, navigation, Search }: any) => {
       }
     }
   }
+*/}
 };
 export default ChatItem;
 
