@@ -46,12 +46,15 @@ const ChatOptions = ({ route, navigation }: any) => {
   const showModalDeleteChat = () => setDeleteChat(true);
   const hideModalDeleteChat = () => setDeleteChat(false);
 
-  useEffect(()=>{
-    getChatImagen()
-  }, []);
+  //Loading
+  const [loading, setLoading] = React.useState(true);
 
-  useLayoutEffect(() => {
-    fetchUsers(route.params.chat.users.UserList);
+  useEffect(() => {
+    (async () => {
+      await getChatImagen()
+      await fetchUsers(route.params.chat.users.UserList)
+      setLoading(false)
+    })();
   }, []);
 
   const getChatImagen = async () => {
@@ -320,6 +323,7 @@ const ChatOptions = ({ route, navigation }: any) => {
       });
   };
   //type: group || difusion
+
   if (route.params.chat.type == "group" || route.params.chat.type == "difusion") {
     if (route.params.Admin) {
       return (
@@ -657,7 +661,7 @@ const ChatOptions = ({ route, navigation }: any) => {
                 <Text style={{fontWeight:'bold', fontSize:18}}>Email:</Text>
               </View>
               <View>
-                <Text style={{fontSize:15, marginTop:10}}>{users[0].email}</Text>
+                <Text style={{fontSize:15, marginTop:10}}>{users[0]?.email}</Text>
               </View>
             </View>
           </View>
