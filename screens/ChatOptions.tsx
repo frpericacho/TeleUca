@@ -318,8 +318,23 @@ const ChatOptions = ({ route, navigation }: any) => {
         hideModalTitle();
       });
   };
-  //type: group || difusion
 
+  const reduceTitle = () => {
+    return (
+      <View>
+        <Text>
+        {TitleChat.length > 30 ?
+          TitleChat.substring(0, 27).concat("...")
+          :
+          TitleChat
+        }
+        </Text>
+      </View>
+    )
+  }
+
+
+  //type: group || difusion
   if (route.params.chat.type == "group" || route.params.chat.type == "difusion") {
     if (route.params.Admin) {
       return (
@@ -437,15 +452,7 @@ const ChatOptions = ({ route, navigation }: any) => {
                   />
                 </TouchableOpacity>
               </View>
-              <View>
-                <Text>
-                {TitleChat.length > 30 ?
-                  TitleChat.substring(0, 27).concat("...")
-                  :
-                  TitleChat
-                }
-                </Text>
-              </View>
+              {reduceTitle()}
               <View style={{ flexDirection: "row" }}>
                 <View style={{ marginRight: 15 }}>
                   <Icon
@@ -551,15 +558,7 @@ const ChatOptions = ({ route, navigation }: any) => {
                 />
               </TouchableOpacity>
             </View>
-            <View>
-              <Text>
-                {TitleChat.length > 30 ?
-                  TitleChat.substring(0, 27).concat("...")
-                  :
-                  TitleChat
-                }
-              </Text>
-            </View>
+            {reduceTitle()}
             <View style={{ marginRight: 10 }}>
               <Icon
                 name="account-remove"
@@ -627,15 +626,7 @@ const ChatOptions = ({ route, navigation }: any) => {
               />
             </TouchableOpacity>
           </View>
-          <View>
-            <Text>
-              {TitleChat.length > 30 ?
-                TitleChat.substring(0, 27).concat("...")
-                :
-                TitleChat
-              }
-            </Text>
-          </View>
+          {reduceTitle()}
           <View>
             <Icon name="dots-vertical" size={30} color="white" />
           </View>
