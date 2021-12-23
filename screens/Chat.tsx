@@ -49,7 +49,6 @@ const Chat = ({ route, navigation }: any) => {
     firebase.firestore().collection('users').where('email','==',MyUserAuth?.email).get().then(async (user) => {
       setUserFirestore(user.docs[0].data())
     })
-    //readNewMessages();
   });
 
   useEffect(() => {

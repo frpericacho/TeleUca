@@ -3,7 +3,6 @@ import { Button, Input, Image, Icon } from "react-native-elements";
 import MultiSelect from 'react-native-multiple-select';
 import firebase from "firebase";
 import React, {useEffect, useState} from "react";
-import fetchSubjects from "../../components/Multiselect/firebaseAPI";
 import CareerMultiselect from "../../components/Multiselect/CareerMultiselect";
 
 export default function Register({ navigation }: any) {
@@ -38,25 +37,6 @@ export default function Register({ navigation }: any) {
         })
       })
   }
-
-  /*const fetchSubjects = async (selectedItem) => {
-    await firebase
-      .firestore()
-      .collection("careers")
-      .where("name","==",selectedItem)
-      .get().then((snapshot)=>{
-        snapshot.docs[0].data().subjects.forEach(element => {
-          element.get().then((doc)=>{
-            let subject = {
-              id: doc.id,
-              name: doc.data().name,
-              acronym: doc.data().acronym
-            }
-            subjects.push(subject)
-          })
-        });
-      })
-  }*/
 
   const handleRegister = async (email: string, password: string) => {
     setLoading("Registrando")
@@ -183,24 +163,6 @@ export default function Register({ navigation }: any) {
           />
         </View>
         <View style={styles.ListCareer}>
-          {/*
-            <MultiSelect
-              items={careers}
-              selectedItems={selectedCareer}
-              onSelectedItemsChange={(selectedItems)=>{setSelectedCareer(selectedItems); setSelected(true); fetchSubjects(selectedItems[0], subjects)}}
-              selectText="Escoge titulación"
-              searchInputPlaceholderText="Buscar titulaciones..."
-              noItemsText="No se encuentran coincidencias"
-              styleTextDropdown={{marginLeft:10}}
-              styleTextDropdownSelected={{marginLeft:10}}
-              searchInputStyle={{height:40}}
-              hideDropdown
-              single
-              textInputProps={{autoFocus:false}}
-              displayKey="name"
-              uniqueKey="name"
-            />
-          */}
           {CareerMultiselect(careers,selectedCareer,subjects,setSelectedCareer,setSelected)}
         </View>
         {selected ? 

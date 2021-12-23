@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { View, FlatList, TouchableOpacity } from "react-native";
 import { Searchbar } from "react-native-paper";
-import { Button } from "react-native-paper";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import firebase from "firebase";
 import Chat from "../lib/Types/Chat";

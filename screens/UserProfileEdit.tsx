@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, TouchableOpacity, TextInput, StyleSheet, ScrollView } from "react-native";
+import { View, Text, TouchableOpacity, TextInput, StyleSheet, ScrollView, Alert } from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { Image, Input } from "react-native-elements";
 import { FAB, Button } from "react-native-paper";
 import * as ImagePicker from "expo-image-picker";
 import firebase from "firebase";
-import { Alert } from "react-native";
 import MultiSelect from 'react-native-multiple-select';
 
 const UserProfileEdit = ({ route, navigation }: any) => {

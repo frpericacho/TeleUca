@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -13,7 +13,6 @@ import { SwipeListView } from "react-native-swipe-list-view";
 import firebase from "firebase";
 import { Button, Provider, Portal, Modal, FAB } from "react-native-paper";
 import * as ImagePicker from "expo-image-picker";
-import { useEffect } from "react";
 
 const ChatOptions = ({ route, navigation }: any) => {
   //MyUser

@@ -1,6 +1,5 @@
-import React, { useState } from "react";
-import { TouchableOpacity, Text } from "react-native";
-import { View, StyleSheet } from "react-native";
+import React from "react";
+import { TouchableOpacity, Text, View, StyleSheet } from "react-native";
 import { Title } from "react-native-paper";
 import { Badge, Avatar, Icon } from "react-native-elements";
 import firebase from "firebase";
