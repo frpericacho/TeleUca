@@ -6,10 +6,9 @@ import {
   Portal,
   Button,
   Provider,
-  FAB,
   Snackbar,
 } from "react-native-paper";
-import { Input, SpeedDial } from "react-native-elements";
+import { Input, SpeedDial, FAB } from "react-native-elements";
 import Chat from "../lib/Types/Chat";
 import * as ImagePicker from "expo-image-picker";
 import firebase from "firebase";
@@ -341,100 +340,6 @@ export default function Home({ navigation }: any) {
     }
   }
 
-  /*
-  const submitGroup = async (title: string, description: string) => {
-    if (title == "") {
-      onOpenSnackBar();
-    }  else {
-      firebase
-        .firestore()
-        .collection("chats")
-        .add({
-          avatar_url: "",
-          description: DescriptionChat,
-          title: titleChat,
-          titleLowerCase: titleChat.toLowerCase(),
-          //type: group
-          type: "group",
-          users: {
-            UserList,
-          },
-          LastMessage: {
-            createdAt: new Date()
-          },
-          NewMessages: [],
-          Admin: MyUserAuth?.email,
-        })
-        .then(async(chat) => {
-          let NewMessages: any = [];
-          UserList.forEach((user: string) => {
-            NewMessages.push({
-              email: user,
-              NewMessage: false,
-            });
-          });
-          chat.update({
-            NewMessages: NewMessages,
-          });
-          setUserList([firebase.auth().currentUser?.email]);
-          hideModal();
-
-          await setTitleChat('')
-          await setDescriptionChat('')
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
-  };
-  */
- /*
-  const submitDiffusion = async (title: string, description: string) => {
-    if (title == "") {
-      onOpenSnackBar();
-    } else {
-      firebase
-        .firestore()
-        .collection("chats")
-        .add({
-          avatar_url: "",
-          description: DescriptionChat,
-          title: titleChat,
-          titleLowerCase: titleChat.toLowerCase(),
-          //type: difusion
-          type: "difusion",
-          users: {
-            UserList,
-          },
-          LastMessage: {
-            createdAt: new Date()
-          },
-          NewMessages: [],
-          Admin: MyUserAuth?.email,
-        })
-        .then(async(chat) => {
-          let NewMessages: any = [];
-          UserList.forEach((user: string) => {
-            NewMessages.push({
-              email: user,
-              NewMessage: false,
-            });
-          });
-          chat.update({
-            NewMessages: NewMessages,
-          });
-          setUserList([firebase.auth().currentUser?.email]);
-          hideModal();
-
-          await setTitleChat('')
-          await setDescriptionChat('')
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
-  }
-*/
   const addUserChat = async () => {
     if (MyUserAuth?.email?.includes("@alum.uca.es")) {
       if (user.includes("@uca.es")) {
@@ -468,25 +373,6 @@ export default function Home({ navigation }: any) {
       }
     }
   };
-
-  /*const fetchSubjects = async (selectedItem) => {
-    await firebase
-      .firestore()
-      .collection("careers")
-      .where("name","==",selectedItem)
-      .get().then((snapshot)=>{
-        snapshot.docs[0].data().subjects.forEach(element => {
-          element.get().then((doc)=>{
-            let subject = {
-              id: doc.id,
-              name: doc.data().name,
-              acronym: doc.data().acronym
-            }
-            subjects.push(subject)
-          })
-        });
-      })
-  }*/
 
   const sortChat = async (a: Chat, b: Chat) => {
     return a.LastMessage.createdAt > b.LastMessage.createdAt;
@@ -575,24 +461,6 @@ export default function Home({ navigation }: any) {
             {showGroupUser ? 
               <View>
                 <View>
-                  {/*
-                    <MultiSelect
-                      items={careers}
-                      selectedItems={selectedCareer}
-                      onSelectedItemsChange={(selectedItems)=>{setSelectedCareer(selectedItems); setSelected(true); fetchSubjects(selectedItems[0], subjects)}}
-                      selectText="Escoge titulación"
-                      searchInputPlaceholderText="Buscar titulaciones..."
-                      noItemsText="No se encuentran coincidencias"
-                      styleTextDropdown={{marginLeft:10}}
-                      styleTextDropdownSelected={{marginLeft:10}}
-                      searchInputStyle={{height:40}}
-                      hideDropdown
-                      single
-                      textInputProps={{autoFocus:false}}
-                      displayKey="name"
-                      uniqueKey="name"
-                    />
-                  */}
                   {CareerMultiselect(careers,selectedCareer,subjects,setSelectedCareer,setSelected)}
                 </View>
                 {selected ? 
@@ -646,43 +514,42 @@ export default function Home({ navigation }: any) {
           renderItem={renderChatItem}
         />
       </View>
-      {/*
-      <FAB
-        style={{
-          backgroundColor: "#03A9F4",
-          position: "absolute",
-          margin: 16,
-          padding: 5,
-          right: 0,
-          bottom: 0,
-        }}
-        small
-        color="#FFF"
-        icon="chat-plus"
-        onPress={showModal}
-      />
-      */}
-      <SpeedDial
-        isOpen={openSpeedDial} 
-        icon={{ name: 'edit', color: '#fff' }} 
-        openIcon={{ name: 'close', color: '#fff' }} 
-        onOpen={() => setOpenSpeedDial(!openSpeedDial)} 
-        onClose={() => setOpenSpeedDial(!openSpeedDial)}
-        color='#03A9F4'
-      >
-        <SpeedDial.Action 
-          icon={{ name: 'add', color: '#fff' }} 
-          title="Crear Chat" 
-          onPress={() => {showModal("group"); setOpenSpeedDial(!openSpeedDial)}}
-          color='#03A9F4'
-        />  
-        <SpeedDial.Action 
-          icon={{ name: 'delete', color: '#fff' }} 
-          title="Crear Chat Difusión" 
-          onPress={() => {showModal("difusion"); setOpenSpeedDial(!openSpeedDial)}}
-          color='#03A9F4'
+      {MyUserAuth?.email?.includes("@alum.uca.es") ? 
+        <FAB
+          style={{
+            position: "absolute",
+            margin: 16,
+            padding: 5,
+            right: 0,
+            bottom: 0,
+          }}
+          color="#03A9F4"
+          icon={{ name: 'group-add', color: '#fff', type:'material' }} 
+          onPress={()=>showModal("group")}
         />
-      </SpeedDial>
+        :
+        <SpeedDial
+          isOpen={openSpeedDial} 
+          icon={{ name: 'edit', color: '#fff' }} 
+          openIcon={{ name: 'close', color: '#fff' }} 
+          onOpen={() => setOpenSpeedDial(!openSpeedDial)} 
+          onClose={() => setOpenSpeedDial(!openSpeedDial)}
+          color='#03A9F4'
+        >
+          <SpeedDial.Action 
+            icon={{ name: 'group-add', color: '#fff', type:'material' }} 
+            title="Crear Chat" 
+            onPress={() => {showModal("group"); setOpenSpeedDial(!openSpeedDial)}}
+            color='#03A9F4'
+          />  
+          <SpeedDial.Action 
+            icon={{ name: 'campaign', color: '#fff', type:'material' }} 
+            title="Crear Chat Difusión" 
+            onPress={() => {showModal("difusion"); setOpenSpeedDial(!openSpeedDial)}}
+            color='#03A9F4'
+          />
+        </SpeedDial>
+      }
     </Provider>
   );
 }

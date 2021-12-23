@@ -46,14 +46,10 @@ const ChatOptions = ({ route, navigation }: any) => {
   const showModalDeleteChat = () => setDeleteChat(true);
   const hideModalDeleteChat = () => setDeleteChat(false);
 
-  //Loading
-  const [loading, setLoading] = React.useState(true);
-
   useEffect(() => {
     (async () => {
       await getChatImagen()
       await fetchUsers(route.params.chat.users.UserList)
-      setLoading(false)
     })();
   }, []);
 
