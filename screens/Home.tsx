@@ -477,6 +477,7 @@ export default function Home({ navigation }: any) {
                       styleTextDropdown={{marginLeft:10}}
                       styleTextDropdownSelected={{marginLeft:10}}
                       searchInputStyle={{height:40}}
+                      styleDropdownMenuSubsection={{borderRadius: 25}}
                       tagContainerStyle={{
                         maxWidth: '90%'
                       }}
@@ -530,7 +531,7 @@ export default function Home({ navigation }: any) {
         :
         <SpeedDial
           isOpen={openSpeedDial} 
-          icon={{ name: 'edit', color: '#fff' }} 
+          icon={{ name: 'add', color: '#fff', type:'material' }} 
           openIcon={{ name: 'close', color: '#fff' }} 
           onOpen={() => setOpenSpeedDial(!openSpeedDial)} 
           onClose={() => setOpenSpeedDial(!openSpeedDial)}

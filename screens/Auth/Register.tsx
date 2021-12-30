@@ -179,6 +179,7 @@ export default function Register({ navigation }: any) {
             styleTextDropdown={{marginLeft:10}}
             styleTextDropdownSelected={{marginLeft:10}}
             searchInputStyle={{height:40}}
+            styleDropdownMenuSubsection={{borderRadius: 25}}
             tagContainerStyle={{
               maxWidth: '90%'
             }}

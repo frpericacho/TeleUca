@@ -14,6 +14,7 @@ const CareerMultiselect = (careers, selectedCareer, subjects, setSelectedCareer,
             styleTextDropdown={{marginLeft:10}}
             styleTextDropdownSelected={{marginLeft:10}}
             searchInputStyle={{height:40}}
+            styleDropdownMenuSubsection={{borderRadius: 25}}
             hideDropdown
             single
             textInputProps={{autoFocus:false}}

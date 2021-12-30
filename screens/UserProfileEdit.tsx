@@ -351,6 +351,7 @@ const UserProfileEdit = ({ route, navigation }: any) => {
                     styleTextDropdown={{marginLeft:10}}
                     styleTextDropdownSelected={{marginLeft:10}}
                     searchInputStyle={{height:40}}
+                    styleDropdownMenuSubsection={{borderRadius: 25}}
                     hideDropdown
                     single
                     textInputProps={{autoFocus:false}}
@@ -375,10 +376,10 @@ const UserProfileEdit = ({ route, navigation }: any) => {
                       styleTextDropdown={{marginLeft:10}}
                       styleTextDropdownSelected={{marginLeft:10}}
                       searchInputStyle={{height:40}}
+                      styleDropdownMenuSubsection={{borderRadius: 25}}
                       tagContainerStyle={{
                         maxWidth: '90%'
                       }}
-                      hideDropdown
                       textInputProps={{autoFocus:false}}
                       displayKey="name"
                       uniqueKey="id"
@@ -405,11 +406,11 @@ const UserProfileEdit = ({ route, navigation }: any) => {
 
 const styles = StyleSheet.create({
   List:{
+    marginTop: 30,
     marginHorizontal: 40,
   },
   ListCareer: {
-    marginHorizontal: 40,
-    marginBottom: 30
+    marginHorizontal: 40
   }
 });
 
