@@ -351,7 +351,7 @@ const UserProfileEdit = ({ route, navigation }: any) => {
                     styleTextDropdown={{marginLeft:10}}
                     styleTextDropdownSelected={{marginLeft:10}}
                     searchInputStyle={{height:40}}
-                    styleDropdownMenuSubsection={{borderRadius: 25}}
+                    styleDropdownMenuSubsection={{borderRadius: 25, height:"100%"}}
                     hideDropdown
                     single
                     textInputProps={{autoFocus:false}}
@@ -376,7 +376,7 @@ const UserProfileEdit = ({ route, navigation }: any) => {
                       styleTextDropdown={{marginLeft:10}}
                       styleTextDropdownSelected={{marginLeft:10}}
                       searchInputStyle={{height:40}}
-                      styleDropdownMenuSubsection={{borderRadius: 25}}
+                      styleDropdownMenuSubsection={{borderRadius: 25, height:"100%"}}
                       tagContainerStyle={{
                         maxWidth: '90%'
                       }}
