@@ -17,6 +17,7 @@ import * as Notifications from 'expo-notifications';
 import Constants from 'expo-constants';
 import MultiSelect from 'react-native-multiple-select';
 import CareerMultiselect from "../components/Multiselect/CareerMultiselect";
+import SubjectMultiselect from "../components/Multiselect/SubjectMultiselect";
 
 export default function Home({ navigation }: any) {
   //MyUser
@@ -465,27 +466,30 @@ export default function Home({ navigation }: any) {
                 </View>
                 {selected ? 
                   <View style={{marginTop:20}}>
-                    <MultiSelect
-                      items={subjects}
-                      selectedItems={selectedSubjects}
-                      onSelectedItemsChange={(selectedItems)=>setSelectedSubjects(selectedItems)}
-                      selectText="Escoge asignaturas"
-                      searchInputPlaceholderText="Buscar asignaturas..."
-                      noItemsText="No se encuentran coincidencias"
-                      submitButtonText="Añadir asignaturas"
-                      hideSubmitButton
-                      styleTextDropdown={{marginLeft:10}}
-                      styleTextDropdownSelected={{marginLeft:10}}
-                      searchInputStyle={{height:40}}
-                      styleDropdownMenuSubsection={{borderRadius: 25}}
-                      tagContainerStyle={{
-                        maxWidth: '90%'
-                      }}
-                      hideDropdown
-                      textInputProps={{autoFocus:false}}
-                      displayKey="name"
-                      uniqueKey="id"
-                    />
+                    {SubjectMultiselect(subjects,selectedSubjects,setSelectedSubjects)}
+                    {/*
+                      <MultiSelect
+                        items={subjects}
+                        selectedItems={selectedSubjects}
+                        onSelectedItemsChange={(selectedItems)=>setSelectedSubjects(selectedItems)}
+                        selectText="Escoge asignaturas"
+                        searchInputPlaceholderText="Buscar asignaturas..."
+                        noItemsText="No se encuentran coincidencias"
+                        submitButtonText="Añadir asignaturas"
+                        hideSubmitButton
+                        styleTextDropdown={{marginLeft:10}}
+                        styleTextDropdownSelected={{marginLeft:10}}
+                        searchInputStyle={{height:40}}
+                        styleDropdownMenuSubsection={{borderRadius: 25}}
+                        tagContainerStyle={{
+                          maxWidth: '90%'
+                        }}
+                        hideDropdown
+                        textInputProps={{autoFocus:false}}
+                        displayKey="name"
+                        uniqueKey="id"
+                      />
+                    */}
                   </View>
                 : null }
               </View> 
