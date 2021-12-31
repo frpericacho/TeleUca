@@ -46,16 +46,16 @@ const Chat = ({ route, navigation }: any) => {
   const [Chat, setChat] = useState<any>();
 
   //NewMeassages
-  const [unsubscribe, setUnsubscribe] = useState<any>();
+  //const [unsubscribe, setUnsubscribe] = useState<any>();
 
   useEffect(() => {
     firebase.firestore().collection('users').where('email','==',MyUserAuth?.email).get().then(async (user) => {
       setUserFirestore(user.docs[0].data())
     })
-    const willBlurSubscription = navigation.addListener('blur', () => {
+   /*const willBlurSubscription = navigation.addListener('blur', () => {
       unsubscribe
     });
-    return willBlurSubscription;
+    return willBlurSubscription;*/
   });
 
   useEffect(() => {
