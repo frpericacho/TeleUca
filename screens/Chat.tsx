@@ -45,10 +45,17 @@ const Chat = ({ route, navigation }: any) => {
   //Chat
   const [Chat, setChat] = useState<any>();
 
+  //NewMeassages
+  const [unsubscribe, setUnsubscribe] = useState<any>();
+
   useEffect(() => {
     firebase.firestore().collection('users').where('email','==',MyUserAuth?.email).get().then(async (user) => {
       setUserFirestore(user.docs[0].data())
     })
+    const willBlurSubscription = navigation.addListener('blur', () => {
+      unsubscribe
+    });
+    return willBlurSubscription;
   });
 
   useEffect(() => {
@@ -118,6 +125,7 @@ const Chat = ({ route, navigation }: any) => {
   };
 
   const readNewMessages = async () => {
+    
     firebase
       .firestore()
       .collection("chats")
@@ -136,6 +144,25 @@ const Chat = ({ route, navigation }: any) => {
           NewMessages: NewMessagesAux,
         });
       });
+    
+   /*
+    let unsubscribeAux = firebase
+      .firestore()
+      .collection("chats")
+      .doc(route.params.id)
+      .onSnapshot((snapshot)=>{
+        let NewMessagesAux = snapshot.data()?.NewMessages;
+        NewMessagesAux.filter((users: any) => {
+          return users.email == firebase.auth().currentUser?.email;
+        }).map((users: any) => {
+          users.NewMessage = false;
+        });
+        
+        snapshot.ref.update({
+          NewMessages: NewMessagesAux,
+        });
+      })
+    setUnsubscribe(unsubscribeAux)*/
   };
 
   const sendPushNotification = async (email: string, text: string) => {

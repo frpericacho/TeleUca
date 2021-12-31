@@ -74,6 +74,9 @@ export default function Register({ navigation }: any) {
               Alert.alert("Este email se encuentra ya en uso");
               setEmail("")
               setPassword("")
+            }else if(error.code == 'auth/weak-password'){
+              Alert.alert("La contraseña es demasiado débil");
+              setPassword("")
             }else{
               Alert.alert("Se ha producido un error en el email y/o contraseña");
               setEmail("")
