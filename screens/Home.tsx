@@ -15,7 +15,6 @@ import firebase from "firebase";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import * as Notifications from 'expo-notifications';
 import Constants from 'expo-constants';
-import MultiSelect from 'react-native-multiple-select';
 import CareerMultiselect from "../components/Multiselect/CareerMultiselect";
 import SubjectMultiselect from "../components/Multiselect/SubjectMultiselect";
 

@@ -75,7 +75,7 @@ export default class AudioSlider extends PureComponent {
             }
         });
           
-    };
+    }
 
     mapAudioToCurrentTime = async () => {
         await this.soundObject.setPositionAsync(this.state.currentTime);
@@ -248,6 +248,6 @@ export default class AudioSlider extends PureComponent {
                 </View>
             </View>
         );
-    };
+    }
 
 }

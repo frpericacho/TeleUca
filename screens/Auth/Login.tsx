@@ -1,7 +1,6 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { StyleSheet, View, Alert } from "react-native";
 import { Button, Input, Image } from "react-native-elements";
-import React from "react";
 import firebase from "firebase";
 import { registerForPushNotificationsAsync } from "../../App";
 

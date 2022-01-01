@@ -1,6 +1,5 @@
 import { Alert, StyleSheet, View, ScrollView } from "react-native";
 import { Button, Input, Image, Icon } from "react-native-elements";
-import MultiSelect from 'react-native-multiple-select';
 import firebase from "firebase";
 import React, {useEffect, useState} from "react";
 import CareerMultiselect from "../../components/Multiselect/CareerMultiselect";

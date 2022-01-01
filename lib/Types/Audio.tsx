@@ -1,4 +1,3 @@
-import { Audio, AVPlaybackStatus } from 'expo-av';
 
 type AudioType = {
     soundObjt: any,

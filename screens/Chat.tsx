@@ -81,16 +81,31 @@ const Chat = ({ route, navigation }: any) => {
       .orderBy("createdAt", "desc")
       .onSnapshot((snapshot) => {
         setMessages(
-          snapshot.docs.map((doc) => ({
-            _id: doc.data()._id,
-            createdAt: doc.data().createdAt.toDate(),
-            text: doc.data().text,
-            user: doc.data().user,
-            image: doc.data().image,
-            video: doc.data().video,
-            audio: doc.data().audio,
-            document: doc.data().document,
-          }))
+          snapshot.docs.map(function(doc) {
+            if(doc.data().audio){
+              return(
+                {
+                  _id: doc.data()._id,
+                  createdAt: doc.data().createdAt,
+                  user: doc.data().user,
+                  audio: doc.data().audio,
+                }
+              )
+            }else{
+              return (
+                {
+                  _id: doc.data()._id,
+                  createdAt: doc.data().createdAt.toDate(),
+                  text: doc.data().text,
+                  user: doc.data().user,
+                  image: doc.data().image,
+                  video: doc.data().video,
+                  audio: doc.data().audio,
+                  document: doc.data().document,
+                }
+              )
+            }
+          })
         );
       });
     return willFocusSubscription;
@@ -817,7 +832,7 @@ const Chat = ({ route, navigation }: any) => {
                               _id: firebase.auth().currentUser?.email,
                               name: firebase.auth().currentUser?.email,
                             },
-                            createdAt: nombre,
+                            createdAt: new Date(),
                           },
                           NewMessages: NewMessagesAux,
                         });
