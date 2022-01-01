@@ -122,12 +122,11 @@ export default class AudioSlider extends PureComponent {
         this.setState({ playing: false });
         await this.soundObject.pauseAsync();
         await this.state.dotOffset.setValue({ x:0, y:0 });
-        // this.state.dotOffset.setValue(0);
         await this.soundObject.setPositionAsync(0);
     }
 
     measureTrack = (event) => {
-        this.setState({ 'trackLayout': event.nativeEvent.layout }); // {x, y, width, height}
+        this.setState({ 'trackLayout': event.nativeEvent.layout });
     }
 
     async componentDidMount() {
