@@ -8,8 +8,8 @@ const ChatItem = ({ Chat, navigation, Search }: any) => {
   //MyUser
   const MyUserAuth = firebase.auth().currentUser;
 
-  const chatTextView = (individual: boolean, search: boolean, titleDisplay: string) => {
-    if(!search){
+  const chatTextView = (individual: boolean, searchView: boolean, titleDisplay: string) => {
+    if(!searchView){
       if(individual){
         return(
           <View
@@ -74,7 +74,7 @@ const ChatItem = ({ Chat, navigation, Search }: any) => {
     }
   }
 
-  const chatItemView = (individual: boolean, newMessage: boolean, search: boolean) => {
+  const chatItemView = (individual: boolean, newMessage: boolean, searchView: boolean) => {
     let avatarDisplay, titleDisplay
     if(individual){
       titleDisplay = Chat.users.UserList.filter((email: string) => {
@@ -130,7 +130,7 @@ const ChatItem = ({ Chat, navigation, Search }: any) => {
               null
             }
           </View>
-          {chatTextView(individual, search, titleDisplay)}
+          {chatTextView(individual, searchView, titleDisplay)}
           {newMessage ? 
             <Badge
               status="success"
@@ -171,11 +171,6 @@ const ChatItem = ({ Chat, navigation, Search }: any) => {
 export default ChatItem;
 
 function search(MyEmail: string | null | undefined, myArray: Array<any>) {
-  /*for (var i = 0; i < myArray.length; i++) {
-    if (myArray[i].email === MyEmail) {
-      return myArray[i];
-    }
-  }*/
   for(let userSearch of myArray){
     if(userSearch.email === MyEmail){
       return userSearch;
@@ -184,7 +179,7 @@ function search(MyEmail: string | null | undefined, myArray: Array<any>) {
 }
 
 function checkNewMessages(Chat: any, MyUserAuth: firebase.User | null) {
-  let check: boolean = false;
+  let check: boolean;
 
   if (Chat?.NewMessages) {
     let user = search(MyUserAuth?.email, Chat.NewMessages);
