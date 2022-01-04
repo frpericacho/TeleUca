@@ -6,11 +6,11 @@ import MainStack from './MainStack';
 import firebase from 'firebase';
 
 export default () => {
-	const [user] = useAuthState(firebase.auth())
-
+	const [auth] = useAuthState(firebase.auth())
+	
 	return (
 		<NavigationContainer>
-			{user ? <MainStack/> : <AuthStack />}
+			{auth ? <MainStack/> : <AuthStack />}
 		</NavigationContainer>
 	);
 };
