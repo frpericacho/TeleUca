@@ -860,10 +860,8 @@ const Chat = ({ route, navigation }: any) => {
           cancelButtonIndex,
         },
         async (buttonIndex: any) => {
-          switch (buttonIndex) {
-            case 0:
-              await saveMessage(currentMessage);
-              break;
+          if(buttonIndex==0){
+            await saveMessage(currentMessage);
           }
         }
       );
@@ -877,10 +875,8 @@ const Chat = ({ route, navigation }: any) => {
           cancelButtonIndex,
         },
         async (buttonIndex: any) => {
-          switch (buttonIndex) {
-            case 0:
-              await saveMessage(currentMessage);
-              break;
+          if(buttonIndex==0){
+            await saveMessage(currentMessage);
           }
         }
       );
@@ -894,10 +890,8 @@ const Chat = ({ route, navigation }: any) => {
           cancelButtonIndex,
         },
         async (buttonIndex: any) => {
-          switch (buttonIndex) {
-            case 0:
-              await saveMessage(currentMessage);
-              break;
+          if(buttonIndex==0){
+            await saveMessage(currentMessage);
           }
         }
       );

@@ -171,9 +171,14 @@ const ChatItem = ({ Chat, navigation, Search }: any) => {
 export default ChatItem;
 
 function search(MyEmail: string | null | undefined, myArray: Array<any>) {
-  for (var i = 0; i < myArray.length; i++) {
+  /*for (var i = 0; i < myArray.length; i++) {
     if (myArray[i].email === MyEmail) {
       return myArray[i];
+    }
+  }*/
+  for(let userSearch of myArray){
+    if(userSearch.email === MyEmail){
+      return userSearch;
     }
   }
 }

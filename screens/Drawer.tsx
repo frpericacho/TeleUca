@@ -66,7 +66,7 @@ export function DrawerContent({ props, navigation }: any) {
         </View>
         <TouchableOpacity
           onPress={async () =>
-            await navigation.navigate("UserProfileEdit", { User: MyUser })
+            navigation.navigate("UserProfileEdit", { User: MyUser })
           }
           style={{ marginLeft: 30, marginTop: 20 }}
         >
