@@ -40,7 +40,6 @@ const Chat = ({ route, navigation }: any) => {
   //Audio
   const [recording, setRecording] = React.useState<Audio.Recording>();
   const [IsRecording, setIsRecording] = React.useState(false);
-  const [sound, setSound] = React.useState<Audio.Sound>();
 
   //Chat
   const [Chat, setChat] = useState<any>();
@@ -729,7 +728,6 @@ const Chat = ({ route, navigation }: any) => {
     const { sound } = await Audio.Sound.createAsync(
       require('../assets/pop.mp3')
     );
-    setSound(sound);
     await sound.playAsync();
 
     try {
@@ -756,7 +754,6 @@ const Chat = ({ route, navigation }: any) => {
     const { sound } = await Audio.Sound.createAsync(
       require('../assets/pop.mp3')
     );
-    setSound(sound);
     await sound.playAsync();
 
     setRecording(undefined);

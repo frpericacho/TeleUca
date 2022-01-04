@@ -9,11 +9,11 @@ export default function Login({ navigation }: any) {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState("");
 
-  const handleLogin = async (email: string, password: string) => {
+  const handleLogin = async (UserEmail: string, UserPassword: string) => {
     setLoading("Entrando")
     await firebase
       .auth()
-      .signInWithEmailAndPassword(email, password)
+      .signInWithEmailAndPassword(UserEmail, UserPassword)
       .then((res) => {
         console.log(res);
         registerForPushNotificationsAsync();
