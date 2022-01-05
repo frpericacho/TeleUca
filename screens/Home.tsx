@@ -264,8 +264,8 @@ export default function Home({ navigation }: any) {
     .collection('users')
     .where("subjects","array-contains-any",selectedSubjects)
     .get().then((users)=>{
-      users.docs.forEach((user)=>{
-        auxArray.push(user.data().email)
+      users.docs.forEach((UserData)=>{
+        auxArray.push(UserData.data().email)
       })
     })
     auxArray.forEach((item)=>{
@@ -283,8 +283,8 @@ export default function Home({ navigation }: any) {
     .collection('users')
     .where("career","==",selectedCareer[0])
     .get().then((users)=>{
-      users.docs.forEach((user)=>{
-        auxArray.push(user.data().email)
+      users.docs.forEach((UserData)=>{
+        auxArray.push(UserData.data().email)
       })
     })
     auxArray.forEach((item)=>{
@@ -319,9 +319,9 @@ export default function Home({ navigation }: any) {
         })
         .then(async(chat) => {
           let NewMessages: any = [];
-          UserList.forEach((user: string) => {
+          UserList.forEach((UserEmail: string) => {
             NewMessages.push({
-              email: user,
+              email: UserEmail,
               NewMessage: false,
             });
           });
@@ -466,29 +466,6 @@ export default function Home({ navigation }: any) {
                 {selected ? 
                   <View style={{marginTop:20}}>
                     {SubjectMultiselect(subjects,selectedSubjects,setSelectedSubjects)}
-                    {/*
-                      <MultiSelect
-                        items={subjects}
-                        selectedItems={selectedSubjects}
-                        onSelectedItemsChange={(selectedItems)=>setSelectedSubjects(selectedItems)}
-                        selectText="Escoge asignaturas"
-                        searchInputPlaceholderText="Buscar asignaturas..."
-                        noItemsText="No se encuentran coincidencias"
-                        submitButtonText="Añadir asignaturas"
-                        hideSubmitButton
-                        styleTextDropdown={{marginLeft:10}}
-                        styleTextDropdownSelected={{marginLeft:10}}
-                        searchInputStyle={{height:40}}
-                        styleDropdownMenuSubsection={{borderRadius: 25}}
-                        tagContainerStyle={{
-                          maxWidth: '90%'
-                        }}
-                        hideDropdown
-                        textInputProps={{autoFocus:false}}
-                        displayKey="name"
-                        uniqueKey="id"
-                      />
-                    */}
                   </View>
                 : null }
               </View> 

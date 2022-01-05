@@ -58,8 +58,8 @@ const ChatOptions = ({ route, navigation }: any) => {
       let titleDisplay = route.params.chat.users.UserList.filter((email: string) => {
         return email != MyUserAuth?.email;
       });
-      let avatarDisplay = route.params.chat.avatar_url.filter((user:any)=>{
-        return user.email == titleDisplay;
+      let avatarDisplay = route.params.chat.avatar_url.filter((userAux:any)=>{
+        return userAux.email == titleDisplay;
       })
       await setImageChat(avatarDisplay[0].avatar_url)
     }else{
@@ -67,20 +67,20 @@ const ChatOptions = ({ route, navigation }: any) => {
     }
   }
 
-  const fetchUsers = async (UserList: any) => {
+  const fetchUsers = async (UserArray: any) => {
     let userDocs: any = [];
     firebase
       .firestore()
       .collection("users")
-      .where("email", "in", UserList)
+      .where("email", "in", UserArray)
       .get()
       .then((snapshot) => {
         userDocs = snapshot.docs
-          .filter((user) => {
-            return user.data().email != MyUserAuth?.email;
+          .filter((NotMyUser) => {
+            return NotMyUser.data().email != MyUserAuth?.email;
           })
-          .map((user) => {
-            return user.data();
+          .map((userData) => {
+            return userData.data();
           });
         setUsers(userDocs);
       });
@@ -166,12 +166,12 @@ const ChatOptions = ({ route, navigation }: any) => {
       .then((chat) => {
         let UserListAux = chat.data()?.users.UserList;
         let NewMessagesAux = chat.data()?.NewMessages;
-        let usersAux = users.filter((user: any) => {
-          return user.email != data.item.email;
+        let usersAux = users.filter((NotMyUser: any) => {
+          return NotMyUser.email != data.item.email;
         });
 
-        NewMessagesAux = NewMessagesAux.filter((user: any) => {
-          return user.email != data.item.email;
+        NewMessagesAux = NewMessagesAux.filter((NotMyUser: any) => {
+          return NotMyUser.email != data.item.email;
         });
         UserListAux = UserListAux.filter((email: string) => {
           return email != data.item.email;
@@ -197,12 +197,12 @@ const ChatOptions = ({ route, navigation }: any) => {
       .then((chat) => {
         let UserListAux = chat.data()?.users.UserList;
         let NewMessagesAux = chat.data()?.NewMessages;
-        let usersAux = users.filter((user: any) => {
-          return user.email != MyUserAuth?.email;
+        let usersAux = users.filter((NotMyUser: any) => {
+          return NotMyUser.email != MyUserAuth?.email;
         });
 
-        NewMessagesAux = NewMessagesAux.filter((user: any) => {
-          return user.email != MyUserAuth?.email;
+        NewMessagesAux = NewMessagesAux.filter((NotMyUser: any) => {
+          return NotMyUser.email != MyUserAuth?.email;
         });
         UserListAux = UserListAux.filter((email: string) => {
           return email != MyUserAuth?.email;
@@ -272,8 +272,8 @@ const ChatOptions = ({ route, navigation }: any) => {
 
         UserList.filter((email: string) => {
           let ArrayAux: Array<any> = [];
-          ArrayAux = NewMessagesAux.filter((user: any) => {
-            return user.email == email;
+          ArrayAux = NewMessagesAux.filter((MyUser: any) => {
+            return MyUser.email == email;
           });
           if (ArrayAux.length == 0) {
             return true;

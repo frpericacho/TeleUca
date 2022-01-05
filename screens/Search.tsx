@@ -18,9 +18,9 @@ export default function Search({ navigation }: any) {
   //User
   const [users, setUsers] = useState<Array<User>>([]);
 
-  const updateSearch = (search: string) => {
-    setState(search);
-    if (!search) {
+  const updateSearch = (searchTerm: string) => {
+    setState(searchTerm);
+    if (!searchTerm) {
       setChats([]);
       setUsers([]);
     } else {
@@ -30,8 +30,8 @@ export default function Search({ navigation }: any) {
         .firestore()
         .collection("chats")
         .orderBy("titleLowerCase")
-        .startAt(search.toLowerCase())
-        .endAt(search.toLowerCase() + "\uf8ff")
+        .startAt(searchTerm.toLowerCase())
+        .endAt(searchTerm.toLowerCase() + "\uf8ff")
         .onSnapshot((snapshot) => {
           docs = snapshot.docs
             .filter((doc) => {
@@ -46,8 +46,8 @@ export default function Search({ navigation }: any) {
         .firestore()
         .collection("users")
         .orderBy("email")
-        .startAt(search)
-        .endAt(search + "\uf8ff")
+        .startAt(searchTerm)
+        .endAt(searchTerm + "\uf8ff")
         .onSnapshot((snapshot) => {
           userDocs = snapshot.docs
             .filter((doc) => {

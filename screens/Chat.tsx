@@ -42,7 +42,7 @@ const Chat = ({ route, navigation }: any) => {
   const [IsRecording, setIsRecording] = React.useState(false);
 
   //Chat
-  const [Chat, setChat] = useState<any>();
+  const [ChatContent, setChat] = useState<any>();
 
   //NewMeassages
   //const [unsubscribe, setUnsubscribe] = useState<any>();
@@ -81,7 +81,7 @@ const Chat = ({ route, navigation }: any) => {
               return(
                 {
                   _id: doc.data()._id,
-                  createdAt: doc.data().createdAt,
+                  createdAt: doc.data().createdAt.toDate(),
                   user: doc.data().user,
                   audio: doc.data().audio,
                 }
@@ -715,6 +715,7 @@ const Chat = ({ route, navigation }: any) => {
   const renderInputToolbar = (props: any) => {
     //type: difusion
     if (route.params.type == "difusion" && route.params.Admin != MyUserAuth?.email) {
+      return null;
     } else {
     return(
       <InputToolbar
@@ -775,7 +776,7 @@ const Chat = ({ route, navigation }: any) => {
                   .add({
                     _id: nombre,
                     chat_id: route.params.id,
-                    createdAt: nombre,
+                    createdAt: new Date(),
                     user: {
                       _id: firebase.auth().currentUser?.email,
                       name: firebase.auth().currentUser?.email,
@@ -1100,12 +1101,12 @@ const Chat = ({ route, navigation }: any) => {
                 (await Admin)
                   ? navigation.navigate("ChatOptions", {
                       title: Title,
-                      chat: Chat,
+                      chat: ChatContent,
                       Admin: true,
                     })
                   : navigation.navigate("ChatOptions", {
                       title: Title,
-                      chat: Chat,
+                      chat: ChatContent,
                       Admin: false,
                     })
               }
