@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   FlatList,
+  ScrollView
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { Image, Input } from "react-native-elements";
@@ -35,6 +36,7 @@ const ChatOptions = ({ route, navigation }: any) => {
   const hideModalTitle = () => setVisibleTitle(false);
   const [Title, setTitle] = useState(route.params.chat.title);
   const [TitleChat, setTitleChat] = useState(route.params.chat.title);
+  const [Description, setDescription] = useState(route.params.chat.description);
   let textInputTitle: any;
 
   //ChatImage
@@ -45,6 +47,11 @@ const ChatOptions = ({ route, navigation }: any) => {
   const showModalDeleteChat = () => setDeleteChat(true);
   const hideModalDeleteChat = () => setDeleteChat(false);
 
+  //ModifyDescription
+  const [visibleModifyDescription, setModifyDescription] = React.useState(false);
+  const showModifyDescription = () => setModifyDescription(true);
+  const hideModifyDescription = () => setModifyDescription(false);
+
   useEffect(() => {
     (async () => {
       await getChatImagen()
@@ -53,7 +60,6 @@ const ChatOptions = ({ route, navigation }: any) => {
   }, []);
 
   const getChatImagen = async () => {
-    //type: individual
     if(route.params.chat.type == "individual"){
       let titleDisplay = route.params.chat.users.UserList.filter((email: string) => {
         return email != MyUserAuth?.email;
@@ -318,6 +324,20 @@ const ChatOptions = ({ route, navigation }: any) => {
       });
   };
 
+  const ChangeDescriptionChat = async () => {
+    firebase
+      .firestore()
+      .collection("chats")
+      .doc(route.params.chat.id)
+      .update({
+        description: Description,
+      })
+      .then((chat) => {
+        setDescription(Description);
+        hideModifyDescription();
+      });
+  }
+
   const reduceTitle = () => {
     return (
       <View>
@@ -333,7 +353,6 @@ const ChatOptions = ({ route, navigation }: any) => {
   }
 
 
-  //type: group || difusion
   if (route.params.chat.type == "group" || route.params.chat.type == "difusion") {
     if (route.params.Admin) {
       return (
@@ -431,6 +450,25 @@ const ChatOptions = ({ route, navigation }: any) => {
                   </View>
                 </View>
               </Modal>
+              <Modal
+                visible={visibleModifyDescription}
+                onDismiss={hideModifyDescription}
+                contentContainerStyle={styles.containerStyle}
+              >
+                <View>
+                  <Input
+                    value={Description}
+                    label="Nuevo descripción de chat:"
+                    ref={(input) => {
+                      textInputTitle = input;
+                    }}
+                    onChangeText={(value) => setDescription(value)}
+                    placeholder="Descripción chat"
+                    clearTextOnFocus
+                  />
+                  <Button onPress={() => ChangeDescriptionChat()}>Enviar</Button>
+                </View>
+              </Modal>
             </Portal>
             <View
               style={{
@@ -497,19 +535,35 @@ const ChatOptions = ({ route, navigation }: any) => {
                 />
               </View>
               <View style={{ flex: 2, backgroundColor: "#B3E5FC" }}>
-                <Text style={{ margin: 10, fontSize: 15 }}>
-                  {route.params.chat.description}
-                </Text>
-                <Text style={{ margin: 10, fontWeight: "bold", fontSize: 20 }}>
-                  Participantes
-                </Text>
-                <SwipeListView
-                  data={users}
-                  renderItem={renderUserItem}
-                  keyExtractor={(item: any) => item.email.toString()}
-                  renderHiddenItem={(data) => renderHiddenUserItem(data)}
-                  rightOpenValue={-75}
-                />
+                <ScrollView>
+                  <View>
+                    <View style={{flexDirection: "row", alignItems: "center", justifyContent: "space-between"}}>
+                      <Text style={{ margin: 10, fontWeight: "bold", fontSize: 20 }}>
+                        Descripción
+                      </Text>
+                      <Icon
+                        name="circle-edit-outline"
+                        size={30}
+                        color="#900"
+                        style={{marginRight: 10}}
+                        onPress={showModifyDescription}
+                      />
+                    </View>
+                    <Text style={{ margin: 10, fontSize: 15, marginLeft: 20 }}>
+                      {Description}
+                    </Text>
+                  </View>
+                  <Text style={{ margin: 10, fontWeight: "bold", fontSize: 20 }}>
+                    Participantes
+                  </Text>
+                  <SwipeListView
+                    data={users}
+                    renderItem={renderUserItem}
+                    keyExtractor={(item: any) => item.email.toString()}
+                    renderHiddenItem={(data) => renderHiddenUserItem(data)}
+                    rightOpenValue={-75}
+                  />
+                </ScrollView>
                 <FAB
                   style={{
                     backgroundColor: "#03A9F4",
@@ -579,9 +633,16 @@ const ChatOptions = ({ route, navigation }: any) => {
               />
             </View>
             <View style={{ flex: 2, backgroundColor: "#B3E5FC" }}>
-              <Text style={{ margin: 10, fontSize: 15 }}>
-                {route.params.chat.description}
-              </Text>
+                <View>
+                  <View style={{flexDirection: "row", alignItems: "center", justifyContent: "space-between"}}>
+                    <Text style={{ margin: 10, fontWeight: "bold", fontSize: 20 }}>
+                      Descripción
+                    </Text>
+                  </View>
+                  <Text style={{ margin: 10, fontSize: 15, marginLeft: 20 }}>
+                    {Description}
+                  </Text>
+              </View>
               <Text style={{ margin: 10, fontWeight: "bold", fontSize: 20 }}>
                 Participantes
               </Text>
@@ -597,7 +658,6 @@ const ChatOptions = ({ route, navigation }: any) => {
       );
     }
   } else {
-    // HASTA AQUI
     return (
       <View
         style={{

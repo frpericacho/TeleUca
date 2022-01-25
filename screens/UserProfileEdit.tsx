@@ -149,7 +149,6 @@ const UserProfileEdit = ({ route, navigation }: any) => {
             ref.put(resolve).then((resolve) => {
               resolve.ref.getDownloadURL().then((url) => {
                 //Modificar tambien los chats individuales
-
                 firebase
                   .firestore()
                   .collection("users")
@@ -175,7 +174,6 @@ const UserProfileEdit = ({ route, navigation }: any) => {
   };
 
   const changeImageChats = async () => {
-    //type: individual
     firebase
       .firestore()
       .collection("chats")
@@ -184,7 +182,6 @@ const UserProfileEdit = ({ route, navigation }: any) => {
       .get()
       .then((docs) => {
         docs.forEach((chat) => {
-          console.log('este es el chat',chat.data())
           let MyAvatar = chat.data().avatar_url.filter((user:any)=>{
             return user.email == route.params.User.email;
           })
